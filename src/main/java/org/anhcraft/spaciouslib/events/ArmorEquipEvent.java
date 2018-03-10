@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.events;
 
+import org.anhcraft.spaciouslib.inventory.EquipSlot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -13,12 +14,18 @@ public class ArmorEquipEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private ItemStack oldArmor;
     private ItemStack newArmor;
+    private EquipSlot slot;
     private Player player;
 
-    public ArmorEquipEvent(Player player, ItemStack oldArmor, ItemStack newArmor){
+    public ArmorEquipEvent(Player player, ItemStack oldArmor, ItemStack newArmor, EquipSlot slot){
         this.player = player;
         this.oldArmor = oldArmor;
         this.newArmor = newArmor;
+        this.slot = slot;
+    }
+
+    public EquipSlot getSlot(){
+        return this.slot;
     }
 
     public Player getPlayer(){

