@@ -5,8 +5,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * An event triggers when player jumps on the spot
- * Doesn't trigger if player jump to another location or fall down
+ * An event triggers when player jumps
+ * Doesn't trigger if player falls down
  */
 public class PlayerJumpEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
