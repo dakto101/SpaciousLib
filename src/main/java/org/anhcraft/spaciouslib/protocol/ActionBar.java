@@ -41,14 +41,14 @@ public class ActionBar {
                 Object enumActionBar = enumActionBarField.get(null);
                 Constructor<?> packetCons = packetPlayOutTitleClass.getDeclaredConstructor(enumTitleActionClass, chatBaseComponentClass, int.class, int.class, int.class);
                 Object packet = packetCons.newInstance(enumActionBar, chatBaseComponent, fadeIn, stay, fadeOut);
-                return new PacketSender(packet, nmsEntityPlayer);
+                return new PacketSender(packet);
             }
             // 1.8 R1 - 1.10
             else{
                 Class<?> packetPlayOutChatClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutChat");
                 Constructor<?> packetCons = packetPlayOutChatClass.getDeclaredConstructor(chatBaseComponentClass, byte.class);
                 Object packet = packetCons.newInstance(chatBaseComponent, (byte) 2);
-                return new PacketSender(packet, nmsEntityPlayer);
+                return new PacketSender(packet);
             }
         } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchFieldException e) {
             e.printStackTrace();
