@@ -62,7 +62,7 @@ public class ArmorEquipEventTask extends BukkitRunnable implements Listener {
                 x.put(EquipSlot.FEET, b);
                 data.put(p, x);
                 for(EquipSlot r : x.keySet()){
-                    ArmorEquipEvent e = new ArmorEquipEvent(p, null, x.get(r), r);
+                    ArmorEquipEvent e = new ArmorEquipEvent(p, x.get(r), x.get(r), r);
                     Bukkit.getServer().getPluginManager().callEvent(e);
                 }
             }
