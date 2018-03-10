@@ -41,10 +41,8 @@ public class URLUtils {
             BufferedOutputStream bout = new BufferedOutputStream(
                     fos, 1024);
             byte[] data = new byte[1024];
-            long downloadedFileSize = 0;
             int x;
             while ((x = in.read(data)) != -1) {
-                downloadedFileSize += x;
                 bout.write(data, 0, x);
             }
             bout.close();

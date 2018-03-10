@@ -33,4 +33,20 @@ public class InventoryUtils {
         }
         return filter;
     }
+
+    public static boolean compare(ItemStack a, ItemStack b) {
+        if(isNull(a)){
+            return isNull(b);
+        }
+        else if(isNull(b)){
+            return isNull(a);
+        }
+        else {
+            return a.hashCode() == b.hashCode();
+        }
+    }
+
+    public static ItemStack clone(ItemStack item) {
+        return isNull(item) ? null : item.clone();
+    }
 }

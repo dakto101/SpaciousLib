@@ -16,7 +16,7 @@ public class ServerUtils {
         return e;
     }
 
-    public static <E extends Entity> List<Entity> getAllEntitiesClass(Class<E> c){
+    public static <E extends Entity> List<Entity> getAllEntitiesByClass(Class<E> c){
         List<Entity> e = new ArrayList<>();
         for(World w : Bukkit.getServer().getWorlds()){
             e.addAll(w.getEntitiesByClass(c));

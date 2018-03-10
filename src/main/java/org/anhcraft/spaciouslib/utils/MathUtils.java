@@ -17,4 +17,8 @@ public class MathUtils {
             return 0;
         }
     }
+
+    public static double round(double a){
+        return (double) Math.round(a * 100) / 100;
+    }
 }
