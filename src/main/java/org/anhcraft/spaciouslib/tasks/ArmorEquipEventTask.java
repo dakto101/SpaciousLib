@@ -55,6 +55,7 @@ public class ArmorEquipEventTask extends BukkitRunnable implements Listener {
                     Bukkit.getServer().getPluginManager().callEvent(e);
                     x.put(EquipSlot.FEET, e.getNewArmor());
                 }
+                data.put(p, x);
             } else {
                 x.put(EquipSlot.HEAD, h);
                 x.put(EquipSlot.CHEST, c);
@@ -62,7 +63,7 @@ public class ArmorEquipEventTask extends BukkitRunnable implements Listener {
                 x.put(EquipSlot.FEET, b);
                 data.put(p, x);
                 for(EquipSlot r : x.keySet()){
-                    ArmorEquipEvent e = new ArmorEquipEvent(p, x.get(r), x.get(r), r);
+                    ArmorEquipEvent e = new ArmorEquipEvent(p, null, x.get(r), r);
                     Bukkit.getServer().getPluginManager().callEvent(e);
                 }
             }
