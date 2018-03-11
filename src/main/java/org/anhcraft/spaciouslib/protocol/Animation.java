@@ -14,12 +14,10 @@ public class Animation {
         try {
             Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftPlayer");
             Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v.toString() + ".Entity");
-            Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v.toString() + ".EntityPlayer");
             Class<?> packetPlayOutAnimationClass = Class.forName("net.minecraft.server." + v.toString() + ".PacketPlayOutAnimation");
             Object craftPlayer = craftPlayerClass.cast(player);
             Method handle = craftPlayerClass.getDeclaredMethod("getHandle");
             Object nmsEntity = handle.invoke(craftPlayer);
-            Object nmsEntityPlayer = nmsEntityPlayerClass.cast(nmsEntity);
             Constructor<?> packetCons = packetPlayOutAnimationClass.getDeclaredConstructor(nmsEntityClass, int.class);
             Object packet = packetCons.newInstance(nmsEntity, type.getID());
             return new PacketSender(packet);
