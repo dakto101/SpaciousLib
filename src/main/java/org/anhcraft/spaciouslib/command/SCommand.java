@@ -6,9 +6,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.defaults.BukkitCommand;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
@@ -50,10 +51,10 @@ public class SCommand {
         }
         this.name = name.toLowerCase();
         this.rootRunnable = rootRunnable;
-        initArgErrorMessage();
+        init();
     }
 
-    private void initArgErrorMessage() {
+    private void init() {
         setArgErrorMessage(ArgumentType.URL,
                 "&cYou must type a valid URL! (e.g: https://example.com/)");
         setArgErrorMessage(ArgumentType.EMAIL,
@@ -68,6 +69,7 @@ public class SCommand {
                 "&cYou must type a valid boolean! (true, false)");
         setArgErrorMessage(ArgumentType.WORLD,
                 "&cCouldn't find that world!");
+        setDoesNotEnoughtArgsErrorMessage("&cNot enough arguments!");
     }
 
     public ArgumentType getArgumentType(CommandArgument arg){
@@ -132,7 +134,7 @@ public class SCommand {
                         .append(arg.isOptional() ? "]" : ">");
             }
         }
-        return cmd.toString();
+        return Strings.color(cmd.toString());
     }
 
     public String getCommandString(boolean color, int maxArgSize){
@@ -207,13 +209,20 @@ public class SCommand {
             throw new Exception("This command hasn't normalized yet! Please use normalize() method before using this method!");
         }
         if(getCommand() == null){
-            CommandManager.register(new BukkitCommand(this.name) {
+            Class pluginCommandClass = PluginCommand.class;
+            Constructor pluginCommandCons = pluginCommandClass.getDeclaredConstructor(String.class, Plugin.class);
+            pluginCommandCons.setAccessible(true);
+            Object pluginCommand = pluginCommandCons.newInstance(this.name, plugin);
+            PluginCommand c = (PluginCommand) pluginCommand;
+            c.setExecutor(new CommandExecutor() {
                 @Override
-                public boolean execute(CommandSender s, String l, String[] a) {
+                public boolean onCommand(CommandSender s, Command command,
+                                         String l, String[] a) {
                     sc.execute(s, a);
                     return false;
                 }
             });
+            CommandManager.register(c);
         } else if(getCommand() instanceof PluginCommand){
             ((PluginCommand) getCommand()).setExecutor(new CommandExecutor() {
                 @Override
