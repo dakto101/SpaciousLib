@@ -6,6 +6,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.defaults.BukkitCommand;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -199,98 +201,112 @@ public class SCommand {
         return true;
     }
 
-    public SCommand buildExecutor() throws Exception {
+    public SCommand buildExecutor(JavaPlugin plugin) throws Exception {
+        SCommand sc = this;
         if(!isValid()){
             throw new Exception("This command hasn't normalized yet! Please use normalize() method before using this method!");
         }
-        SCommand sc = this;
-        if(getCommand() instanceof PluginCommand){
+        if(getCommand() == null){
+            CommandManager.register(new BukkitCommand(this.name) {
+                @Override
+                public boolean execute(CommandSender s, String l, String[] a) {
+                    sc.execute(s, a);
+                    return false;
+                }
+            });
+        } else if(getCommand() instanceof PluginCommand){
             ((PluginCommand) getCommand()).setExecutor(new CommandExecutor() {
                 @Override
                 public boolean onCommand(CommandSender s, Command command,
                                          String l, String[] a) {
-                    if(a.length == 0){
-                        rootRunnable.run(sc, s);
-                    } else {
-                        LinkedHashMap<CommandArgument, String> values = new LinkedHashMap<>();
-                        int i = 0;
-                        for(String value : a){
-                            if(getArguments().size() <= i){
-                                break;
-                            }
-                            values.put(getArguments().get(i), value);
-                            i++;
-                        }
-                        if(values.size() < getArguments(false).size()){
-                            s.sendMessage(sc.doesNotEnoughtArgsErrorMessage);
-                        } else {
-                            boolean hasError = false;
-                            argTypeValidator:
-                            for(CommandArgument arg : values.keySet()) {
-                                String value = values.get(arg);
-                                switch(getArgumentType(arg)) {
-                                    case URL:
-                                        if(!Pattern.compile("(https?|ftp):(/{1,})((?!-)([-a-zA-Z0-9]{1,})(?<!-))\\.((?!-)([-a-zA-Z0-9]{1,})).*").matcher(value).matches()) {
-                                            s.sendMessage(sc.argErrorMessages.get(ArgumentType.URL));
-                                            hasError = true;
-                                            break argTypeValidator;
-                                        }
-                                        break;
-                                    case EMAIL:
-                                        if(!Pattern.compile("[A-Za-z0-9\\.\\-\\_]+@[A-Za-z0-9\\-\\_]+\\.[A-Za-z0-9\\-\\_]+").matcher(value).matches()) {
-                                            s.sendMessage(sc.argErrorMessages.get(ArgumentType.EMAIL));
-                                            hasError = true;
-                                            break argTypeValidator;
-                                        }
-                                        break;
-                                    case BOOLEAN:
-                                        if(!value.equalsIgnoreCase("true")
-                                                && !value.equalsIgnoreCase("false")) {
-                                            s.sendMessage(sc.argErrorMessages.get(ArgumentType.BOOLEAN));
-                                            hasError = true;
-                                            break argTypeValidator;
-                                        }
-                                        break;
-                                    case WORLD:
-                                        if(Bukkit.getServer().getWorld(value) == null) {
-                                            s.sendMessage(sc.argErrorMessages.get(ArgumentType.WORLD));
-                                            hasError = true;
-                                            break argTypeValidator;
-                                        }
-                                        break;
-                                    case REAL_NUMBER:
-                                        if(!Pattern.compile("(^(-|)[0-9]+$)|(^(-|)[0-9]+\\.[0-9]+$)").matcher(value).matches()) {
-                                            s.sendMessage(sc.argErrorMessages.get(ArgumentType.REAL_NUMBER));
-                                            hasError = true;
-                                            break argTypeValidator;
-                                        }
-                                        break;
-                                    case INTEGER_NUMBER:
-                                        if(!Pattern.compile("^(-|)[0-9]+$").matcher(value).matches()) {
-                                            s.sendMessage(sc.argErrorMessages.get(ArgumentType.INTEGER_NUMBER));
-                                            hasError = true;
-                                            break argTypeValidator;
-                                        }
-                                        break;
-                                    case ONLINE_PLAYER:
-                                        if(!Bukkit.getServer().getOfflinePlayer(value).isOnline()) {
-                                            s.sendMessage(sc.argErrorMessages.get(ArgumentType.ONLINE_PLAYER));
-                                            hasError = true;
-                                            break argTypeValidator;
-                                        }
-                                        break;
-                                }
-                            }
-                            if(!hasError) {
-                                new ArrayList<>(values.keySet())
-                                        .get(values.size()-1).getRunnable().run(sc, s);
-                            }
-                        }
-                    }
+                    sc.execute(s, a);
                     return false;
                 }
             });
         }
         return sc;
+    }
+
+    private void execute(CommandSender s, String[] a) {
+        SCommand sc = this;
+        if(a.length == 0){
+            rootRunnable.run(sc, s, a);
+        } else {
+            LinkedHashMap<CommandArgument, String> values = new LinkedHashMap<>();
+            int i = 0;
+            for(String value : a) {
+                if(getArguments().size() <= i) {
+                    break;
+                }
+                values.put(getArguments().get(i), value);
+                i++;
+            }
+            if(values.size() < getArguments(false).size()) {
+                s.sendMessage(sc.doesNotEnoughtArgsErrorMessage);
+            } else {
+                boolean hasError = false;
+                argTypeValidator:
+                for(CommandArgument arg : values.keySet()) {
+                    String value = values.get(arg);
+                    switch(getArgumentType(arg)) {
+                        case URL:
+                            if(!Pattern.compile("(https?|ftp):(/{1,})((?!-)([-a-zA-Z0-9]{1,})(?<!-))\\.((?!-)([-a-zA-Z0-9]{1,})).*").matcher(value).matches()) {
+                                s.sendMessage(sc.argErrorMessages.get(ArgumentType.URL));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case EMAIL:
+                            if(!Pattern.compile("[A-Za-z0-9\\.\\-\\_]+@[A-Za-z0-9\\-\\_]+\\.[A-Za-z0-9\\-\\_]+").matcher(value).matches()) {
+                                s.sendMessage(sc.argErrorMessages.get(ArgumentType.EMAIL));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case BOOLEAN:
+                            if(!value.equalsIgnoreCase("true")
+                                    && !value.equalsIgnoreCase("false")) {
+                                s.sendMessage(sc.argErrorMessages.get(ArgumentType.BOOLEAN));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case WORLD:
+                            if(Bukkit.getServer().getWorld(value) == null) {
+                                s.sendMessage(sc.argErrorMessages.get(ArgumentType.WORLD));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case REAL_NUMBER:
+                            if(!Pattern.compile("(^(-|)[0-9]+$)|(^(-|)[0-9]+\\.[0-9]+$)").matcher(value).matches()) {
+                                s.sendMessage(sc.argErrorMessages.get(ArgumentType.REAL_NUMBER));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case INTEGER_NUMBER:
+                            if(!Pattern.compile("^(-|)[0-9]+$").matcher(value).matches()) {
+                                s.sendMessage(sc.argErrorMessages.get(ArgumentType.INTEGER_NUMBER));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case ONLINE_PLAYER:
+                            if(!Bukkit.getServer().getOfflinePlayer(value).isOnline()) {
+                                s.sendMessage(sc.argErrorMessages.get(ArgumentType.ONLINE_PLAYER));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                    }
+                }
+                if(!hasError) {
+                    CommandArgument arg = new ArrayList<>(values.keySet())
+                            .get(values.size() - 1);
+                    arg.getRunnable().run(sc, s, a);
+                }
+            }
+        }
     }
 }
