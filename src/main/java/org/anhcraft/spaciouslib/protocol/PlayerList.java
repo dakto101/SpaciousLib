@@ -39,6 +39,6 @@ public class PlayerList {
     }
 
     public void remove(){
-
+        create("{\"translate\":\"\"}", "{\"translate\":\"\"}");
     }
 }
