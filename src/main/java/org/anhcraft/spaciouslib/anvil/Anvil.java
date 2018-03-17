@@ -19,9 +19,7 @@ public class Anvil implements AnvilWrapper{
      * Please use AnvilForm instead
      * @param player a player which you want to show to
      * @param id anvil's id
-     * @deprecated
      */
-    @Deprecated
     public Anvil(Player player, String id){
         this.player = player;
         this.id = id;

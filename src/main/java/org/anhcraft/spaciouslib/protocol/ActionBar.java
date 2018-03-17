@@ -2,6 +2,7 @@ package org.anhcraft.spaciouslib.protocol;
 
 import org.anhcraft.spaciouslib.utils.GVersion;
 import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.JSONUtils;
 import org.anhcraft.spaciouslib.utils.Strings;
 
 import java.lang.reflect.Constructor;
@@ -15,7 +16,11 @@ public class ActionBar {
     }
 
     public static PacketSender create(String text, int fadeIn, int stay, int fadeOut) {
-        text = "{\"text\": \"" + Strings.color(text) + "\"}";
+        if(JSONUtils.isValid(text)){
+            text = Strings.color(text);
+        } else {
+            text = "{\"text\": \"" + Strings.color(text) + "\"}";
+        }
         GVersion v = GameVersion.getVersion();
         try {
             Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GVersion.v1_8_R1) ? "" : "IChatBaseComponent$") + "ChatSerializer");

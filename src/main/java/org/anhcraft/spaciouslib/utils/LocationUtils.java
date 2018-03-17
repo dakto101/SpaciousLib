@@ -26,9 +26,9 @@ public class LocationUtils {
 
     public static List<Block> getNearbyBlocks(Location loc, int rx, int ry, int rz){
         List<Block> list = new ArrayList<>();
-        for (int x = -rx; x <= rx; x++){
-            for (int y = -ry; y <= ry; y++) {
-                for (int z = -rz; z <= rz; z++) {
+        for (int x = -(rx); x <= rx; x++){
+            for (int y = -(ry); y <= ry; y++) {
+                for (int z = -(rz); z <= rz; z++) {
                     list.add(new Location(
                             loc.getWorld(),
                             loc.getX() + x,
