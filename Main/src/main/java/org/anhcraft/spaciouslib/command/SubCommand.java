@@ -8,6 +8,12 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+/**
+ * A subcommand is one or many static arguments of a command (which created by SCommand)<br>
+ * A subcommand (static argument) can have unlimited dynamic arguments<br>
+ * With a dynamic argument, players can type anything they want but it needs to depend on the type of that argument<br>
+ * E.g: players can only type integer number if the type of that argument which they was typed in is INTEGER_NUMBER
+ */
 public class SubCommand extends CommandString{
     private String name;
     private String description;
@@ -18,6 +24,13 @@ public class SubCommand extends CommandString{
     protected String canNotFindCmdErrorMessage;
     private boolean hideTypeCommandString = false;
 
+    /**
+     * Creates a new SubCommand instance
+     * @param name the name of this subcommand
+     * @param description the description of this subcommand
+     * @param rootRunnable a runnable which was triggered if a player run this subcommand
+     * @throws Exception
+     */
     public SubCommand(String name, String description, CommandRunnable rootRunnable) throws Exception {
         this.name = name.trim().toLowerCase();
         this.rootRunnable = rootRunnable;
@@ -76,11 +89,26 @@ public class SubCommand extends CommandString{
         return this;
     }
 
+    /**
+     * Creates a new dynamic argument for this subcommand
+     * @param arg CommandArgument instance
+     * @param type type of this argument
+     * @return
+     */
     public SubCommand setArgument(CommandArgument arg, CommandArgument.Type type){
         this.args.put(arg, type);
         return this;
     }
 
+    /**
+     * Creates a new dynamic argument for this subcommand
+     * @param name the name of this argument
+     * @param argRunnable runnable for this argument, only triggers if a player runs a command which has this argument at the end
+     * @param type the type of this argument
+     * @param optional
+     * @return
+     * @throws Exception
+     */
     public SubCommand setArgument(String name, CommandRunnable argRunnable, CommandArgument.Type type, boolean optional) throws Exception {
         setArgument(new CommandArgument(name, argRunnable, optional), type);
         return this;
@@ -101,7 +129,7 @@ public class SubCommand extends CommandString{
         return this;
     }
 
-    String getCommandString(boolean color){
+    protected String getCommandString(boolean color){
         StringBuilder cmd;
         if(color){
             cmd = new StringBuilder((color ? gcs(Type.BEGIN_SUB_COMMAND) : "") + this.name);
@@ -133,6 +161,11 @@ public class SubCommand extends CommandString{
         return cmd.toString();
     }
 
+    /**
+     * Normalizes this subcommand<br>
+     * It'll sort optional arguments into the end of this subcommand. The order between optional arguments or non-optional arguments won't be change.
+     * @return
+     */
     public SubCommand normalize(){
         LinkedHashMap<CommandArgument, CommandArgument.Type> require = new LinkedHashMap<>();
         LinkedHashMap<CommandArgument, CommandArgument.Type> optional = new LinkedHashMap<>();
@@ -154,6 +187,10 @@ public class SubCommand extends CommandString{
         return this;
     }
 
+    /**
+     * Checks is this subcommand valid
+     * @return
+     */
     public boolean isValid(){
         int a = 0;
         for(CommandArgument c : getArguments()){
@@ -168,7 +205,7 @@ public class SubCommand extends CommandString{
         return true;
     }
 
-    void execute(SCommand cmd, CommandSender s, String[] a) {
+    protected void execute(SCommand cmd, CommandSender s, String[] a) {
         SubCommand sc = this;
         if(a.length == 0){
             rootRunnable.run(cmd, sc, s, a, "");

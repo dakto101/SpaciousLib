@@ -15,7 +15,7 @@ public class Anvil implements AnvilWrapper{
     private String id;
 
     /**
-     * Creates a new anvil
+     * Creates a new anvil<br>
      * Please use AnvilForm instead
      * @param player a player which you want to show to
      * @param id anvil's id

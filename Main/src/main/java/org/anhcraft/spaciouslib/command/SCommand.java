@@ -10,12 +10,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A command builder helps you create a new command and register it in runtime
+ */
 public class SCommand extends CommandString {
     private Command command;
     private String name;
     private SubCommand rootCmd;
     private List<SubCommand> subcmds = new ArrayList<>();
 
+    /**
+     * Create a new SCommand instance
+     * @param name the name of that command (e.g: test is the name of the command /test a b c)
+     * @param rootRunnable a runnable which was triggered if a player run that command with no arguments
+     * @param rootDescription the description for this command if a player run that command with no arguments
+     * @throws Exception
+     */
     public SCommand(String name, CommandRunnable rootRunnable, String rootDescription) throws Exception {
         this.name = name.trim().toLowerCase();
         if(0 < this.name.length() && this.name.split(" ").length != 1){
@@ -25,6 +35,13 @@ public class SCommand extends CommandString {
         addSubCommand(this.rootCmd);
     }
 
+    /**
+     * Creates a new SCommand instance (which doesn't need a description for the command)<br>
+     * The description: &cShows all commands
+     * @param name the name of this command
+     * @param rootRunnable a runnable which was triggered if a player run that command with no arguments
+     * @throws Exception
+     */
     public SCommand(String name, CommandRunnable rootRunnable) throws Exception {
         this.name = name.trim().toLowerCase();
         if(0 < this.name.length() && this.name.split(" ").length != 1){
@@ -34,12 +51,22 @@ public class SCommand extends CommandString {
         addSubCommand(this.rootCmd);
     }
 
+    /**
+     * Creates a new SCommand instance<br>
+     * This subcommand must have a blank name
+     * @param name the name of this command
+     * @param rootCmd the subcommand instance
+     * @throws Exception
+     */
     public SCommand(String name, SubCommand rootCmd) throws Exception {
         this.name = name.trim().toLowerCase();
         if(0 < this.name.length() && this.name.split(" ").length != 1){
             throw new Exception("Invalid command name!");
         }
         this.rootCmd = rootCmd;
+        if(0 < this.rootCmd.getName().length()){
+            throw new Exception("Subcommand must have a black name!");
+        }
     }
 
     public SCommand addSubCommand(SubCommand subCommand){
@@ -55,6 +82,11 @@ public class SCommand extends CommandString {
         return this.command;
     }
 
+    /**
+     * Gets the string format of this command
+     * @param color true if you want to "color" that string
+     * @return the command in string format
+     */
     public List<String> getCommandsAsString(boolean color){
         List<String> a = new ArrayList<>();
         for(SubCommand sc : getSubCommands()){
@@ -63,10 +95,22 @@ public class SCommand extends CommandString {
         return a;
     }
 
+    /**
+     * Gets the string format of a specific subcommand
+     * @param color true if you want to "color" that string
+     * @return the command in string format
+     */
     public String getCommandAsString(SubCommand subCommand, boolean color){
         return Strings.color((color ? gcs(Type.BEGIN_COMMAND) : "") + this.name + " " + subCommand.getCommandString(color));
     }
 
+    /**
+     * Builds a new executor for this command<br>
+     * Also registers this command with "CommandManager" if the command hasn't registered yet<br>
+     * @param plugin
+     * @return
+     * @throws Exception
+     */
     public SCommand buildExecutor(JavaPlugin plugin) throws Exception {
         if(getCommand() == null){
             Constructor pluginCommandCons = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);

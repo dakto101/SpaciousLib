@@ -99,11 +99,16 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                                     commandSender.sendMessage(sCommand.getCommandAsString(subCommand, true));
                                 }
                             })
-                                    .setArgument("text", new CommandRunnable() {
+                                    .setArgument("header", new CommandRunnable() {
                                         @Override
                                         public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
-                                            PlayerList.create(s, s).sendAll();
-                                            commandSender.sendMessage("ok");
+                                            commandSender.sendMessage(sCommand.getCommandAsString(subCommand, true));
+                                        }
+                                    }, CommandArgument.Type.CUSTOM, false)
+                                    .setArgument("footer", new CommandRunnable() {
+                                        @Override
+                                        public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
+                                            PlayerList.create(strings[0], strings[1]).sendAll();
                                         }
                                     }, CommandArgument.Type.CUSTOM, false)
                     )

@@ -2,6 +2,9 @@ package org.anhcraft.spaciouslib.command;
 
 import java.util.LinkedHashMap;
 
+/**
+ * Parts of command string
+ */
 public abstract class CommandString {
     public enum Type {
         BEGIN_COMMAND,
@@ -19,6 +22,11 @@ public abstract class CommandString {
 
     private LinkedHashMap<Type, String> cmdstr = new LinkedHashMap<>();
 
+    /**
+     * Set the new value for that string part
+     * @param type string part's type
+     * @param str new value
+     */
     public void scs(Type type, String str){
         cmdstr.put(type, str);
     }
