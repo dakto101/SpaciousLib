@@ -5,12 +5,7 @@ import com.google.gson.reflect.TypeToken;
 
 public class JSONUtils {
     public static boolean isValid(String json) {
-        try {
-            new Gson().fromJson(json, Object.class);
-            return true;
-        } catch(com.google.gson.JsonSyntaxException ex) {
-            return false;
-        }
+        return RegEx.JSON.matches(json);
     }
 
     public static <C> String toJson(C type, Object object){

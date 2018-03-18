@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.protocol;
 
+import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -70,33 +71,33 @@ public class Particle {
         }
     }
 
-    public PacketSender create(Type type, Location location, int count){
+    public static PacketSender create(Type type, Location location, int count){
         return create(type, (float) location.getX(), (float) location.getY(), (float) location.getZ(), count, 0, 0, 0, false, 0, Material.AIR, 0);
     }
 
-    public PacketSender create(Type type, float x, float y, float z, int count){
+    public static PacketSender create(Type type, float x, float y, float z, int count){
         return create(type, x, y, z, count, 0, 0, 0, false, 0, Material.AIR, 0);
     }
 
-    public PacketSender create(Type type, Location location, int count, Material material, int data){
+    public static PacketSender create(Type type, Location location, int count, Material material, int data){
         return create(type, (float) location.getX(), (float) location.getY(), (float) location.getZ(), count, 0, 0, 0, false, 0, material, data);
     }
 
-    public PacketSender create(Type type, float x, float y, float z, int count, Material material, int data){
+    public static PacketSender create(Type type, float x, float y, float z, int count, Material material, int data){
         return create(type, x, y, z, count, 0, 0, 0, false, 0, material, data);
     }
 
-    public PacketSender create(Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float particleData, Material material, int data){
+    public static PacketSender create(Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float particleData, Material material, int data){
         return create(type, (float) location.getX(), (float) location.getY(), (float) location.getZ(), count, offsetX, offsetY, offsetZ, longDistance, particleData, material, data);
     }
 
-    public PacketSender create(Type type, float x, float y, float z, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float particleData, Material material, int data){
+    public static PacketSender create(Type type, float x, float y, float z, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float particleData, Material material, int data){
         try {
-            Class<?> enumParticleClass = Class.forName("net.minecraft.server.EnumParticle");
+            Class<?> enumParticleClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".EnumParticle");
             Field enumParticleField = enumParticleClass.getDeclaredField(type.toString());
             enumParticleField.setAccessible(true);
             Object enumParticle = enumParticleField.get(null);
-            Class<?> particleClass = Class.forName("net.minecraft.server.PacketPlayOutWorldParticles");
+            Class<?> particleClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".PacketPlayOutWorldParticles");
             Constructor<?> packetCons = particleClass.getDeclaredConstructor(enumParticleClass, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class, int[].class);
             Object packet;
             if(type.equals(Type.ITEM_CRACK)){

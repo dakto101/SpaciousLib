@@ -1,6 +1,17 @@
 package org.anhcraft.spaciouslib.command;
 
 public class CommandArgument {
+    public enum Type{
+        CUSTOM,
+        URL,
+        EMAIL,
+        ONLINE_PLAYER,
+        INTEGER_NUMBER,
+        REAL_NUMBER,
+        BOOLEAN,
+        WORLD
+    }
+
     private String name;
     private CommandRunnable runnable;
     private boolean optional;

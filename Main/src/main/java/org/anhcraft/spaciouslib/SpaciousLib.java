@@ -8,9 +8,7 @@ public final class SpaciousLib extends JavaPlugin {
     public static SpaciousLib instance;
 
     @Override
-    public void onEnable() {
-        instance = this;
-
+    public void onEnable(){
         getServer().getPluginManager().registerEvents(new PlayerJumpEventListener(), this);
         getServer().getPluginManager().registerEvents(new InteractItemListener(), this);
         getServer().getPluginManager().registerEvents(new AnvilCloseListener(), this);
