@@ -1,7 +1,7 @@
 package org.anhcraft.spaciouslib.inventory;
 
-import org.anhcraft.spaciouslib.nbt.NBTManager;
 import org.anhcraft.spaciouslib.nbt.NBTCompoundWrapper;
+import org.anhcraft.spaciouslib.nbt.NBTManager;
 import org.anhcraft.spaciouslib.utils.Strings;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
-public class SItems {
+public class SItem {
     private ItemStack item;
 
     /**
@@ -19,7 +19,7 @@ public class SItems {
      *
      * @param item an item
      */
-    public SItems(ItemStack item) {
+    public SItem(ItemStack item) {
         this.item = item;
     }
 
@@ -31,7 +31,7 @@ public class SItems {
      * @param amount item's amount
      *
      */
-    public SItems(String name, Material type, int amount) {
+    public SItem(String name, Material type, int amount) {
         this.item = new ItemStack(type, amount);
         name(name);
     }
@@ -45,7 +45,7 @@ public class SItems {
      * @param durability item's durability
      *
      */
-    public SItems(String name, Material type, int amount, short durability) {
+    public SItem(String name, Material type, int amount, short durability) {
         this.item = new ItemStack(type, amount);
         name(name);
         durability(durability);
@@ -62,7 +62,7 @@ public class SItems {
     /**
      * Sets a name for that item
      */
-    public SItems name(String name) {
+    public SItem name(String name) {
         ItemMeta a = this.item.getItemMeta();
         a.setDisplayName(Strings.color(name));
         this.item.setItemMeta(a);
@@ -74,7 +74,7 @@ public class SItems {
      * @param enchant enchantment's name
      * @param level   enchantment's level
      */
-    public SItems addEnchant(Enchantment enchant, int level) {
+    public SItem addEnchant(Enchantment enchant, int level) {
         ItemMeta a = this.item.getItemMeta();
         a.addEnchant(enchant, level, true);
         this.item.setItemMeta(a);
@@ -84,7 +84,7 @@ public class SItems {
     /**
      * Removes an enchantment out of that item
      */
-    public SItems removeEnchant(Enchantment enchant) {
+    public SItem removeEnchant(Enchantment enchant) {
         ItemMeta a = this.item.getItemMeta();
         a.removeEnchant(enchant);
         this.item.setItemMeta(a);
@@ -114,7 +114,7 @@ public class SItems {
      *
      * @param text a lore
      */
-    public SItems addLore(String text) {
+    public SItem addLore(String text) {
         ItemMeta a = this.item.getItemMeta();
         List<String> lores;
         if(a.hasLore()) {
@@ -133,7 +133,7 @@ public class SItems {
      *
      * @param texts list of lores
      */
-    public SItems addLores(List<String> texts) {
+    public SItem addLores(List<String> texts) {
         ItemMeta a = this.item.getItemMeta();
         List<String> lores;
         if(a.hasLore()) {
@@ -154,7 +154,7 @@ public class SItems {
      *
      * @param texts a list of lores
      */
-    public SItems setLores(List<String> texts) {
+    public SItem setLores(List<String> texts) {
         ItemMeta a = this.item.getItemMeta();
         List<String> lores = new ArrayList<>();
         for(String b : texts) {
@@ -168,7 +168,7 @@ public class SItems {
     /**
      * Removes a specific lore line out of that item
      */
-    public SItems removeLore(int index) {
+    public SItem removeLore(int index) {
         ItemMeta a = this.item.getItemMeta();
         List<String> lores = a.getLore();
         lores.remove(index);
@@ -188,7 +188,7 @@ public class SItems {
     /**
      * Add a flag to that item
      */
-    public SItems flag(ItemFlag flag) {
+    public SItem flag(ItemFlag flag) {
         ItemMeta a = this.item.getItemMeta();
         a.addItemFlags(flag);
         this.item.setItemMeta(a);
@@ -198,7 +198,7 @@ public class SItems {
     /**
      * Removes a flag out of that item
      */
-    public SItems removeFlag(ItemFlag flag) {
+    public SItem removeFlag(ItemFlag flag) {
         ItemMeta a = this.item.getItemMeta();
         a.removeItemFlags(flag);
         this.item.setItemMeta(a);
@@ -224,7 +224,7 @@ public class SItems {
     /**
      * Sets a new durability value for that item
      */
-    public SItems durability(short durability) {
+    public SItem durability(short durability) {
         this.item.setDurability(durability);
         return this;
     }
@@ -239,7 +239,7 @@ public class SItems {
     /**
      * Sets a new type for that item
      */
-    public SItems setType(Material type) {
+    public SItem setType(Material type) {
         this.item.setType(type);
         return this;
     }
@@ -254,7 +254,7 @@ public class SItems {
     /**
      * Sets amount value for that item
      */
-    public SItems amount(int amount) {
+    public SItem amount(int amount) {
         this.item.setAmount(amount);
         return this;
     }
@@ -278,7 +278,7 @@ public class SItems {
     /**
      * Toggles unbreakable of that item
      */
-    public SItems unbreakable(Boolean b) {
+    public SItem unbreakable(Boolean b) {
         if(b) {
             item = new NBTManager(item).setBoolean("Unbreakable", true).toItemStack(item);
         } else {
@@ -301,7 +301,7 @@ public class SItems {
      * @param type  type of attribute
      * @param value value
      */
-    public SItems addAttribute(AttributeType type, double value) {
+    public SItem addAttribute(AttributeType type, double value) {
         List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
@@ -320,7 +320,7 @@ public class SItems {
      * @param value value
      * @param slot slot
      */
-    public SItems addAttribute(AttributeType type, double value, EquipSlot slot) {
+    public SItem addAttribute(AttributeType type, double value, EquipSlot slot) {
         List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
@@ -340,7 +340,7 @@ public class SItems {
      * @param value value
      * @param index index
      */
-    public SItems setAttribute(AttributeType type, double value, int index) {
+    public SItem setAttribute(AttributeType type, double value, int index) {
         return removeAttribute(index).addAttribute(type, value);
     }
 
@@ -352,7 +352,7 @@ public class SItems {
      * @param index index
      * @param slot slot
      */
-    public SItems setAttribute(AttributeType type, double value, EquipSlot slot, int index) {
+    public SItem setAttribute(AttributeType type, double value, EquipSlot slot, int index) {
         return removeAttribute(index).addAttribute(type, value, slot);
     }
 
@@ -361,7 +361,7 @@ public class SItems {
      *
      * @param index index of attribute
      */
-    public SItems removeAttribute(int index) {
+    public SItem removeAttribute(int index) {
         List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
         if(l != null) {
             if(index < l.size()) {
@@ -381,7 +381,7 @@ public class SItems {
      *
      * @param type type of attribute
      */
-    public SItems removeAttribute(AttributeType type) {
+    public SItem removeAttribute(AttributeType type) {
         List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
