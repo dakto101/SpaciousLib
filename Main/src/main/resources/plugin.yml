@@ -1,5 +1,5 @@
 name: SpaciousLib
-version: 1.4.5
+version: 1.4.6
 main: org.anhcraft.spaciouslib.SpaciousLib
 authors: [anhcraft, inventivetalent]
 description: A library has necessary utilities for all plugins
