@@ -12,7 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 
 public class SItem {
-    private ItemStack item;
+    protected ItemStack item;
 
     /**
      * Imports from an item
@@ -302,7 +302,7 @@ public class SItem {
      * @param value value
      */
     public SItem addAttribute(AttributeType type, double value) {
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
@@ -321,7 +321,7 @@ public class SItem {
      * @param slot slot
      */
     public SItem addAttribute(AttributeType type, double value, EquipSlot slot) {
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
@@ -362,7 +362,7 @@ public class SItem {
      * @param index index of attribute
      */
     public SItem removeAttribute(int index) {
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l != null) {
             if(index < l.size()) {
                 l.remove(index);
@@ -382,15 +382,17 @@ public class SItem {
      * @param type type of attribute
      */
     public SItem removeAttribute(AttributeType type) {
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
-        List<NBTCompoundWrapper> newCompounds = new ArrayList<>();
+        List<Object> newCompounds = new ArrayList<>();
         String n = AttributeType.getModifierName(type);
-        for(NBTCompoundWrapper w : l){
-            if(!w.getString("AttributeName").equals(n)){
-                newCompounds.add(w);
+        for(Object w : l){
+            if(w instanceof NBTCompoundWrapper) {
+                if(!((NBTCompoundWrapper) w).getString("AttributeName").equals(n)) {
+                    newCompounds.add(w);
+                }
             }
         }
         if(newCompounds.size() == 0){
@@ -407,14 +409,16 @@ public class SItem {
      * @param type  type of attribute
      */
     public Boolean hasAttribute(AttributeType type) {
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
         String n = AttributeType.getModifierName(type);
-        for(NBTCompoundWrapper w : l){
-            if(w.getString("AttributeName").equals(n)){
-                return true;
+        for(Object w : l){
+            if(w instanceof NBTCompoundWrapper) {
+                if(((NBTCompoundWrapper) w).getString("AttributeName").equals(n)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -428,17 +432,18 @@ public class SItem {
      * @return type
      */
     public AttributeType getAttributeType(int index) {
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             return null;
         } else {
             if(index < l.size()) {
-                NBTCompoundWrapper w = l.get(index);
-                return AttributeType.getByName(w.getString("AttributeName"));
-            } else {
-                return null;
+                if(l.get(index) instanceof NBTCompoundWrapper) {
+                    NBTCompoundWrapper w = (NBTCompoundWrapper) l.get(index);
+                    return AttributeType.getByName(w.getString("AttributeName"));
+                }
             }
         }
+        return null;
     }
 
     /**
@@ -450,15 +455,17 @@ public class SItem {
      */
     public double getAttributeAmount(AttributeType type) {
         double r = 0;
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
         String n = AttributeType.getModifierName(type);
-        for(NBTCompoundWrapper w : l){
-            if(w.getString("AttributeName").equals(n) && w.hasKey("Amount")){
-                r = w.getDouble("Amount");
-                break;
+        for(Object w : l){
+            if(w instanceof NBTCompoundWrapper) {
+                if(((NBTCompoundWrapper) w).getString("AttributeName").equals(n) && ((NBTCompoundWrapper) w).hasKey("Amount")) {
+                    r = ((NBTCompoundWrapper) w).getDouble("Amount");
+                    break;
+                }
             }
         }
         return r;
@@ -473,14 +480,16 @@ public class SItem {
      */
     public int getAttributeAmount(int index) {
         int r = 0;
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
         if(index < l.size()) {
-            NBTCompoundWrapper w = l.get(index);
-            if(w.hasKey("Amount")) {
-                r = w.getInt("Amount");
+            if(l.get(index) instanceof NBTCompoundWrapper) {
+                NBTCompoundWrapper w = (NBTCompoundWrapper) l.get(index);
+                if(w.hasKey("Amount")) {
+                    r = w.getInt("Amount");
+                }
             }
         }
         return r;
@@ -490,12 +499,14 @@ public class SItem {
      * Gets slot of an attribute which has a specific index
      */
     public EquipSlot getAttributeEquipSlot(int index) {
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l != null) {
             if(index < l.size()) {
-                NBTCompoundWrapper w = l.get(index);
-                if(w.hasKey("Slot")) {
-                    return EquipSlot.valueOf(w.getString("Slot").toUpperCase());
+                if(l.get(index) instanceof NBTCompoundWrapper) {
+                    NBTCompoundWrapper w = (NBTCompoundWrapper) l.get(index);
+                    if(w.hasKey("Slot")) {
+                        return EquipSlot.valueOf(w.getString("Slot").toUpperCase());
+                    }
                 }
             }
         }
@@ -507,15 +518,17 @@ public class SItem {
      */
     public EquipSlot getAttributeEquipSlot(AttributeType type) {
         String r = null;
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
         String n = AttributeType.getModifierName(type);
-        for(NBTCompoundWrapper w : l){
-            if(w.getString("AttributeName").equals(n) && w.hasKey("Slot")){
-                r = w.getString("Slot").toUpperCase();
-                break;
+        for(Object w : l){
+            if(w instanceof NBTCompoundWrapper) {
+                if(((NBTCompoundWrapper) w).getString("AttributeName").equals(n) && ((NBTCompoundWrapper) w).hasKey("Slot")) {
+                    r = ((NBTCompoundWrapper) w).getString("Slot").toUpperCase();
+                    break;
+                }
             }
         }
         return EquipSlot.valueOf(r);
@@ -526,12 +539,14 @@ public class SItem {
      */
     public List<AttributeType> getAllAttributes() {
         List<AttributeType> types = new ArrayList<>();
-        List<NBTCompoundWrapper> l = new NBTManager(item).getList("AttributeModifiers");
+        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
-        for(NBTCompoundWrapper w : l){
-            types.add(AttributeType.getByName(w.getString("AttributeName")));
+        for(Object w : l){
+            if(w instanceof NBTCompoundWrapper) {
+                types.add(AttributeType.getByName(((NBTCompoundWrapper) w).getString("AttributeName")));
+            }
         }
         return types;
     }

@@ -3,14 +3,17 @@ package org.anhcraft.spaciouslib.io;
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class FileManager {
     private File file;
 
     /**
-     * Creates a new FileManager isntance<br>
+     * Creates a new FileManager instance<br>
      * Mustn't be a directory
      * @param file a file
      */
@@ -19,21 +22,36 @@ public class FileManager {
     }
 
     /**
-     * Creates that file
+     * Creates a new FileManager instance<br>
+     * Mustn't be a directory
+     * @param path file's path
      */
-    public void create(){
-        try {
-            this.file.createNewFile();
-        } catch(IOException e) {
-            e.printStackTrace();
+    public FileManager(String path){
+        this.file = new File(path);
+    }
+
+    /**
+     * Creates that file if it doesn't exist
+     */
+    public FileManager create(){
+        if(!this.file.exists()){
+            try {
+                this.file.createNewFile();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
         }
+        return this;
     }
 
     /**
      * Deletes that file
      */
-    public void delete(){
-        this.file.delete();
+    public FileManager delete(){
+        if(this.file.exists()) {
+            this.file.delete();
+        }
+        return this;
     }
 
     /**
@@ -44,7 +62,9 @@ public class FileManager {
         new BukkitRunnable() {
             @Override
             public void run() {
-                file.delete();
+                if(file.exists()) {
+                    file.delete();
+                }
             }
         }.runTaskLaterAsynchronously(SpaciousLib.instance, 20 * delaySeconds);
     }

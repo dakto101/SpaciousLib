@@ -1,7 +1,6 @@
 package org.anhcraft.spaciouslib.database;
 
 import org.anhcraft.spaciouslib.SpaciousLib;
-import org.anhcraft.spaciouslib.utils.TaskStatus;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -12,6 +11,11 @@ import java.sql.Statement;
 import java.util.LinkedHashMap;
 
 public abstract class Database {
+    public enum TaskStatus {
+        CONTINUE,
+        STOP
+    }
+
     protected Connection conn;
     protected Statement state;
     private LinkedHashMap<String, BukkitTask> tasks = new LinkedHashMap<>();

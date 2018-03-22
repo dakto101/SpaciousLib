@@ -6,9 +6,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * A command builder helps you create a new command and register it in runtime
@@ -117,6 +115,12 @@ public class SCommand extends CommandString {
             pluginCommandCons.setAccessible(true);
             Object pluginCommand = pluginCommandCons.newInstance(this.name, plugin);
             PluginCommand c = (PluginCommand) pluginCommand;
+            c.setTabCompleter(new TabCompleter() {
+                @Override
+                public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+                    return tabcomplete(args);
+                }
+            });
             c.setExecutor(new CommandExecutor() {
                 @Override
                 public boolean onCommand(CommandSender s, Command command,
@@ -128,6 +132,12 @@ public class SCommand extends CommandString {
             CommandManager.register(plugin, c);
             this.command = c;
         } else if(getCommand() instanceof PluginCommand){
+            ((PluginCommand) getCommand()).setTabCompleter(new TabCompleter() {
+                @Override
+                public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+                    return tabcomplete(args);
+                }
+            });
             ((PluginCommand) getCommand()).setExecutor(new CommandExecutor() {
                 @Override
                 public boolean onCommand(CommandSender s, Command command,
@@ -140,18 +150,55 @@ public class SCommand extends CommandString {
         return this;
     }
 
+    private List<String> tabcomplete(String[] a) {
+        TreeMap<Integer, String> s = new TreeMap<>(Collections.reverseOrder());
+        StringBuilder cmdb = new StringBuilder();
+        for(String t : a){
+            if(t.replace(" ", "").length() == 0){
+                continue;
+            }
+            cmdb.append(" ").append(t);
+        }
+        String cmd = cmdb.toString().replaceFirst(" ", "").trim().toLowerCase();
+        for(SubCommand sc : getSubCommands()){
+            if(sc.getName().startsWith(cmd)) {
+                String[] m = sc.getName().split(" ");
+                String[] j = cmd.split(" ");
+                String[] n = m;
+                if(0 < cmd.length() && 0 < j.length && 0 < m.length && m[m.length - 1].startsWith(j[j.length - 1])){
+                    if(j.length == m.length){
+                        n = new String[]{m[m.length - 1]};
+                    } else {
+                        n = Arrays.copyOfRange(m, j.length, m.length);
+                    }
+                }
+                StringBuilder x = new StringBuilder();
+                for(String t : n){
+                    x.append(" ").append(t);
+                }
+                String v = x.toString().trim();
+                s.put(v.length(), v);
+            }
+        }
+        return new ArrayList<>(s.values());
+    }
+
     private void execute(CommandSender s, String[] a) {
         StringBuilder cmdb = new StringBuilder();
         for(String t : a){
             cmdb.append(" ").append(t);
         }
-        String cmd = cmdb.toString().replaceFirst(" ", "").trim();
+        String cmd = cmdb.toString().replaceFirst(" ", "").trim().toLowerCase();
         SubCommand found = null;
         boolean xt = false;
         for(SubCommand sc : this.subcmds){
             if(cmd.length() == 0 && sc.getName().length() == 0){
                 xt = true;
-                sc.execute(this, s, new String[]{});
+                try {
+                    sc.execute(this, s, new String[]{});
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             }
             else if(0 < sc.getName().length() && validateSubCommand(sc.getName(), cmd)){
@@ -162,10 +209,21 @@ public class SCommand extends CommandString {
         }
         if(found != null) {
             int x = found.getName().split(" ").length;
-            found.execute(this, s, Arrays.copyOfRange(a, x, a.length));
+            try {
+                found.execute(this, s, Arrays.copyOfRange(a, x, a.length));
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         } else {
             if(!xt) {
                 s.sendMessage(Strings.color(rootCmd.canNotFindCmdErrorMessage));
+                for(SubCommand sc : getSubCommands()){
+                    if(sc.getName().startsWith(cmd)){
+                        s.sendMessage(Strings.color(rootCmd.suggestMessage));
+                        s.sendMessage(getCommandAsString(sc, true));
+                        break;
+                    }
+                }
             }
         }
     }

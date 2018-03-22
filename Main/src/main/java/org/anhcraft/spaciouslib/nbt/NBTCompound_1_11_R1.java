@@ -394,11 +394,10 @@ public class NBTCompound_1_11_R1 implements NBTCompoundWrapper {
     }
 
     @Override
-    public List<NBTCompoundWrapper> getList(String name) {
+    public List<Object> getList(String name) {
         Object v = map.get(name);
-        if(v instanceof ArrayList<?> &&
-                0 < ((ArrayList<?>) v).size() && ((ArrayList<?>) v).get(0) instanceof NBTCompoundWrapper) {
-            return (List<NBTCompoundWrapper>) v;
+        if(v instanceof ArrayList<?> && 0 < ((ArrayList<?>) v).size()) {
+            return (List<Object>) v;
         } else {
             return null;
         }

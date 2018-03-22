@@ -25,7 +25,7 @@ public interface NBTCompoundWrapper {
     byte getByte(String name);
     int[] getIntArray(String name);
     byte[] getByteArray(String name);
-    List<NBTCompoundWrapper> getList(String name);
+    List<Object> getList(String name);
     NBTCompoundWrapper getCompound(String name);
     void remove(String name);
     Boolean hasKey(String key);

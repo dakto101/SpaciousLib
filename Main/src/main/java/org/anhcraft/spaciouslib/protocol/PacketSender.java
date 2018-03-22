@@ -40,7 +40,7 @@ public class PacketSender {
         return this;
     }
 
-    public PacketSender send(World world){
+    public PacketSender sendWorld(World world){
         for(Player p : world.getPlayers()){
             sendPlayer(p);
         }
@@ -62,5 +62,9 @@ public class PacketSender {
             sendPlayer(p);
         }
         return this;
+    }
+
+    public Object getPacket(){
+        return this.packet;
     }
 }

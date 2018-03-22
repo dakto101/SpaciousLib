@@ -22,6 +22,7 @@ public class SubCommand extends CommandString{
     private LinkedHashMap<CommandArgument, CommandArgument.Type> args = new LinkedHashMap<>();
     private String doesNotEnoughtArgsErrorMessage;
     protected String canNotFindCmdErrorMessage;
+    protected String suggestMessage;
     private boolean hideTypeCommandString = false;
 
     /**
@@ -55,6 +56,7 @@ public class SubCommand extends CommandString{
                 "&cCouldn't find that world!");
         setDoesNotEnoughtArgsErrorMessage("&cNot enough arguments!");
         setCanNotFindCmdMessage("&cCan't find that command. Please recheck the syntax.");
+        setSuggestMessage("&6Maybe this is the command which you want: &f");
     }
 
     public String getName(){
@@ -205,7 +207,10 @@ public class SubCommand extends CommandString{
         return true;
     }
 
-    protected void execute(SCommand cmd, CommandSender s, String[] a) {
+    void execute(SCommand cmd, CommandSender s, String[] a) throws Exception {
+        if(!isValid()){
+            throw new Exception("This subcommand isn't valid, please normalize first");
+        }
         SubCommand sc = this;
         if(a.length == 0){
             rootRunnable.run(cmd, sc, s, a, "");
@@ -290,5 +295,9 @@ public class SubCommand extends CommandString{
                 }
             }
         }
+    }
+
+    public void setSuggestMessage(String suggestMessage) {
+        this.suggestMessage = suggestMessage;
     }
 }

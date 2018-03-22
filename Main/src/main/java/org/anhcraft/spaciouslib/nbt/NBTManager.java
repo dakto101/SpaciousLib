@@ -138,7 +138,7 @@ public class NBTManager {
         return this;
     }
 
-    public NBTManager setList(String name, List<NBTCompoundWrapper> value) {
+    public NBTManager setList(String name, List<Object> value) {
         warpper.set(name, value);
         return this;
     }
@@ -183,7 +183,7 @@ public class NBTManager {
         return warpper.getByteArray(name);
     }
 
-    public List<NBTCompoundWrapper> getList(String name) {
+    public List<Object> getList(String name) {
         return warpper.getList(name);
     }
 

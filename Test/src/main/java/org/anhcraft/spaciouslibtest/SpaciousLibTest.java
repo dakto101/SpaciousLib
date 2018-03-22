@@ -4,12 +4,17 @@ import org.anhcraft.spaciouslib.command.CommandArgument;
 import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SCommand;
 import org.anhcraft.spaciouslib.command.SubCommand;
+import org.anhcraft.spaciouslib.events.PacketHandleEvent;
+import org.anhcraft.spaciouslib.inventory.AttributeType;
+import org.anhcraft.spaciouslib.inventory.EquipSlot;
+import org.anhcraft.spaciouslib.inventory.SBook;
 import org.anhcraft.spaciouslib.protocol.Particle;
 import org.anhcraft.spaciouslib.protocol.PlayerList;
 import org.anhcraft.spaciouslib.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,7 +23,7 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         try {
-            new SCommand("sld",
+            new SCommand("slt",
                     new CommandRunnable() {
                         @Override
                         public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
@@ -48,7 +53,7 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                                                 double x = Math.cos(radians) * 3;
                                                 double z = Math.sin(radians) * 3;
                                                 location.add(x,0,z);
-                                                Particle.create(type, location, 10).send(((Player) commandSender).getWorld());
+                                                Particle.create(type, location, 10).sendWorld(((Player) commandSender).getWorld());
                                                 location.subtract(x,0,z);
                                             }
                                         }
@@ -71,7 +76,7 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                                                 double x = Math.cos(radians) * 3;
                                                 double z = Math.sin(radians) * 3;
                                                 location.add(x,0,z);
-                                                Particle.create(type, location, StringUtils.toIntegerNumber(strings[1])).send(((Player) commandSender).getWorld());
+                                                Particle.create(type, location, StringUtils.toIntegerNumber(strings[1])).sendWorld(((Player) commandSender).getWorld());
                                                 location.subtract(x,0,z);
                                             }
                                         }
@@ -124,6 +129,29 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
             e.printStackTrace();
         }
         getServer().getPluginManager().registerEvents(this, this);
+    }
+
+    @EventHandler
+    public void ev(PacketHandleEvent ev){
+        if(ev.getType().equals(PacketHandleEvent.Type.SERVER_BOUND)){
+            if(ev.getPacket().getClass().getSimpleName().equals("PacketPlayInChat")){
+                if(ev.getPacketValue("a").toString().equalsIgnoreCase("fuck")){
+                    ev.getPlayer().getInventory().addItem(
+                            new SBook("&aRules", 1)
+                                    .setAuthor("anhcraft")
+                                    .setTitle("RULES")
+                                    .setBookGeneration(SBook.BookGeneration.ORIGINAL)
+                                    .addPage("test test")
+                                    .addPage("test!!!!!!!!!!")
+                                    .addPage("testtttttttttttttttttttt")
+                                    .unbreakable(true)
+                                    .addAttribute(AttributeType.movementSpeed, 0.01, EquipSlot.MAINHAND)
+                                    .getItem());
+                    ev.getPlayer().updateInventory();
+                    ev.setCancelled(true);
+                }
+            }
+        }
     }
 
     @Override
