@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class NBTManager {
-    private NBTCompoundWrapper warpper;
+    private NBTCompoundWrapper wrapper;
 
     /**
      * Creates a new NBTCompound
@@ -21,7 +21,7 @@ public class NBTManager {
             Class<?> e = Class.forName("org.anhcraft.spaciouslib.nbt.NBTCompound_" +
                     GameVersion.getVersion().toString().replace("v", ""));
             Constructor c = e.getConstructor();
-            warpper = (NBTCompoundWrapper) c.newInstance();
+            wrapper = (NBTCompoundWrapper) c.newInstance();
         } catch(ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
             e1.printStackTrace();
         }
@@ -36,8 +36,8 @@ public class NBTManager {
             Class<?> e = Class.forName("org.anhcraft.spaciouslib.nbt.NBTCompound_" +
                     GameVersion.getVersion().toString().replace("v", ""));
             Constructor c = e.getConstructor();
-            warpper = (NBTCompoundWrapper) c.newInstance();
-            warpper.fromItem(i.clone());
+            wrapper = (NBTCompoundWrapper) c.newInstance();
+            wrapper.fromItem(i.clone());
         } catch(ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
             e1.printStackTrace();
         }
@@ -52,8 +52,8 @@ public class NBTManager {
             Class<?> e = Class.forName("org.anhcraft.spaciouslib.nbt.NBTCompound_" +
                     GameVersion.getVersion().toString().replace("v", ""));
             Constructor c = e.getConstructor();
-            warpper = (NBTCompoundWrapper) c.newInstance();
-            warpper.fromFile(f);
+            wrapper = (NBTCompoundWrapper) c.newInstance();
+            wrapper.fromFile(f);
         } catch(ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
             e1.printStackTrace();
         }
@@ -68,8 +68,8 @@ public class NBTManager {
             Class<?> e = Class.forName("org.anhcraft.spaciouslib.nbt.NBTCompound_" +
                     GameVersion.getVersion().toString().replace("v", ""));
             Constructor c = e.getConstructor();
-            warpper = (NBTCompoundWrapper) c.newInstance();
-            warpper.fromEntity(entity);
+            wrapper = (NBTCompoundWrapper) c.newInstance();
+            wrapper.fromEntity(entity);
         } catch(ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
             e1.printStackTrace();
         }
@@ -77,139 +77,147 @@ public class NBTManager {
 
     /**
      * Loads all NBT tags from NBTCompoundWrapper instance
-     * @param warpper NBTCompoundWrapper instance
+     * @param wrapper NBTCompoundWrapper instance
      */
-    public NBTManager(NBTCompoundWrapper warpper){
-        this.warpper = warpper;
-    }
-
-    public NBTManager set(String name, Object value) {
-        warpper.set(name, value);
-        return this;
+    public NBTManager(NBTCompoundWrapper wrapper){
+        this.wrapper = wrapper;
     }
     
     public NBTManager setString(String name, String value) {
-        warpper.set(name, value);
+        wrapper.map.put(name, value);
         return this;
     }
 
     public NBTManager setInt(String name, int value) {
-        warpper.set(name, value);
+        wrapper.map.put(name, value);
         return this;
     }
 
     public NBTManager setBoolean(String name, Boolean value) {
-        warpper.set(name, value);
+        wrapper.map.put(name, value);
         return this;
     }
 
     public NBTManager setShort(String name, short value) {
-        warpper.set(name, value);
+        wrapper.map.put(name, value);
         return this;
     }
 
     public NBTManager setDouble(String name, double value) {
-        warpper.set(name, value);
+        wrapper.map.put(name, value);
         return this;
     }
 
     public NBTManager setFloat(String name, float value) {
-        warpper.set(name, value);
+        wrapper.map.put(name, value);
         return this;
     }
 
     public NBTManager setLong(String name, long value) {
-        warpper.set(name, value);
+        wrapper.map.put(name, value);
         return this;
     }
 
     public NBTManager setByte(String name, byte value) {
-        warpper.set(name, value);
+        wrapper.map.put(name, value);
         return this;
     }
 
     public NBTManager setIntArray(String name, int[] value) {
-        warpper.set(name, value);
+        wrapper.map.put(name, value);
         return this;
     }
 
     public NBTManager setByteArray(String name, byte[] value) {
-        warpper.set(name, value);
+        wrapper.map.put(name, value);
         return this;
     }
 
-    public NBTManager setList(String name, List<Object> value) {
-        warpper.set(name, value);
+    public <E> NBTManager setList(String name, List<E> value) {
+        wrapper.map.put(name, value);
+        return this;
+    }
+
+    public NBTManager set(String name, Object value) {
+        wrapper.map.put(name, value);
         return this;
     }
 
     public String getString(String name) {
-        return warpper.getString(name);
+        return (String) wrapper.map.get(name);
     }
 
     public int getInt(String name) {
-        return warpper.getInt(name);
+        return (int) wrapper.map.get(name);
     }
 
     public Boolean getBoolean(String name) {
-        return warpper.getBoolean(name);
+        return (Boolean) wrapper.map.get(name);
     }
 
     public short getShort(String name) {
-        return warpper.getShort(name);
+        return (short) wrapper.map.get(name);
     }
 
     public double getDouble(String name) {
-        return warpper.getDouble(name);
+        return (double) wrapper.map.get(name);
     }
 
     public float getFloat(String name) {
-        return warpper.getFloat(name);
+        return (float) wrapper.map.get(name);
     }
 
     public long getLong(String name) {
-        return warpper.getLong(name);
+        return (long) wrapper.map.get(name);
     }
 
     public byte getByte(String name) {
-        return warpper.getByte(name);
+        return (byte) wrapper.map.get(name);
     }
 
     public int[] getIntArray(String name) {
-        return warpper.getIntArray(name);
+        return (int[]) wrapper.map.get(name);
     }
 
     public byte[] getByteArray(String name) {
-        return warpper.getByteArray(name);
+        return (byte[]) wrapper.map.get(name);
     }
 
-    public List<Object> getList(String name) {
-        return warpper.getList(name);
+    public <E> List<E> getList(String name) {
+        return (List<E>) wrapper.map.get(name);
     }
 
-    public LinkedHashMap<String, Object> getAllTags() {
-        return warpper.getAllTags();
+    public void setTags(LinkedHashMap<String, Object> tags) {
+        wrapper.map = tags;
+    }
+
+    public LinkedHashMap<String, Object> getTags() {
+        return wrapper.map;
+    }
+
+    public void setCompound(NBTCompoundWrapper compound, String name) {
+        wrapper.map.put(name, compound);
     }
 
     public NBTCompoundWrapper getCompound(String name) {
-        return warpper.getCompound(name);
+        return (NBTCompoundWrapper) wrapper.map.get(name);
     }
 
-    public NBTCompoundWrapper getWarpper(){
-        return warpper;
+    public NBTCompoundWrapper getWrapper(){
+        return wrapper;
     }
 
     public NBTManager remove(String name) {
-        warpper.remove(name);
+        wrapper.map.remove(name);
         return this;
     }
 
     public Boolean hasKey(String key) {
-        return warpper.hasKey(key);
+        return wrapper.map.containsKey(key);
     }
 
     public Boolean hasValue(String value) {
-        return warpper.hasValue(value);
+        return wrapper.map.containsValue(value);
     }
 
     /**
@@ -218,7 +226,7 @@ public class NBTManager {
      * @return new version of that item
      */
     public ItemStack toItemStack(ItemStack oldItem) {
-        return warpper.toItem(oldItem);
+        return wrapper.toItem(oldItem);
     }
 
     /**
@@ -226,7 +234,7 @@ public class NBTManager {
      * @param file file
      */
     public void toFile(File file) {
-        warpper.toFile(file);
+        wrapper.toFile(file);
     }
 
     /**
@@ -234,6 +242,6 @@ public class NBTManager {
      * @param entity entity
      */
     public void toEntity(Entity entity) {
-        warpper.toEntity(entity);
+        wrapper.toEntity(entity);
     }
 }

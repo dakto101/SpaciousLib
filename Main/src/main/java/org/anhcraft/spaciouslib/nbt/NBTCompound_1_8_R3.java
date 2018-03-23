@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class NBTCompound_1_8_R3 implements NBTCompoundWrapper {
+public class NBTCompound_1_8_R3 extends NBTCompoundWrapper {
     private LinkedHashMap<String, Object> map = new LinkedHashMap<>();
 
     private NBTCompoundWrapper decode(NBTTagCompound c){
@@ -22,36 +22,36 @@ public class NBTCompound_1_8_R3 implements NBTCompoundWrapper {
                 if(c.get(s) instanceof NBTTagByte){
                     byte b = c.getByte(s);
                     if(b ==  ((byte) 0)){
-                        w.set(s, false);
+                        map.put(s, false);
                     } else if(b == ((byte) 1)){
-                        w.set(s, true);
+                        map.put(s, true);
                     } else {
-                        w.set(s, b);
+                        map.put(s, b);
                     }
                 }
                 else if(c.get(s) instanceof NBTTagShort) {
-                    w.set(s, c.getShort(s));
+                    map.put(s, c.getShort(s));
                 }
                 else if(c.get(s) instanceof NBTTagInt) {
-                    w.set(s, c.getInt(s));
+                    map.put(s, c.getInt(s));
                 }
                 else if(c.get(s) instanceof NBTTagLong) {
-                    w.set(s, c.getLong(s));
+                    map.put(s, c.getLong(s));
                 }
                 else if(c.get(s) instanceof NBTTagFloat) {
-                    w.set(s, c.getFloat(s));
+                    map.put(s, c.getFloat(s));
                 }
                 else if(c.get(s) instanceof NBTTagDouble) {
-                    w.set(s, c.getDouble(s));
+                    map.put(s, c.getDouble(s));
                 }
                 else if(c.get(s) instanceof NBTTagByteArray) {
-                    w.set(s, c.getByteArray(s));
+                    map.put(s, c.getByteArray(s));
                 }
                 else if(c.get(s) instanceof NBTTagIntArray) {
-                    w.set(s, c.getIntArray(s));
+                    map.put(s, c.getIntArray(s));
                 }
                 else if(c.get(s) instanceof NBTTagString) {
-                    w.set(s, c.getString(s));
+                    map.put(s, c.getString(s));
                 }
                 else if(c.get(s) instanceof NBTTagList) {
                     List<Object> es = new ArrayList<>();
@@ -65,10 +65,10 @@ public class NBTCompound_1_8_R3 implements NBTCompoundWrapper {
                         }
                         i++;
                     }
-                    w.set(s, es);
+                    map.put(s, es);
                 }
                 else if(c.get(s) instanceof NBTTagCompound) {
-                    w.set(s, decode(c.getCompound(s)));
+                    map.put(s, decode(c.getCompound(s)));
                 }
             }
         }
@@ -126,8 +126,8 @@ public class NBTCompound_1_8_R3 implements NBTCompoundWrapper {
     private NBTTagCompound encode(NBTCompoundWrapper c){
         NBTTagCompound w = new NBTTagCompound();
         if (c != null) {
-            for(String o : c.getAllTags().keySet()){
-                Object v = c.getAllTags().get(o);
+            for(String o : map.keySet()){
+                Object v = map.get(o);
                 if(v instanceof Byte){
                     w.set(o, new NBTTagByte((byte) v));
                 } else if(v instanceof Short){
@@ -148,10 +148,10 @@ public class NBTCompound_1_8_R3 implements NBTCompoundWrapper {
                     w.set(o, new NBTTagIntArray((int[]) v));
                 } else if(v instanceof String) {
                     w.set(o, new NBTTagString((String) v));
-                } else if(v instanceof ArrayList<?> &&
-                        0 < ((ArrayList<?>) v).size()){
+                } else if(v instanceof ArrayList &&
+                        0 < ((ArrayList) v).size()){
                     NBTTagList ntl = new NBTTagList();
-                    List<?> list = (ArrayList<?>) v;
+                    ArrayList list = (ArrayList) v;
                     int i = 0;
                     while(i < list.size()) {
                         Object compound = list.get(i);
@@ -191,10 +191,10 @@ public class NBTCompound_1_8_R3 implements NBTCompoundWrapper {
             return new NBTTagIntArray((int[]) compound);
         } else if(compound instanceof String) {
             return new NBTTagString((String) compound);
-        } else if(compound instanceof ArrayList<?> &&
-                0 < ((ArrayList<?>) compound).size()){
+        } else if(compound instanceof ArrayList &&
+                0 < ((ArrayList) compound).size()){
             NBTTagList ntl = new NBTTagList();
-            List<?> list = (ArrayList<?>) compound;
+            ArrayList list = (ArrayList) compound;
             int i = 0;
             while(i < list.size()) {
                 Object c = list.get(i);
@@ -217,14 +217,14 @@ public class NBTCompound_1_8_R3 implements NBTCompoundWrapper {
     }
 
     public NBTCompound_1_8_R3(NBTTagCompound c){
-        map.putAll(decode(c).getAllTags());
+        map.putAll(decode(c).map);
     }
 
     @Override
     public void fromItem(ItemStack item) {
         net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
         NBTTagCompound c = nmsItem.getTag();
-        map.putAll(decode(c).getAllTags());
+        map.putAll(decode(c).map);
     }
 
     @Override
@@ -243,7 +243,7 @@ public class NBTCompound_1_8_R3 implements NBTCompoundWrapper {
             e.printStackTrace();
         }
         try {
-            map.putAll(decode(NBTCompressedStreamTools.a(s)).getAllTags());
+            map.putAll(decode(NBTCompressedStreamTools.a(s)).map);
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -278,159 +278,11 @@ public class NBTCompound_1_8_R3 implements NBTCompoundWrapper {
     public void fromEntity(Entity entity) {
         NBTTagCompound tag = new NBTTagCompound();
         ((CraftEntity) entity).getHandle().c(tag);
-        map.putAll(decode(tag).getAllTags());
+        map.putAll(decode(tag).map);
     }
 
     @Override
     public void toEntity(Entity entity) {
         ((EntityLiving) ((CraftEntity) entity).getHandle()).a(encode(this));
-    }
-
-    @Override
-    public void set(String name, Object value) {
-        map.put(name, value);
-    }
-
-    @Override
-    public String getString(String name) {
-        Object v = map.get(name);
-        if(v instanceof String) {
-            return (String) v;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public int getInt(String name) {
-        Object v = map.get(name);
-        if(v instanceof Integer) {
-            return (int) v;
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public Boolean getBoolean(String name) {
-        Object v = map.get(name);
-        if(v instanceof Boolean) {
-            return (Boolean) v;
-        } else if(v instanceof Byte) {
-            return (((byte) v) == ((byte) 1));
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public short getShort(String name) {
-        Object v = map.get(name);
-        if(v instanceof Short) {
-            return (short) v;
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public double getDouble(String name) {
-        Object v = map.get(name);
-        if(v instanceof Double) {
-            return (double) v;
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public float getFloat(String name) {
-        Object v = map.get(name);
-        if(v instanceof Float) {
-            return (float) v;
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public long getLong(String name) {
-        Object v = map.get(name);
-        if(v instanceof Long) {
-            return (long) v;
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public byte getByte(String name) {
-        Object v = map.get(name);
-        if(v instanceof Byte) {
-            return (byte) v;
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public int[] getIntArray(String name) {
-        Object v = map.get(name);
-        if(v instanceof int[]) {
-            return (int[]) v;
-        } else {
-            return new int[0];
-        }
-    }
-
-    @Override
-    public byte[] getByteArray(String name) {
-        Object v = map.get(name);
-        if(v instanceof byte[]) {
-            return (byte[]) v;
-        } else {
-            return new byte[0];
-        }
-    }
-
-    @Override
-    public List<Object> getList(String name) {
-        Object v = map.get(name);
-        if(v instanceof ArrayList<?> &&
-                0 < ((ArrayList<?>) v).size()) {
-            return (List<Object>) v;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public NBTCompoundWrapper getCompound(String name) {
-        Object v = map.get(name);
-        if(v instanceof NBTCompoundWrapper) {
-            return (NBTCompoundWrapper) v;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void remove(String name) {
-        map.remove(name);
-    }
-
-    @Override
-    public Boolean hasKey(String key) {
-        return map.containsKey(key);
-    }
-
-    @Override
-    public Boolean hasValue(String value) {
-        return map.containsKey(value);
-    }
-
-    @Override
-    public LinkedHashMap<String, Object> getAllTags() {
-        return map;
     }
 }

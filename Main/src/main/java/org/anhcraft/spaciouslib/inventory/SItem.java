@@ -33,7 +33,7 @@ public class SItem {
      */
     public SItem(String name, Material type, int amount) {
         this.item = new ItemStack(type, amount);
-        name(name);
+        setName(name);
     }
 
     /**
@@ -47,14 +47,14 @@ public class SItem {
      */
     public SItem(String name, Material type, int amount, short durability) {
         this.item = new ItemStack(type, amount);
-        name(name);
-        durability(durability);
+        setName(name);
+        setDurability(durability);
     }
 
     /**
      * Gets name of that item
      */
-    public String name() {
+    public String getName() {
         ItemMeta a = this.item.getItemMeta();
         return a.getDisplayName();
     }
@@ -62,7 +62,7 @@ public class SItem {
     /**
      * Sets a name for that item
      */
-    public SItem name(String name) {
+    public SItem setName(String name) {
         ItemMeta a = this.item.getItemMeta();
         a.setDisplayName(Strings.color(name));
         this.item.setItemMeta(a);
@@ -94,7 +94,7 @@ public class SItem {
     /**
      * Gets all enchantments of that item
      */
-    public Map<Enchantment, Integer> enchants() {
+    public Map<Enchantment, Integer> getEnchants() {
         ItemMeta a = this.item.getItemMeta();
         return a.getEnchants();
     }
@@ -104,7 +104,7 @@ public class SItem {
      *
      * @param enchant an enchantment
      */
-    public int enchant(Enchantment enchant) {
+    public int getEnchantLevel(Enchantment enchant) {
         ItemMeta a = this.item.getItemMeta();
         return a.getEnchantLevel(enchant);
     }
@@ -180,7 +180,7 @@ public class SItem {
     /**
      * Gets all lores of that item
      */
-    public List<String> lore() {
+    public List<String> getLores() {
         ItemMeta a = this.item.getItemMeta();
         return a.getLore();
     }
@@ -188,7 +188,7 @@ public class SItem {
     /**
      * Add a flag to that item
      */
-    public SItem flag(ItemFlag flag) {
+    public SItem addFlag(ItemFlag flag) {
         ItemMeta a = this.item.getItemMeta();
         a.addItemFlags(flag);
         this.item.setItemMeta(a);
@@ -216,7 +216,7 @@ public class SItem {
     /**
      * Gets all flag of that item
      */
-    public Set<ItemFlag> flag() {
+    public Set<ItemFlag> getFlags() {
         ItemMeta a = this.item.getItemMeta();
         return a.getItemFlags();
     }
@@ -224,7 +224,7 @@ public class SItem {
     /**
      * Sets a new durability value for that item
      */
-    public SItem durability(short durability) {
+    public SItem setDurability(short durability) {
         this.item.setDurability(durability);
         return this;
     }
@@ -232,7 +232,7 @@ public class SItem {
     /**
      * Gets the durability value of that item
      */
-    public short durability() {
+    public short getDurability() {
         return this.item.getDurability();
     }
 
@@ -254,7 +254,7 @@ public class SItem {
     /**
      * Sets amount value for that item
      */
-    public SItem amount(int amount) {
+    public SItem setAmount(int amount) {
         this.item.setAmount(amount);
         return this;
     }
@@ -262,7 +262,7 @@ public class SItem {
     /**
      * Gets amount value of that item
      */
-    public int amount() {
+    public int getAmount() {
         return this.item.getAmount();
     }
 
@@ -276,10 +276,10 @@ public class SItem {
     }
 
     /**
-     * Toggles unbreakable of that item
+     * Sets unbreakable of that item
      */
-    public SItem unbreakable(Boolean b) {
-        if(b) {
+    public SItem setUnbreakable(Boolean unbreakable) {
+        if(unbreakable) {
             item = new NBTManager(item).setBoolean("Unbreakable", true).toItemStack(item);
         } else {
             item = new NBTManager(item).remove("Unbreakable").toItemStack(item);
@@ -309,7 +309,7 @@ public class SItem {
         String n = AttributeType.getModifierName(type);
         UUID uuid = UUID.randomUUID();
         NBTManager c = new NBTManager().set("AttributeName", n).set("Name", "Modifier").set("Amount", value).set("Operation", 0).set("UUIDLeast", uuid.getLeastSignificantBits()).set("UUIDMost", uuid.getMostSignificantBits());
-        l.add(c.getWarpper());
+        l.add(c.getWrapper());
         item = new NBTManager(item).setList("AttributeModifiers", l).toItemStack(item);
         return this;
     }
@@ -328,7 +328,7 @@ public class SItem {
         String n = AttributeType.getModifierName(type);
         UUID uuid = UUID.randomUUID();
         NBTManager c = new NBTManager().set("AttributeName", n).set("Name", "Modifier").set("Amount", value).set("Operation", 0).set("UUIDLeast", uuid.getLeastSignificantBits()).set("UUIDMost", uuid.getMostSignificantBits()).set("Slot", slot.toString().toLowerCase());
-        l.add(c.getWarpper());
+        l.add(c.getWrapper());
         item = new NBTManager(item).setList("AttributeModifiers", l).toItemStack(item);
         return this;
     }
@@ -390,7 +390,7 @@ public class SItem {
         String n = AttributeType.getModifierName(type);
         for(Object w : l){
             if(w instanceof NBTCompoundWrapper) {
-                if(!((NBTCompoundWrapper) w).getString("AttributeName").equals(n)) {
+                if(!new NBTManager((NBTCompoundWrapper) w).getString("AttributeName").equals(n)) {
                     newCompounds.add(w);
                 }
             }
@@ -416,7 +416,7 @@ public class SItem {
         String n = AttributeType.getModifierName(type);
         for(Object w : l){
             if(w instanceof NBTCompoundWrapper) {
-                if(((NBTCompoundWrapper) w).getString("AttributeName").equals(n)) {
+                if((new NBTManager((NBTCompoundWrapper) w)).getString("AttributeName").equals(n)) {
                     return true;
                 }
             }
@@ -439,7 +439,7 @@ public class SItem {
             if(index < l.size()) {
                 if(l.get(index) instanceof NBTCompoundWrapper) {
                     NBTCompoundWrapper w = (NBTCompoundWrapper) l.get(index);
-                    return AttributeType.getByName(w.getString("AttributeName"));
+                    return AttributeType.getByName(new NBTManager(w).getString("AttributeName"));
                 }
             }
         }
@@ -462,8 +462,8 @@ public class SItem {
         String n = AttributeType.getModifierName(type);
         for(Object w : l){
             if(w instanceof NBTCompoundWrapper) {
-                if(((NBTCompoundWrapper) w).getString("AttributeName").equals(n) && ((NBTCompoundWrapper) w).hasKey("Amount")) {
-                    r = ((NBTCompoundWrapper) w).getDouble("Amount");
+                if((new NBTManager((NBTCompoundWrapper) w)).getString("AttributeName").equals(n) && (new NBTManager((NBTCompoundWrapper) w)).hasKey("Amount")) {
+                    r = (new NBTManager((NBTCompoundWrapper) w)).getDouble("Amount");
                     break;
                 }
             }
@@ -487,8 +487,8 @@ public class SItem {
         if(index < l.size()) {
             if(l.get(index) instanceof NBTCompoundWrapper) {
                 NBTCompoundWrapper w = (NBTCompoundWrapper) l.get(index);
-                if(w.hasKey("Amount")) {
-                    r = w.getInt("Amount");
+                if(new NBTManager(w).hasKey("Amount")) {
+                    r = new NBTManager(w).getInt("Amount");
                 }
             }
         }
@@ -504,8 +504,8 @@ public class SItem {
             if(index < l.size()) {
                 if(l.get(index) instanceof NBTCompoundWrapper) {
                     NBTCompoundWrapper w = (NBTCompoundWrapper) l.get(index);
-                    if(w.hasKey("Slot")) {
-                        return EquipSlot.valueOf(w.getString("Slot").toUpperCase());
+                    if(new NBTManager(w).hasKey("Slot")) {
+                        return EquipSlot.valueOf(new NBTManager(w).getString("Slot").toUpperCase());
                     }
                 }
             }
@@ -525,8 +525,8 @@ public class SItem {
         String n = AttributeType.getModifierName(type);
         for(Object w : l){
             if(w instanceof NBTCompoundWrapper) {
-                if(((NBTCompoundWrapper) w).getString("AttributeName").equals(n) && ((NBTCompoundWrapper) w).hasKey("Slot")) {
-                    r = ((NBTCompoundWrapper) w).getString("Slot").toUpperCase();
+                if((new NBTManager((NBTCompoundWrapper) w)).getString("AttributeName").equals(n) && (new NBTManager((NBTCompoundWrapper) w)).hasKey("Slot")) {
+                    r = (new NBTManager((NBTCompoundWrapper) w)).getString("Slot").toUpperCase();
                     break;
                 }
             }
@@ -545,7 +545,7 @@ public class SItem {
         }
         for(Object w : l){
             if(w instanceof NBTCompoundWrapper) {
-                types.add(AttributeType.getByName(((NBTCompoundWrapper) w).getString("AttributeName")));
+                types.add(AttributeType.getByName((new NBTManager((NBTCompoundWrapper) w)).getString("AttributeName")));
             }
         }
         return types;

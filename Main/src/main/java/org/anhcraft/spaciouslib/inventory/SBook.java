@@ -52,9 +52,24 @@ public class SBook extends SItem {
         return new NBTManager(this.item).getByte("resolved") == 1;
     }
 
-    public List<String> getAllPages(){
+    public SBook setPages(List<String> contents){
+        List<String> cont = new ArrayList<>();
+        for(String content : contents){
+            if(JSONUtils.isValid(content)){
+                cont.add(Strings.color(content));
+            } else {
+                cont.add("{\"text\": \"" + Strings.color(content) + "\"}");
+            }
+        }
         NBTManager nbt = new NBTManager(this.item);
-        List<Object> pages = nbt.getList("pages");
+        nbt.setList("pages", cont);
+        this.item = nbt.toItemStack(this.item);
+        return this;
+    }
+
+    public List<String> getPages(){
+        NBTManager nbt = new NBTManager(this.item);
+        List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
         }
@@ -69,7 +84,7 @@ public class SBook extends SItem {
 
     public String getPage(int index){
         NBTManager nbt = new NBTManager(this.item);
-        List<Object> pages = nbt.getList("pages");
+        List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
         }
@@ -83,7 +98,7 @@ public class SBook extends SItem {
             content = "{\"text\": \"" + Strings.color(content) + "\"}";
         }
         NBTManager nbt = new NBTManager(this.item);
-        List<Object> pages = nbt.getList("pages");
+        List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
         }
@@ -100,7 +115,7 @@ public class SBook extends SItem {
             content = "{\"text\": \"" + Strings.color(content) + "\"}";
         }
         NBTManager nbt = new NBTManager(this.item);
-        List<Object> pages = nbt.getList("pages");
+        List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
         }
@@ -117,7 +132,7 @@ public class SBook extends SItem {
             content = "{\"text\": \"" + Strings.color(content) + "\"}";
         }
         NBTManager nbt = new NBTManager(this.item);
-        List<Object> pages = nbt.getList("pages");
+        List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
         }
@@ -129,7 +144,7 @@ public class SBook extends SItem {
 
     public SBook removePage(int index){
         NBTManager nbt = new NBTManager(this.item);
-        List<Object> pages = nbt.getList("pages");
+        List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
         }
@@ -139,7 +154,7 @@ public class SBook extends SItem {
         return this;
     }
 
-    public SBook removeAllPages(){
+    public SBook removePages(){
         NBTManager nbt = new NBTManager(this.item);
         nbt.setList("pages", new ArrayList<>());
         this.item = nbt.toItemStack(this.item);

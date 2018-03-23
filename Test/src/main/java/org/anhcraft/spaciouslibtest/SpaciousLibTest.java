@@ -13,9 +13,11 @@ import org.anhcraft.spaciouslib.protocol.PlayerList;
 import org.anhcraft.spaciouslib.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SpaciousLibTest extends JavaPlugin implements Listener {
@@ -135,17 +137,20 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
     public void ev(PacketHandleEvent ev){
         if(ev.getType().equals(PacketHandleEvent.Type.SERVER_BOUND)){
             if(ev.getPacket().getClass().getSimpleName().equals("PacketPlayInChat")){
-                if(ev.getPacketValue("a").toString().equalsIgnoreCase("fuck")){
+                if(ev.getPacketValue("a").toString().equalsIgnoreCase("rule")){
                     ev.getPlayer().getInventory().addItem(
-                            new SBook("&aRules", 1)
+                            new SBook("&aRule", 1)
                                     .setAuthor("anhcraft")
-                                    .setTitle("RULES")
+                                    .setTitle("RULE")
                                     .setBookGeneration(SBook.BookGeneration.ORIGINAL)
-                                    .addPage("test test")
-                                    .addPage("test!!!!!!!!!!")
-                                    .addPage("testtttttttttttttttttttt")
-                                    .unbreakable(true)
-                                    .addAttribute(AttributeType.movementSpeed, 0.01, EquipSlot.MAINHAND)
+                                    .addPage("First page")
+                                    .addPage("Second page")
+                                    .addPage("Third page")
+                                    .setUnbreakable(true)
+                                    .addAttribute(AttributeType.movementSpeed, 0.05, EquipSlot.MAINHAND)
+                                    .addLore("This is the rule book of this server!")
+                                    .addEnchant(Enchantment.DAMAGE_ALL, 1)
+                                    .addFlag(ItemFlag.HIDE_ENCHANTS)
                                     .getItem());
                     ev.getPlayer().updateInventory();
                     ev.setCancelled(true);
