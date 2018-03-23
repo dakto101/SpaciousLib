@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslibtest;
 
+import org.anhcraft.spaciouslib.bungee.BungeeManager;
 import org.anhcraft.spaciouslib.command.CommandArgument;
 import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SCommand;
@@ -8,12 +9,15 @@ import org.anhcraft.spaciouslib.events.PacketHandleEvent;
 import org.anhcraft.spaciouslib.inventory.AttributeType;
 import org.anhcraft.spaciouslib.inventory.EquipSlot;
 import org.anhcraft.spaciouslib.inventory.SBook;
+import org.anhcraft.spaciouslib.protocol.Camera;
 import org.anhcraft.spaciouslib.protocol.Particle;
 import org.anhcraft.spaciouslib.protocol.PlayerList;
+import org.anhcraft.spaciouslib.utils.RandomUtils;
 import org.anhcraft.spaciouslib.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -126,6 +130,39 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                             PlayerList.remove();
                         }
                     }))
+
+                    .addSubCommand(new SubCommand("camera", "View as a random nearby entity", new CommandRunnable() {
+                        @Override
+                        public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] strings, String s) {
+                            if(sender instanceof Player){
+                                Entity e = RandomUtils.pickRandom(((Player) sender).getNearbyEntities(5, 5, 5));
+                                Camera.create(e).sendPlayer((Player) sender);
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommand("tpsv", "Teleport you or a specific player to a server in Bungee network", new CommandRunnable() {
+                        @Override
+                        public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
+                            sender.sendMessage(cmd.getCommandAsString(subcmd, true));
+                        }
+                    }).setArgument("server", new CommandRunnable() {
+                                @Override
+                                public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
+                                    if(sender instanceof Player){
+                                        BungeeManager.connect((Player) sender, value);
+                                    }
+                                }
+                            }, CommandArgument.Type.CUSTOM, false)
+                        .setArgument("player", new CommandRunnable() {
+                            @Override
+                            public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
+                                if(sender instanceof Player){
+                                    BungeeManager.connect((Player) sender, value, args[0]);
+                                }
+                            }
+                        }, CommandArgument.Type.ONLINE_PLAYER, true)
+                    )
                     .buildExecutor(this);
         } catch(Exception e) {
             e.printStackTrace();

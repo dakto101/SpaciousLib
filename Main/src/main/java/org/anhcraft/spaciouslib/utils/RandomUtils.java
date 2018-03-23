@@ -1,15 +1,21 @@
 package org.anhcraft.spaciouslib.utils;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomUtils {
-    public static <X> X pickRandom(ArrayList<X> list) {
+    public static <X> X pickRandom(List<X> list) {
+        if(list.size() == 0){
+            return null;
+        }
         return list.get(new Random().nextInt(list.size()));
     }
 
     public static <X> X pickRandom(X[] list) {
+        if(list.length == 0){
+            return null;
+        }
         return list[new Random().nextInt(list.length)];
     }
 

@@ -87,11 +87,11 @@ public class Particle {
         return create(type, x, y, z, count, 0, 0, 0, false, 0, material, data);
     }
 
-    public static PacketSender create(Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float particleData, Material material, int data){
-        return create(type, (float) location.getX(), (float) location.getY(), (float) location.getZ(), count, offsetX, offsetY, offsetZ, longDistance, particleData, material, data);
+    public static PacketSender create(Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed, Material material, int data){
+        return create(type, (float) location.getX(), (float) location.getY(), (float) location.getZ(), count, offsetX, offsetY, offsetZ, longDistance, speed, material, data);
     }
 
-    public static PacketSender create(Type type, float x, float y, float z, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float particleData, Material material, int data){
+    public static PacketSender create(Type type, float x, float y, float z, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed, Material material, int data){
         try {
             Class<?> enumParticleClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".EnumParticle");
             Field enumParticleField = enumParticleClass.getDeclaredField(type.toString());
@@ -102,25 +102,24 @@ public class Particle {
             Object packet;
             if(type.equals(Type.ITEM_CRACK)){
                 packet = packetCons.newInstance(enumParticle, longDistance,
-                        x, y, z, offsetX, offsetY, offsetZ, particleData, count, (Object) new int[] {
-                                material.getId(),
-                                data
+                        x, y, z, offsetX, offsetY, offsetZ, speed, count, (Object) new int[] {
+                                data << 12 | material.getId() & 0xFFF
                         });
             }
             else if(type.equals(Type.BLOCK_CRACK)){
                 packet = packetCons.newInstance(enumParticle, longDistance,
-                        x, y, z, offsetX, offsetY, offsetZ, particleData, count, (Object) new int[] {
-                                material.getId()+(data << 12)
+                        x, y, z, offsetX, offsetY, offsetZ, speed, count, (Object) new int[] {
+                                material.getId()
                         });
             }
             else if(type.equals(Type.BLOCK_DUST)){
                 packet = packetCons.newInstance(enumParticle, longDistance,
-                        x, y, z, offsetX, offsetY, offsetZ, particleData, count, (Object) new int[] {
+                        x, y, z, offsetX, offsetY, offsetZ, speed, count, (Object) new int[] {
                                 material.getId()
                         });
             } else {
                 packet = packetCons.newInstance(enumParticle, longDistance,
-                        x, y, z, offsetX, offsetY, offsetZ, particleData, count, (Object) new int[] {});
+                        x, y, z, offsetX, offsetY, offsetZ, speed, count, (Object) new int[0]);
             }
             return new PacketSender(packet);
         } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchFieldException e) {
