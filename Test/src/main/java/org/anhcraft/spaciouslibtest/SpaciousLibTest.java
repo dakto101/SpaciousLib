@@ -1,20 +1,20 @@
 package org.anhcraft.spaciouslibtest;
 
 import org.anhcraft.spaciouslib.bungee.BungeeManager;
-import org.anhcraft.spaciouslib.bungee.BungeePlayerAmountResponse;
 import org.anhcraft.spaciouslib.bungee.BungeePlayerIPResponse;
 import org.anhcraft.spaciouslib.command.CommandArgument;
 import org.anhcraft.spaciouslib.command.CommandRunnable;
-import org.anhcraft.spaciouslib.command.SCommand;
-import org.anhcraft.spaciouslib.command.SubCommand;
+import org.anhcraft.spaciouslib.command.CommandBuilder;
+import org.anhcraft.spaciouslib.command.SubCommandBuilder;
 import org.anhcraft.spaciouslib.events.BungeeForwardEvent;
 import org.anhcraft.spaciouslib.events.PacketHandleEvent;
 import org.anhcraft.spaciouslib.inventory.AttributeType;
+import org.anhcraft.spaciouslib.inventory.BookManager;
 import org.anhcraft.spaciouslib.inventory.EquipSlot;
-import org.anhcraft.spaciouslib.inventory.SBook;
 import org.anhcraft.spaciouslib.protocol.Camera;
 import org.anhcraft.spaciouslib.protocol.Particle;
 import org.anhcraft.spaciouslib.protocol.PlayerList;
+import org.anhcraft.spaciouslib.socket.*;
 import org.anhcraft.spaciouslib.utils.RandomUtils;
 import org.anhcraft.spaciouslib.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -27,6 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -37,25 +38,25 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         try {
-            new SCommand("slt",
+            new CommandBuilder("slt",
                     new CommandRunnable() {
                         @Override
-                        public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
+                        public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                             for(String str : sCommand.getCommandsAsString(true)){
                                 commandSender.sendMessage(str);
                             }
                         }
                     })
 
-                    .addSubCommand(new SubCommand("particle spawn", "Spawn a specific type of particle at your location", new CommandRunnable() {
+                    .addSubCommandBuilder(new SubCommandBuilder("particle spawn", "Spawn a specific type of particle at your location", new CommandRunnable() {
                         @Override
-                        public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
+                        public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                             commandSender.sendMessage(sCommand.getCommandAsString(subCommand, true));
                         }
                     }).setArgument(
                             new CommandArgument("type", new CommandRunnable() {
                                 @Override
-                                public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
+                                public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                                     if(commandSender instanceof Player) {
                                         Particle.Type type = StringUtils.get(strings[0].toUpperCase(), Particle.Type.values());
                                         if(type == null) {
@@ -78,7 +79,7 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                     ).setArgument(
                             new CommandArgument("count", new CommandRunnable() {
                                 @Override
-                                public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
+                                public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                                     if(commandSender instanceof Player) {
                                         Particle.Type type = StringUtils.get(strings[0], Particle.Type.values());
                                         if(type == null) {
@@ -100,9 +101,9 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                             CommandArgument.Type.INTEGER_NUMBER
                     ).hideTypeCommandString())
 
-                    .addSubCommand(new SubCommand("particle list", "show all types of particle", new CommandRunnable() {
+                    .addSubCommandBuilder(new SubCommandBuilder("particle list", "show all types of particle", new CommandRunnable() {
                         @Override
-                        public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
+                        public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                             StringBuilder pls = new StringBuilder();
                             for(Particle.Type p : Particle.Type.values()){
                                 pls.append(p.toString()).append(" ");
@@ -111,37 +112,37 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                         }
                     }))
 
-                    .addSubCommand(
-                            new SubCommand("playerlist set", null, new CommandRunnable() {
+                    .addSubCommandBuilder(
+                            new SubCommandBuilder("playerlist set", null, new CommandRunnable() {
                                 @Override
-                                public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
+                                public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                                     commandSender.sendMessage(sCommand.getCommandAsString(subCommand, true));
                                 }
                             })
                                     .setArgument("header", new CommandRunnable() {
                                         @Override
-                                        public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
+                                        public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                                             commandSender.sendMessage(sCommand.getCommandAsString(subCommand, true));
                                         }
                                     }, CommandArgument.Type.CUSTOM, false)
                                     .setArgument("footer", new CommandRunnable() {
                                         @Override
-                                        public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
+                                        public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                                             PlayerList.create(strings[0], strings[1]).sendAll();
                                         }
                                     }, CommandArgument.Type.CUSTOM, false)
                     )
 
-                    .addSubCommand(new SubCommand("playerlist remove", null, new CommandRunnable() {
+                    .addSubCommandBuilder(new SubCommandBuilder("playerlist remove", null, new CommandRunnable() {
                         @Override
-                        public void run(SCommand sCommand, SubCommand subCommand, CommandSender commandSender, String[] strings, String s) {
+                        public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                             PlayerList.remove();
                         }
                     }))
 
-                    .addSubCommand(new SubCommand("camera", "View as a random nearby entity", new CommandRunnable() {
+                    .addSubCommandBuilder(new SubCommandBuilder("camera", "View as a random nearby entity", new CommandRunnable() {
                         @Override
-                        public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] strings, String s) {
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] strings, String s) {
                             if(sender instanceof Player){
                                 Entity e = RandomUtils.pickRandom(((Player) sender).getNearbyEntities(5, 5, 5));
                                 Camera.create(e).sendPlayer((Player) sender);
@@ -150,9 +151,9 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                     }))
 
 
-                    .addSubCommand(new SubCommand("camera reset", "Reset your view to normal", new CommandRunnable() {
+                    .addSubCommandBuilder(new SubCommandBuilder("camera reset", "Reset your view to normal", new CommandRunnable() {
                         @Override
-                        public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] strings, String s) {
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] strings, String s) {
                             if(sender instanceof Player){
                                 if(sender instanceof Player){
                                     Camera.create((Player) sender).sendPlayer((Player) sender);
@@ -161,14 +162,14 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                         }
                     }))
 
-                    .addSubCommand(new SubCommand("bungee tp", "Teleport you or a specific player to a server in Bungee network", new CommandRunnable() {
+                    .addSubCommandBuilder(new SubCommandBuilder("bungee tp", "Teleport you or a specific player to a server in Bungee network", new CommandRunnable() {
                         @Override
-                        public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             sender.sendMessage(cmd.getCommandAsString(subcmd, true));
                         }
                     }).setArgument("server", new CommandRunnable() {
                                 @Override
-                                public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
+                                public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                                     if(sender instanceof Player){
                                         BungeeManager.connect((Player) sender, value);
                                     }
@@ -176,7 +177,7 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                             }, CommandArgument.Type.CUSTOM, false)
                         .setArgument("player", new CommandRunnable() {
                             @Override
-                            public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
+                            public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                                 if(sender instanceof Player){
                                     BungeeManager.connect((Player) sender, value, args[0]);
                                 }
@@ -184,9 +185,9 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                         }, CommandArgument.Type.ONLINE_PLAYER, true)
                     )
 
-                    .addSubCommand(new SubCommand("bungee ip", "Get your real IP", new CommandRunnable() {
+                    .addSubCommandBuilder(new SubCommandBuilder("bungee ip", "Get your real IP", new CommandRunnable() {
                         @Override
-                        public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             if(sender instanceof Player){
                                 BungeeManager.getIP((Player) sender, new BungeePlayerIPResponse() {
                                     @Override
@@ -199,9 +200,9 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                     }))
                     .buildExecutor(this)
 
-                    .addSubCommand(new SubCommand("bungee data", null, new CommandRunnable() {
+                    .addSubCommandBuilder(new SubCommandBuilder("bungee data", null, new CommandRunnable() {
                         @Override
-                        public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             sender.sendMessage("sent successfully!");
                             ByteArrayOutputStream bytedata = new ByteArrayOutputStream();
                             DataOutputStream data = new DataOutputStream(bytedata);
@@ -220,18 +221,63 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
             e.printStackTrace();
         }
         getServer().getPluginManager().registerEvents(this, this);
+
+        System.out.println("Starting socket server...");
+        SocketManager.registerServer(this, 25568, new ServerSocketRequestHandler() {
+            @Override
+            public void request(ServerSocketClientHandler client, String data) {
+                System.out.println("Client >> " + data);
+                if(data.equals("Hi server!")){
+                    try {
+                        client.send("Hi client!");
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(data.equals("Bye server!")){
+                    try {
+                        client.close();
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        System.out.println("Starting socket client...");
+        try {
+            ClientSocketManager c = SocketManager.registerClient(this, "localhost", 25568, new ClientSocketRequestHandler() {
+                @Override
+                public void request(ClientSocketManager manager, String data)  {
+                    System.out.println("Server >> " + data);
+                }
+            }).send("Hi server!").send("Bye server!");
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        c.close();
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.runTaskLaterAsynchronously(this, 40);
+        } catch(IOException e) {
+
+            e.printStackTrace();
+        }
     }
 
     @EventHandler
     public void ev(PacketHandleEvent ev){
         if(ev.getType().equals(PacketHandleEvent.Type.SERVER_BOUND)){
             if(ev.getPacket().getClass().getSimpleName().equals("PacketPlayInChat")){
-                if(ev.getPacketValue("a").toString().equalsIgnoreCase("rule")){
+                if(ev.getPacketValue("a").toString().equalsIgnoreCase("tchat")){
                     ev.getPlayer().getInventory().addItem(
-                            new SBook("&aRule", 1)
+                            new BookManager("&aRule", 1)
                                     .setAuthor("anhcraft")
                                     .setTitle("RULE")
-                                    .setBookGeneration(SBook.BookGeneration.ORIGINAL)
+                                    .setBookGeneration(BookManager.BookGeneration.ORIGINAL)
                                     .addPage("First page")
                                     .addPage("Second page")
                                     .addPage("Third page")
@@ -243,13 +289,6 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                                     .getItem());
                     ev.getPlayer().updateInventory();
                     ev.setCancelled(true);
-
-                    BungeeManager.getPlayerAmount(new BungeePlayerAmountResponse() {
-                        @Override
-                        public void result(String server, int amount) {
-                            ev.getPlayer().sendMessage(amount+"");
-                        }
-                    });
                 }
             }
         }
@@ -268,5 +307,6 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        SocketManager.unregisterAll(this);
     }
 }

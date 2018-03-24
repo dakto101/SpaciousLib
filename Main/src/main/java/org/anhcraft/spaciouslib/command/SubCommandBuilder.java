@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /**
- * A subcommand is one or many static arguments of a command (which created by SCommand)<br>
+ * A subcommand is one or many static arguments of a command (which created by CommandBuilder)<br>
  * A subcommand (static argument) can have unlimited dynamic arguments<br>
  * With a dynamic argument, players can type anything they want but it needs to depend on the type of that argument<br>
  * E.g: players can only type integer number if the type of that argument which they was typed in is INTEGER_NUMBER
  */
-public class SubCommand extends CommandString{
+public class SubCommandBuilder extends CommandString{
     private String name;
     private String description;
     private CommandRunnable rootRunnable;
@@ -26,13 +26,13 @@ public class SubCommand extends CommandString{
     private boolean hideTypeCommandString = false;
 
     /**
-     * Creates a new SubCommand instance
+     * Creates a new SubCommandBuilder instance
      * @param name the name of this subcommand
      * @param description the description of this subcommand
      * @param rootRunnable a runnable which was triggered if a player run this subcommand
      * @throws Exception
      */
-    public SubCommand(String name, String description, CommandRunnable rootRunnable) throws Exception {
+    public SubCommandBuilder(String name, String description, CommandRunnable rootRunnable) throws Exception {
         this.name = name.trim().toLowerCase();
         this.rootRunnable = rootRunnable;
         this.description = description;
@@ -71,7 +71,7 @@ public class SubCommand extends CommandString{
         return new ArrayList<>(this.args.keySet());
     }
 
-    public SubCommand hideTypeCommandString(){
+    public SubCommandBuilder hideTypeCommandString(){
         this.hideTypeCommandString = true;
         return this;
     }
@@ -86,7 +86,7 @@ public class SubCommand extends CommandString{
         return x;
     }
 
-    public SubCommand removeArgument(CommandArgument arg){
+    public SubCommandBuilder removeArgument(CommandArgument arg){
         this.args.remove(arg);
         return this;
     }
@@ -97,7 +97,7 @@ public class SubCommand extends CommandString{
      * @param type type of this argument
      * @return
      */
-    public SubCommand setArgument(CommandArgument arg, CommandArgument.Type type){
+    public SubCommandBuilder setArgument(CommandArgument arg, CommandArgument.Type type){
         this.args.put(arg, type);
         return this;
     }
@@ -111,22 +111,22 @@ public class SubCommand extends CommandString{
      * @return
      * @throws Exception
      */
-    public SubCommand setArgument(String name, CommandRunnable argRunnable, CommandArgument.Type type, boolean optional) throws Exception {
+    public SubCommandBuilder setArgument(String name, CommandRunnable argRunnable, CommandArgument.Type type, boolean optional) throws Exception {
         setArgument(new CommandArgument(name, argRunnable, optional), type);
         return this;
     }
 
-    public SubCommand setArgErrorMessage(CommandArgument.Type type, String message){
+    public SubCommandBuilder setArgErrorMessage(CommandArgument.Type type, String message){
         this.argErrorMessages.put(type, Strings.color(message));
         return this;
     }
 
-    public SubCommand setDoesNotEnoughtArgsErrorMessage(String message){
+    public SubCommandBuilder setDoesNotEnoughtArgsErrorMessage(String message){
         this.doesNotEnoughtArgsErrorMessage = Strings.color(message);
         return this;
     }
 
-    public SubCommand setCanNotFindCmdMessage(String message){
+    public SubCommandBuilder setCanNotFindCmdMessage(String message){
         this.canNotFindCmdErrorMessage = Strings.color(message);
         return this;
     }
@@ -168,7 +168,7 @@ public class SubCommand extends CommandString{
      * It'll sort optional arguments into the end of this subcommand. The order between optional arguments or non-optional arguments won't be change.
      * @return
      */
-    public SubCommand normalize(){
+    public SubCommandBuilder normalize(){
         LinkedHashMap<CommandArgument, CommandArgument.Type> require = new LinkedHashMap<>();
         LinkedHashMap<CommandArgument, CommandArgument.Type> optional = new LinkedHashMap<>();
         for(CommandArgument c : getArguments()){
@@ -207,11 +207,11 @@ public class SubCommand extends CommandString{
         return true;
     }
 
-    void execute(SCommand cmd, CommandSender s, String[] a) throws Exception {
+    void execute(CommandBuilder cmd, CommandSender s, String[] a) throws Exception {
         if(!isValid()){
             throw new Exception("This subcommand isn't valid, please normalize first");
         }
-        SubCommand sc = this;
+        SubCommandBuilder sc = this;
         if(a.length == 0){
             rootRunnable.run(cmd, sc, s, a, "");
         } else {

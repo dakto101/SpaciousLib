@@ -4,16 +4,28 @@ import org.anhcraft.spaciouslib.nbt.NBTManager;
 import org.anhcraft.spaciouslib.utils.JSONUtils;
 import org.anhcraft.spaciouslib.utils.Strings;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SBook extends SItem {
-    public SBook(String name, int amount){
+public class BookManager extends ItemManager {
+    public BookManager(ItemStack book){
+        super(book);
+        if(book == null || !book.getType().equals(Material.WRITTEN_BOOK)){
+            try {
+                throw new Exception("Item must be a written book");
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public BookManager(String name, int amount){
         super(name, Material.WRITTEN_BOOK, amount);
     }
 
-    public SBook setBookGeneration(BookGeneration generation){
+    public BookManager setBookGeneration(BookGeneration generation){
         this.item = new NBTManager(this.item).setInt("generation",
                 generation.getID()).toItemStack(this.item);
         return this;
@@ -23,7 +35,7 @@ public class SBook extends SItem {
         return BookGeneration.getById(new NBTManager(this.item).getInt("generation"));
     }
 
-    public SBook setAuthor(String author){
+    public BookManager setAuthor(String author){
         author = Strings.color(author);
         this.item = new NBTManager(this.item).setString("author", author).toItemStack(this.item);
         return this;
@@ -33,7 +45,7 @@ public class SBook extends SItem {
         return new NBTManager(this.item).getString("author");
     }
 
-    public SBook setTitle(String title){
+    public BookManager setTitle(String title){
         title = Strings.color(title);
         this.item = new NBTManager(this.item).setString("title", title).toItemStack(this.item);
         return this;
@@ -43,7 +55,7 @@ public class SBook extends SItem {
         return new NBTManager(this.item).getString("title");
     }
 
-    public SBook setResolve(boolean resolved){
+    public BookManager setResolve(boolean resolved){
         this.item = new NBTManager(this.item).setByte("resolved", (byte) (resolved ? 1 : 0)).toItemStack(this.item);
         return this;
     }
@@ -52,7 +64,7 @@ public class SBook extends SItem {
         return new NBTManager(this.item).getByte("resolved") == 1;
     }
 
-    public SBook setPages(List<String> contents){
+    public BookManager setPages(List<String> contents){
         List<String> cont = new ArrayList<>();
         for(String content : contents){
             if(JSONUtils.isValid(content)){
@@ -91,7 +103,7 @@ public class SBook extends SItem {
         return (String) pages.get(index);
     }
 
-    public SBook addPage(String content){
+    public BookManager addPage(String content){
         if(JSONUtils.isValid(content)){
             content = Strings.color(content);
         } else {
@@ -108,7 +120,7 @@ public class SBook extends SItem {
         return this;
     }
 
-    public SBook addPage(int index, String content){
+    public BookManager addPage(int index, String content){
         if(JSONUtils.isValid(content)){
             content = Strings.color(content);
         } else {
@@ -125,7 +137,7 @@ public class SBook extends SItem {
         return this;
     }
 
-    public SBook setPage(int index, String content){
+    public BookManager setPage(int index, String content){
         if(JSONUtils.isValid(content)){
             content = Strings.color(content);
         } else {
@@ -142,7 +154,7 @@ public class SBook extends SItem {
         return this;
     }
 
-    public SBook removePage(int index){
+    public BookManager removePage(int index){
         NBTManager nbt = new NBTManager(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
@@ -154,7 +166,7 @@ public class SBook extends SItem {
         return this;
     }
 
-    public SBook removePages(){
+    public BookManager removePages(){
         NBTManager nbt = new NBTManager(this.item);
         nbt.setList("pages", new ArrayList<>());
         this.item = nbt.toItemStack(this.item);

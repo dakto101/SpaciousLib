@@ -41,7 +41,7 @@ public class CommandArgument {
     private boolean optional;
 
     /**
-     * Creates a new command argument instance for SubCommand
+     * Creates a new command argument instance for SubCommandBuilder
      * @param name the name of this argument
      * @param runnable a runnable
      * @param optional if yes, players can skip this argument

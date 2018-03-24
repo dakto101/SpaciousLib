@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SInventory extends InteractItemListener {
+public class InventoryManager extends InteractItemListener {
     private Inventory inv;
 
     /**
@@ -22,7 +22,7 @@ public class SInventory extends InteractItemListener {
      * @param name the inventory name
      *
      * */
-    public SInventory(String name, int size){
+    public InventoryManager(String name, int size){
         inv = Bukkit.getServer().createInventory(null, size, Strings.color(name));
     }
 
@@ -32,7 +32,7 @@ public class SInventory extends InteractItemListener {
      * @param inv Bukkit inventory
      *
      */
-    public SInventory(Inventory inv){
+    public InventoryManager(Inventory inv){
         this.inv = inv;
     }
 
@@ -42,7 +42,7 @@ public class SInventory extends InteractItemListener {
      * @param row    numerical order of row
      * @param item   the item
      */
-    public SInventory set(int column, int row, ItemStack item){
+    public InventoryManager set(int column, int row, ItemStack item){
         this.inv.setItem(column*row, item);
         return this;
     }
@@ -52,7 +52,7 @@ public class SInventory extends InteractItemListener {
      * @param index numerical order
      * @param item   the item
      */
-    public SInventory set(int index, ItemStack item){
+    public InventoryManager set(int index, ItemStack item){
         this.inv.setItem(index, item);
         return this;
     }
@@ -64,7 +64,7 @@ public class SInventory extends InteractItemListener {
      * @param item   the item
      * @param run    interact event
      */
-    public SInventory set(int column, int row, ItemStack item, InteractItemRunnable run){
+    public InventoryManager set(int column, int row, ItemStack item, InteractItemRunnable run){
         this.inv.setItem(column*row, item);
         a(inv, item, run);
         return this;
@@ -76,7 +76,7 @@ public class SInventory extends InteractItemListener {
      * @param item   the item
      * @param run    interact event
      */
-    public SInventory set(int index, ItemStack item, InteractItemRunnable run){
+    public InventoryManager set(int index, ItemStack item, InteractItemRunnable run){
         this.inv.setItem(index, item);
         a(inv, item, run);
         return this;
@@ -87,7 +87,7 @@ public class SInventory extends InteractItemListener {
      *
      * @param item this item
      */
-    public SInventory remove(ItemStack item){
+    public InventoryManager remove(ItemStack item){
         this.inv.remove(item);
         return this;
     }
@@ -118,7 +118,7 @@ public class SInventory extends InteractItemListener {
     /**
      * Clears out the whole inventory
      */
-    public SInventory clear(){
+    public InventoryManager clear(){
         this.inv.clear();
         return this;
     }
@@ -130,7 +130,7 @@ public class SInventory extends InteractItemListener {
      * @param name the player name
      */
     @Deprecated
-    public SInventory open(String name){
+    public InventoryManager open(String name){
         Bukkit.getServer().getPlayer(name).openInventory(this.inv);
         return this;
     }
@@ -140,7 +140,7 @@ public class SInventory extends InteractItemListener {
      *
      * @param uuid the uuid
      */
-    public SInventory open(UUID uuid){
+    public InventoryManager open(UUID uuid){
         Bukkit.getServer().getPlayer(uuid).openInventory(this.inv);
         return this;
     }
@@ -150,7 +150,7 @@ public class SInventory extends InteractItemListener {
      *
      * @param player the player
      */
-    public SInventory open(Player player){
+    public InventoryManager open(Player player){
         player.openInventory(this.inv);
         return this;
     }

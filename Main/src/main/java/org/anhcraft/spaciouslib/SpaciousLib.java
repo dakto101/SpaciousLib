@@ -2,6 +2,7 @@ package org.anhcraft.spaciouslib;
 
 import org.anhcraft.spaciouslib.bungee.BungeeManager;
 import org.anhcraft.spaciouslib.listeners.*;
+import org.anhcraft.spaciouslib.socket.SocketManager;
 import org.anhcraft.spaciouslib.tasks.ArmorEquipEventTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,6 +27,6 @@ public final class SpaciousLib extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        SocketManager.unregisterAll();
     }
 }

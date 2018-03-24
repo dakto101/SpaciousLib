@@ -11,52 +11,52 @@ import java.util.*;
 /**
  * A command builder helps you create a new command and register it in runtime
  */
-public class SCommand extends CommandString {
+public class CommandBuilder extends CommandString {
     private Command command;
     private String name;
-    private SubCommand rootCmd;
-    private List<SubCommand> subcmds = new ArrayList<>();
+    private SubCommandBuilder rootCmd;
+    private List<SubCommandBuilder> subcmds = new ArrayList<>();
 
     /**
-     * Create a new SCommand instance
+     * Create a new CommandBuilder instance
      * @param name the name of that command (e.g: test is the name of the command /test a b c)
      * @param rootRunnable a runnable which was triggered if a player run that command with no arguments
      * @param rootDescription the description for this command if a player run that command with no arguments
      * @throws Exception
      */
-    public SCommand(String name, CommandRunnable rootRunnable, String rootDescription) throws Exception {
+    public CommandBuilder(String name, CommandRunnable rootRunnable, String rootDescription) throws Exception {
         this.name = name.trim().toLowerCase();
         if(0 < this.name.length() && this.name.split(" ").length != 1){
             throw new Exception("Invalid command name!");
         }
-        this.rootCmd = new SubCommand("", rootDescription, rootRunnable);
-        addSubCommand(this.rootCmd);
+        this.rootCmd = new SubCommandBuilder("", rootDescription, rootRunnable);
+        addSubCommandBuilder(this.rootCmd);
     }
 
     /**
-     * Creates a new SCommand instance (which doesn't need a description for the command)<br>
+     * Creates a new CommandBuilder instance (which doesn't need a description for the command)<br>
      * The description: &cShows all commands
      * @param name the name of this command
      * @param rootRunnable a runnable which was triggered if a player run that command with no arguments
      * @throws Exception
      */
-    public SCommand(String name, CommandRunnable rootRunnable) throws Exception {
+    public CommandBuilder(String name, CommandRunnable rootRunnable) throws Exception {
         this.name = name.trim().toLowerCase();
         if(0 < this.name.length() && this.name.split(" ").length != 1){
             throw new Exception("Invalid command name!");
         }
-        this.rootCmd = new SubCommand("", "&cShows all commands", rootRunnable);
-        addSubCommand(this.rootCmd);
+        this.rootCmd = new SubCommandBuilder("", "&cShows all commands", rootRunnable);
+        addSubCommandBuilder(this.rootCmd);
     }
 
     /**
-     * Creates a new SCommand instance<br>
+     * Creates a new CommandBuilder instance<br>
      * This subcommand must have a blank name
      * @param name the name of this command
      * @param rootCmd the subcommand instance
      * @throws Exception
      */
-    public SCommand(String name, SubCommand rootCmd) throws Exception {
+    public CommandBuilder(String name, SubCommandBuilder rootCmd) throws Exception {
         this.name = name.trim().toLowerCase();
         if(0 < this.name.length() && this.name.split(" ").length != 1){
             throw new Exception("Invalid command name!");
@@ -67,12 +67,12 @@ public class SCommand extends CommandString {
         }
     }
 
-    public SCommand addSubCommand(SubCommand subCommand){
+    public CommandBuilder addSubCommandBuilder(SubCommandBuilder subCommand){
         this.subcmds.add(subCommand);
         return this;
     }
 
-    public List<SubCommand> getSubCommands(){
+    public List<SubCommandBuilder> getSubCommandBuilders(){
         return this.subcmds;
     }
 
@@ -87,7 +87,7 @@ public class SCommand extends CommandString {
      */
     public List<String> getCommandsAsString(boolean color){
         List<String> a = new ArrayList<>();
-        for(SubCommand sc : getSubCommands()){
+        for(SubCommandBuilder sc : getSubCommandBuilders()){
             a.add(Strings.color((color ? gcs(Type.BEGIN_COMMAND) : "") + this.name + (0 < sc.getName().length() ? " " : "") + sc.getCommandString(color)));
         }
         return a;
@@ -98,7 +98,7 @@ public class SCommand extends CommandString {
      * @param color true if you want to "color" that string
      * @return the command in string format
      */
-    public String getCommandAsString(SubCommand subCommand, boolean color){
+    public String getCommandAsString(SubCommandBuilder subCommand, boolean color){
         return Strings.color((color ? gcs(Type.BEGIN_COMMAND) : "") + this.name + " " + subCommand.getCommandString(color));
     }
 
@@ -109,7 +109,7 @@ public class SCommand extends CommandString {
      * @return
      * @throws Exception
      */
-    public SCommand buildExecutor(JavaPlugin plugin) throws Exception {
+    public CommandBuilder buildExecutor(JavaPlugin plugin) throws Exception {
         if(getCommand() == null){
             Constructor pluginCommandCons = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
             pluginCommandCons.setAccessible(true);
@@ -160,7 +160,7 @@ public class SCommand extends CommandString {
             cmdb.append(" ").append(t);
         }
         String cmd = cmdb.toString().replaceFirst(" ", "").trim().toLowerCase();
-        for(SubCommand sc : getSubCommands()){
+        for(SubCommandBuilder sc : getSubCommandBuilders()){
             if(sc.getName().startsWith(cmd)) {
                 String[] m = sc.getName().split(" ");
                 String[] j = cmd.split(" ");
@@ -189,9 +189,9 @@ public class SCommand extends CommandString {
             cmdb.append(" ").append(t);
         }
         String cmd = cmdb.toString().replaceFirst(" ", "").trim().toLowerCase();
-        SubCommand found = null;
+        SubCommandBuilder found = null;
         boolean xt = false;
-        for(SubCommand sc : this.subcmds){
+        for(SubCommandBuilder sc : this.subcmds){
             if(cmd.length() == 0 && sc.getName().length() == 0){
                 xt = true;
                 try {
@@ -201,7 +201,7 @@ public class SCommand extends CommandString {
                 }
                 break;
             }
-            else if(0 < sc.getName().length() && validateSubCommand(sc.getName(), cmd)){
+            else if(0 < sc.getName().length() && validateSubCommandBuilder(sc.getName(), cmd)){
                 if(found == null || found.getName().length() < sc.getName().length()){
                     found = sc;
                 }
@@ -217,7 +217,7 @@ public class SCommand extends CommandString {
         } else {
             if(!xt) {
                 s.sendMessage(Strings.color(rootCmd.canNotFindCmdErrorMessage));
-                for(SubCommand sc : getSubCommands()){
+                for(SubCommandBuilder sc : getSubCommandBuilders()){
                     if(sc.getName().startsWith(cmd)){
                         s.sendMessage(Strings.color(rootCmd.suggestMessage));
                         s.sendMessage(getCommandAsString(sc, true));
@@ -228,7 +228,7 @@ public class SCommand extends CommandString {
         }
     }
 
-    private boolean validateSubCommand(String name, String cmd) {
+    private boolean validateSubCommandBuilder(String name, String cmd) {
         String[] a = name.split(" ");
         String[] b = cmd.split(" ");
         int i = 0;
@@ -244,12 +244,12 @@ public class SCommand extends CommandString {
         return true;
     }
 
-    public SCommand setSubCommands(List<SubCommand> subCommands) {
+    public CommandBuilder setSubCommandBuilders(List<SubCommandBuilder> subCommands) {
         this.subcmds = subCommands;
         return this;
     }
 
-    public SCommand newAlias(String name) throws Exception {
-        return new SCommand(name, rootCmd).setSubCommands(subcmds);
+    public CommandBuilder newAlias(String name) throws Exception {
+        return new CommandBuilder(name, rootCmd).setSubCommandBuilders(subcmds);
     }
 }
