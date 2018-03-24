@@ -8,12 +8,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class NBTCompound_1_12_R1 extends NBTCompoundWrapper {
-    private LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-
     private NBTCompoundWrapper decode(NBTTagCompound c){
         NBTCompoundWrapper w = new NBTCompound_1_12_R1();
         if (c != null) {
@@ -22,36 +19,36 @@ public class NBTCompound_1_12_R1 extends NBTCompoundWrapper {
                 if(c.get(s) instanceof NBTTagByte){
                     byte b = c.getByte(s);
                     if(b ==  ((byte) 0)){
-                        map.put(s, false);
+                        w.tags.put(s, false);
                     } else if(b == ((byte) 1)){
-                        map.put(s, true);
+                        w.tags.put(s, true);
                     } else {
-                        map.put(s, b);
+                        w.tags.put(s, b);
                     }
                 }
                 else if(c.get(s) instanceof NBTTagShort) {
-                    map.put(s, c.getShort(s));
+                    w.tags.put(s, c.getShort(s));
                 }
                 else if(c.get(s) instanceof NBTTagInt) {
-                    map.put(s, c.getInt(s));
+                    w.tags.put(s, c.getInt(s));
                 }
                 else if(c.get(s) instanceof NBTTagLong) {
-                    map.put(s, c.getLong(s));
+                    w.tags.put(s, c.getLong(s));
                 }
                 else if(c.get(s) instanceof NBTTagFloat) {
-                    map.put(s, c.getFloat(s));
+                    w.tags.put(s, c.getFloat(s));
                 }
                 else if(c.get(s) instanceof NBTTagDouble) {
-                    map.put(s, c.getDouble(s));
+                    w.tags.put(s, c.getDouble(s));
                 }
                 else if(c.get(s) instanceof NBTTagByteArray) {
-                    map.put(s, c.getByteArray(s));
+                    w.tags.put(s, c.getByteArray(s));
                 }
                 else if(c.get(s) instanceof NBTTagIntArray) {
-                    map.put(s, c.getIntArray(s));
+                    w.tags.put(s, c.getIntArray(s));
                 }
                 else if(c.get(s) instanceof NBTTagString) {
-                    map.put(s, c.getString(s));
+                    w.tags.put(s, c.getString(s));
                 }
                 else if(c.get(s) instanceof NBTTagList) {
                     List<Object> es = new ArrayList<>();
@@ -65,10 +62,10 @@ public class NBTCompound_1_12_R1 extends NBTCompoundWrapper {
                         }
                         i++;
                     }
-                    map.put(s, es);
+                    w.tags.put(s, es);
                 }
                 else if(c.get(s) instanceof NBTTagCompound) {
-                    map.put(s, decode(c.getCompound(s)));
+                    w.tags.put(s, decode(c.getCompound(s)));
                 }
             }
         }
@@ -126,8 +123,8 @@ public class NBTCompound_1_12_R1 extends NBTCompoundWrapper {
     private NBTTagCompound encode(NBTCompoundWrapper c){
         NBTTagCompound w = new NBTTagCompound();
         if (c != null) {
-            for(String o : map.keySet()){
-                Object v = map.get(o);
+            for(String o : c.tags.keySet()){
+                Object v = c.tags.get(o);
                 if(v instanceof Byte){
                     w.set(o, new NBTTagByte((byte) v));
                 } else if(v instanceof Short){
@@ -217,14 +214,14 @@ public class NBTCompound_1_12_R1 extends NBTCompoundWrapper {
     }
 
     public NBTCompound_1_12_R1(NBTTagCompound c){
-        map.putAll(decode(c).map);
+        tags.putAll(decode(c).tags);
     }
 
     @Override
     public void fromItem(ItemStack item) {
         net.minecraft.server.v1_12_R1.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
         NBTTagCompound c = nmsItem.getTag();
-        map.putAll(decode(c).map);
+        tags.putAll(decode(c).tags);
     }
 
     @Override
@@ -243,7 +240,7 @@ public class NBTCompound_1_12_R1 extends NBTCompoundWrapper {
             e.printStackTrace();
         }
         try {
-            map.putAll(decode(NBTCompressedStreamTools.a(s)).map);
+            tags.putAll(decode(NBTCompressedStreamTools.a(s)).tags);
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -278,7 +275,7 @@ public class NBTCompound_1_12_R1 extends NBTCompoundWrapper {
     public void fromEntity(Entity entity) {
         NBTTagCompound tag = new NBTTagCompound();
         ((CraftEntity) entity).getHandle().c(tag);
-        map.putAll(decode(tag).map);
+        tags.putAll(decode(tag).tags);
     }
 
     @Override

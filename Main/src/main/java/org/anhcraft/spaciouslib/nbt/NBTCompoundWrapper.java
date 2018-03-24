@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.LinkedHashMap;
 
 public abstract class NBTCompoundWrapper {
-    protected LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+    protected LinkedHashMap<String, Object> tags = new LinkedHashMap<>();
 
     public abstract void fromItem(ItemStack item);
     public abstract ItemStack toItem(ItemStack item);

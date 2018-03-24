@@ -243,4 +243,13 @@ public class SCommand extends CommandString {
         }
         return true;
     }
+
+    public SCommand setSubCommands(List<SubCommand> subCommands) {
+        this.subcmds = subCommands;
+        return this;
+    }
+
+    public SCommand newAlias(String name) throws Exception {
+        return new SCommand(name, rootCmd).setSubCommands(subcmds);
+    }
 }

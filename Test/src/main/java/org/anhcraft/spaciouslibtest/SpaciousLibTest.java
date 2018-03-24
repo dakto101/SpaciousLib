@@ -1,10 +1,13 @@
 package org.anhcraft.spaciouslibtest;
 
 import org.anhcraft.spaciouslib.bungee.BungeeManager;
+import org.anhcraft.spaciouslib.bungee.BungeePlayerAmountResponse;
+import org.anhcraft.spaciouslib.bungee.BungeePlayerIPResponse;
 import org.anhcraft.spaciouslib.command.CommandArgument;
 import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SCommand;
 import org.anhcraft.spaciouslib.command.SubCommand;
+import org.anhcraft.spaciouslib.events.BungeeForwardEvent;
 import org.anhcraft.spaciouslib.events.PacketHandleEvent;
 import org.anhcraft.spaciouslib.inventory.AttributeType;
 import org.anhcraft.spaciouslib.inventory.EquipSlot;
@@ -14,6 +17,7 @@ import org.anhcraft.spaciouslib.protocol.Particle;
 import org.anhcraft.spaciouslib.protocol.PlayerList;
 import org.anhcraft.spaciouslib.utils.RandomUtils;
 import org.anhcraft.spaciouslib.utils.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -23,6 +27,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public final class SpaciousLibTest extends JavaPlugin implements Listener {
 
@@ -141,7 +149,19 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                         }
                     }))
 
-                    .addSubCommand(new SubCommand("tpsv", "Teleport you or a specific player to a server in Bungee network", new CommandRunnable() {
+
+                    .addSubCommand(new SubCommand("camera reset", "Reset your view to normal", new CommandRunnable() {
+                        @Override
+                        public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] strings, String s) {
+                            if(sender instanceof Player){
+                                if(sender instanceof Player){
+                                    Camera.create((Player) sender).sendPlayer((Player) sender);
+                                }
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommand("bungee tp", "Teleport you or a specific player to a server in Bungee network", new CommandRunnable() {
                         @Override
                         public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
                             sender.sendMessage(cmd.getCommandAsString(subcmd, true));
@@ -163,7 +183,39 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                             }
                         }, CommandArgument.Type.ONLINE_PLAYER, true)
                     )
-                    .buildExecutor(this);
+
+                    .addSubCommand(new SubCommand("bungee ip", "Get your real IP", new CommandRunnable() {
+                        @Override
+                        public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player){
+                                BungeeManager.getIP((Player) sender, new BungeePlayerIPResponse() {
+                                    @Override
+                                    public void result(String ip, int port) {
+                                        sender.sendMessage(ip+":"+port);
+                                    }
+                                });
+                            }
+                        }
+                    }))
+                    .buildExecutor(this)
+
+                    .addSubCommand(new SubCommand("bungee data", null, new CommandRunnable() {
+                        @Override
+                        public void run(SCommand cmd, SubCommand subcmd, CommandSender sender, String[] args, String value) {
+                            sender.sendMessage("sent successfully!");
+                            ByteArrayOutputStream bytedata = new ByteArrayOutputStream();
+                            DataOutputStream data = new DataOutputStream(bytedata);
+                            try {
+                                data.writeUTF(sender.getName());
+                            } catch(IOException e) {
+                                e.printStackTrace();
+                            }
+                            BungeeManager.forwardData("slt", bytedata.toByteArray());
+                        }
+                    }))
+                    .buildExecutor(this)
+            .newAlias("sl").buildExecutor(this)
+            .newAlias("spaciouslib").buildExecutor(this);
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -191,7 +243,25 @@ public final class SpaciousLibTest extends JavaPlugin implements Listener {
                                     .getItem());
                     ev.getPlayer().updateInventory();
                     ev.setCancelled(true);
+
+                    BungeeManager.getPlayerAmount(new BungeePlayerAmountResponse() {
+                        @Override
+                        public void result(String server, int amount) {
+                            ev.getPlayer().sendMessage(amount+"");
+                        }
+                    });
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void forward(BungeeForwardEvent ev){
+        if(ev.getChannel().equals("slt")){
+            try {
+                Bukkit.getServer().broadcastMessage("Forward from: "+ev.getData().readUTF());
+            } catch(IOException e) {
+                e.printStackTrace();
             }
         }
     }

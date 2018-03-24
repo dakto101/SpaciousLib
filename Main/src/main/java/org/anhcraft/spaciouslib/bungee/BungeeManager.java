@@ -4,11 +4,14 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.anhcraft.spaciouslib.SpaciousLib;
+import org.anhcraft.spaciouslib.events.BungeeForwardEvent;
 import org.anhcraft.spaciouslib.utils.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -168,6 +171,48 @@ public class BungeeManager implements PluginMessageListener {
                 .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
     }
 
+    public static void forwardData(String server, String channel, byte[] bytedata){
+        if(Bukkit.getServer().getOnlinePlayers().size() == 0){
+            return;
+        }
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("Forward");
+        out.writeUTF(server);
+        out.writeUTF(channel);
+        out.writeShort(bytedata.length);
+        out.write(bytedata);
+        Bukkit.getServer().getOnlinePlayers().iterator().next()
+                .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
+    }
+
+    public static void forwardData(String channel, byte[] bytedata){
+        if(Bukkit.getServer().getOnlinePlayers().size() == 0){
+            return;
+        }
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("Forward");
+        out.writeUTF("ALL");
+        out.writeUTF(channel);
+        out.writeShort(bytedata.length);
+        out.write(bytedata);
+        Bukkit.getServer().getOnlinePlayers().iterator().next()
+                .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
+    }
+
+    public static void forwardDataPlayer(String player, String channel, byte[] bytedata){
+        if(Bukkit.getServer().getOnlinePlayers().size() == 0){
+            return;
+        }
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("ForwardToPlayer");
+        out.writeUTF(player);
+        out.writeUTF(channel);
+        out.writeShort(bytedata.length);
+        out.write(bytedata);
+        Bukkit.getServer().getOnlinePlayers().iterator().next()
+                .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
+    }
+
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
         if (!channel.equals(CHANNEL)) {
@@ -178,7 +223,7 @@ public class BungeeManager implements PluginMessageListener {
         boolean b = false;
         for(BungeeResponse br : queue){
             if (sc.equals("IP") && br instanceof BungeePlayerIPResponse) {
-                ((BungeePlayerIPResponse) br).result(i.readUTF(), i.readUTF(), i.readInt());
+                ((BungeePlayerIPResponse) br).result(i.readUTF(), i.readInt());
                 b = true;
             }
             if (sc.equals("PlayerCount") && br instanceof BungeePlayerAmountResponse) {
@@ -206,7 +251,7 @@ public class BungeeManager implements PluginMessageListener {
                 b = true;
             }
             if (sc.equals("ServerIP") && br instanceof BungeeServerIPResponse) {
-                ((BungeeServerIPResponse) br).result(i.readUTF(), i.readUTF(), i.readInt());
+                ((BungeeServerIPResponse) br).result(i.readUTF(), i.readUTF(), i.readUnsignedShort());
                 b = true;
             }
 
@@ -216,6 +261,12 @@ public class BungeeManager implements PluginMessageListener {
         }
         if(b){
             queue.remove(0);
+        } else {
+            byte[] bytedata = new byte[i.readShort()];
+            i.readFully(bytedata);
+            DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytedata));
+            BungeeForwardEvent ev = new BungeeForwardEvent(sc, data);
+            Bukkit.getServer().getPluginManager().callEvent(ev);
         }
     }
 }
