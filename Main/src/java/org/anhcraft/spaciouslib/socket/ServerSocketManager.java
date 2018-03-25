@@ -47,7 +47,7 @@ public class ServerSocketManager extends Thread {
     public void run() {
         try {
             while(true) {
-                if(this.isStopped){
+                if(this.isStopped || this.socket.isClosed()){
                     break;
                 }
                 Socket client = socket.accept();
@@ -57,8 +57,6 @@ public class ServerSocketManager extends Thread {
                     c.start();
                 }
             }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
+        } catch(Exception ignored){ }
     }
 }

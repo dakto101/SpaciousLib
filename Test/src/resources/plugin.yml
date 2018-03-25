@@ -1,6 +1,6 @@
 name: SpaciousLibTest
 version: 1.0.1
-main: org.anhcraft.spaciouslibtest.SpaciousLibTest
+main: org.anhcraft.spaciouslibtest.SpaciousLibTestSpigot
 loadbefore: [SpaciousLib]
 depend: [SpaciousLib]
 authors: [anhcraft]

@@ -42,7 +42,7 @@ public class ClientSocketManager extends SocketHandler {
     public void run() {
         Scanner scan = new Scanner(this.in);
         while(scan.hasNext()){
-            if(this.isStopped){
+            if(this.isStopped || this.server.isClosed()){
                 break;
             }
             requestHandler.request(this, scan.nextLine());
