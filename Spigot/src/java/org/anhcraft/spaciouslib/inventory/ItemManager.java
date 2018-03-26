@@ -1,7 +1,10 @@
 package org.anhcraft.spaciouslib.inventory;
 
-import org.anhcraft.spaciouslib.nbt.NBTCompoundWrapper;
+import org.anhcraft.spaciouslib.attribute.Attribute;
+import org.anhcraft.spaciouslib.attribute.AttributeModifier;
+import org.anhcraft.spaciouslib.nbt.NBTCompound;
 import org.anhcraft.spaciouslib.nbt.NBTManager;
+import org.anhcraft.spaciouslib.utils.ObjGroup;
 import org.anhcraft.spaciouslib.utils.Strings;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -11,25 +14,27 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
+/**
+ * This class helps you to manage the stack of items
+ */
 public class ItemManager {
     protected ItemStack item;
 
     /**
-     * Imports from an item
+     * Creates ItemManager instance
      *
-     * @param item an item
+     * @param item ItemStack object
      */
     public ItemManager(ItemStack item) {
         this.item = item;
     }
 
     /**
-     * Creates a new item
+     * Creates ItemManager instance
      *
-     * @param name   item's name
-     * @param type   item's type
-     * @param amount item's amount
-     *
+     * @param name the name of the item stack
+     * @param type the type of the item stack
+     * @param amount the amount of the item stack
      */
     public ItemManager(String name, Material type, int amount) {
         this.item = new ItemStack(type, amount);
@@ -37,13 +42,12 @@ public class ItemManager {
     }
 
     /**
-     * Creates a new item
+     * Creates ItemManager instance
      *
-     * @param name   item's name
-     * @param type   item's type
-     * @param amount item's amount
-     * @param durability item's durability
-     *
+     * @param name the name of the item stack
+     * @param type the type of the item stack
+     * @param amount the amount of the item stack
+     * @param durability the durability of the item stack
      */
     public ItemManager(String name, Material type, int amount, short durability) {
         this.item = new ItemStack(type, amount);
@@ -52,7 +56,8 @@ public class ItemManager {
     }
 
     /**
-     * Gets name of that item
+     * Gets the name of this item stack
+     * @return the name of this item stack
      */
     public String getName() {
         ItemMeta a = this.item.getItemMeta();
@@ -60,7 +65,9 @@ public class ItemManager {
     }
 
     /**
-     * Sets a name for that item
+     * Sets a new name for this item stack
+     * @param name new name for this item stack
+     * @return this object
      */
     public ItemManager setName(String name) {
         ItemMeta a = this.item.getItemMeta();
@@ -70,9 +77,10 @@ public class ItemManager {
     }
 
     /**
-     * Adds an enchantment to that item
-     * @param enchant enchantment's name
-     * @param level   enchantment's level
+     * Adds an enchantment into this item stack
+     * @param enchant Enchantment object
+     * @param level the level of the enchantment
+     * @return this object
      */
     public ItemManager addEnchant(Enchantment enchant, int level) {
         ItemMeta a = this.item.getItemMeta();
@@ -82,7 +90,9 @@ public class ItemManager {
     }
 
     /**
-     * Removes an enchantment out of that item
+     * Removes an enchantment out of this item stack
+     * @param enchant Enchantment object
+     * @return this object
      */
     public ItemManager removeEnchant(Enchantment enchant) {
         ItemMeta a = this.item.getItemMeta();
@@ -92,7 +102,8 @@ public class ItemManager {
     }
 
     /**
-     * Gets all enchantments of that item
+     * Gets all enchantments of this item stack
+     * @return a map of enchantments with levels
      */
     public Map<Enchantment, Integer> getEnchants() {
         ItemMeta a = this.item.getItemMeta();
@@ -100,9 +111,10 @@ public class ItemManager {
     }
 
     /**
-     * Gets level of an enchantment of that item
+     * Gets the level of the given enchantment of this item stack
      *
-     * @param enchant an enchantment
+     * @param enchant Enchantment object
+     * @return the level of that enchantment
      */
     public int getEnchantLevel(Enchantment enchant) {
         ItemMeta a = this.item.getItemMeta();
@@ -110,9 +122,10 @@ public class ItemManager {
     }
 
     /**
-     * Adds a new lore line to that item
+     * Adds a new lore into this item stack
      *
-     * @param text a lore
+     * @param text the lore
+     * @return this object
      */
     public ItemManager addLore(String text) {
         ItemMeta a = this.item.getItemMeta();
@@ -129,9 +142,10 @@ public class ItemManager {
     }
 
     /**
-     * Adds list of lores to that item
+     * Adds new lores into this item stack
      *
      * @param texts list of lores
+     * @return this object
      */
     public ItemManager addLores(List<String> texts) {
         ItemMeta a = this.item.getItemMeta();
@@ -150,9 +164,10 @@ public class ItemManager {
     }
 
     /**
-     * Sets lores of that item
+     * Sets the lores of this item stack
      *
-     * @param texts a list of lores
+     * @param texts list of lores
+     * @return this object
      */
     public ItemManager setLores(List<String> texts) {
         ItemMeta a = this.item.getItemMeta();
@@ -166,7 +181,10 @@ public class ItemManager {
     }
 
     /**
-     * Removes a specific lore line out of that item
+     * Removes a specific lore out of this item stack
+     *
+     * @param index the index of the lore
+     * @return this object
      */
     public ItemManager removeLore(int index) {
         ItemMeta a = this.item.getItemMeta();
@@ -178,7 +196,8 @@ public class ItemManager {
     }
 
     /**
-     * Gets all lores of that item
+     * Gets all lores of this item stack
+     * @return list of lores
      */
     public List<String> getLores() {
         ItemMeta a = this.item.getItemMeta();
@@ -186,7 +205,9 @@ public class ItemManager {
     }
 
     /**
-     * Add a flag to that item
+     * Adds a flag into this item stack
+     * @param flag the type of flag
+     * @return this object
      */
     public ItemManager addFlag(ItemFlag flag) {
         ItemMeta a = this.item.getItemMeta();
@@ -196,7 +217,9 @@ public class ItemManager {
     }
 
     /**
-     * Removes a flag out of that item
+     * Removes a flag out of this item stack
+     * @param flag the type of flag
+     * @return this object
      */
     public ItemManager removeFlag(ItemFlag flag) {
         ItemMeta a = this.item.getItemMeta();
@@ -206,7 +229,9 @@ public class ItemManager {
     }
 
     /**
-     * Checks does a specific flag exist in that item
+     * Checks does this item stack has the given flag
+     * @param flag the type of flag
+     * @return true if it has
      */
     public Boolean hasFlag(ItemFlag flag) {
         ItemMeta a = this.item.getItemMeta();
@@ -214,7 +239,8 @@ public class ItemManager {
     }
 
     /**
-     * Gets all flag of that item
+     * Gets all flags of this item stack
+     * @return a collection of flags
      */
     public Set<ItemFlag> getFlags() {
         ItemMeta a = this.item.getItemMeta();
@@ -222,7 +248,9 @@ public class ItemManager {
     }
 
     /**
-     * Sets a new durability value for that item
+     * Sets a new durability value for this item stack
+     * @param durability new durability value
+     * @return this object
      */
     public ItemManager setDurability(short durability) {
         this.item.setDurability(durability);
@@ -230,14 +258,17 @@ public class ItemManager {
     }
 
     /**
-     * Gets the durability value of that item
+     * Gets the durability value of this item stack
+     * @return the durability value
      */
     public short getDurability() {
         return this.item.getDurability();
     }
 
     /**
-     * Sets a new type for that item
+     * Sets new type for this item stack
+     * @param type new type
+     * @return this object
      */
     public ItemManager setType(Material type) {
         this.item.setType(type);
@@ -245,14 +276,17 @@ public class ItemManager {
     }
 
     /**
-     * Gets the type of that item
+     * Gets the type of this item
+     * @return the type of this item
      */
     public Material getType() {
         return this.item.getType();
     }
 
     /**
-     * Sets amount value for that item
+     * Sets the amount value for this item stack
+     * @param amount the amount of this item stack
+     * @return this object
      */
     public ItemManager setAmount(int amount) {
         this.item.setAmount(amount);
@@ -260,294 +294,155 @@ public class ItemManager {
     }
 
     /**
-     * Gets amount value of that item
+     * Gets amount value of this item stack
+     * @return the amount value
      */
     public int getAmount() {
         return this.item.getAmount();
     }
 
     /**
-     * Gets that item as item stack
-     *
-     * @return item
+     * Gets this item stack as an ItemStack object
+     * @return ItemStack object
      */
     public ItemStack getItem() {
         return item;
     }
 
     /**
-     * Sets unbreakable of that item
+     * Makes this item stack unbreakable or not
+     * @param unbreakable true if you want to make this item stack unbreakable
+     * @return this object
      */
     public ItemManager setUnbreakable(Boolean unbreakable) {
         if(unbreakable) {
-            item = new NBTManager(item).setBoolean("Unbreakable", true).toItemStack(item);
+            item = NBTManager.fromItem(item).setBoolean("Unbreakable", true).toItem(item);
         } else {
-            item = new NBTManager(item).remove("Unbreakable").toItemStack(item);
+            item = NBTManager.fromItem(item).remove("Unbreakable").toItem(item);
         }
         return this;
     }
 
     /**
-     * Checks is that item unbreakable
+     * Checks is this item stack unbreakable
      *
-     * @return boolean
+     * @return true if yes
      */
     public Boolean isUnbreakable() {
-        return new NBTManager(item).hasKey("Unbreakable");
+        return NBTManager.fromItem(item).hasKey("Unbreakable");
     }
 
     /**
-     * Adds an attribute to that item
-     * @param type  type of attribute
-     * @param value value
+     * Adds an attribute modifier into this item stack
+     * @param type the type of the attribute
+     * @param modifier AttributeModifier object
+     * @param slot equipment slot
+     * @return this object
      */
-    public ItemManager addAttribute(AttributeType type, double value) {
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
+    public ItemManager addAttributeModifier(Attribute.Type type, AttributeModifier modifier, EquipSlot slot) {
+        List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
-        String n = type.getID();
-        UUID uuid = UUID.randomUUID();
-        NBTManager c = new NBTManager().set("AttributeName", n).set("Name", "Modifier").set("Amount", value).set("Operation", 0).set("UUIDLeast", uuid.getLeastSignificantBits()).set("UUIDMost", uuid.getMostSignificantBits());
-        l.add(c.getWrapper());
-        item = new NBTManager(item).setList("AttributeModifiers", l).toItemStack(item);
+        NBTCompound c = NBTManager.newCompound()
+                .set("AttributeName", type.getID())
+                .set("Name", modifier.getName())
+                .set("Amount", modifier.getAmount())
+                .set("Operation", modifier.getOperation().getID())
+                .set("UUIDLeast", modifier.getUniqueID().getLeastSignificantBits())
+                .set("UUIDMost", modifier.getUniqueID().getMostSignificantBits())
+                .set("Slot", slot.toString().toLowerCase());
+        l.add(c);
+        item = NBTManager.fromItem(item).setList("AttributeModifiers", l).toItem(item);
         return this;
     }
 
     /**
-     * Adds an attribute to that item with a specific slot
-     *  @param type type of attribute
-     * @param value value
-     * @param slot slot
+     * Removes all attribute modifiers which has specified name out of this item stack
+     * @param name the name of attribute modifiers
+     * @return this object
      */
-    public ItemManager addAttribute(AttributeType type, double value, EquipSlot slot) {
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
+    public ItemManager removeAttributeModifiers(String name) {
+        List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
         if(l == null){
-            l = new ArrayList<>();
+            return this;
         }
-        String n = type.getID();
-        UUID uuid = UUID.randomUUID();
-        NBTManager c = new NBTManager().set("AttributeName", n).set("Name", "Modifier").set("Amount", value).set("Operation", 0).set("UUIDLeast", uuid.getLeastSignificantBits()).set("UUIDMost", uuid.getMostSignificantBits()).set("Slot", slot.toString().toLowerCase());
-        l.add(c.getWrapper());
-        item = new NBTManager(item).setList("AttributeModifiers", l).toItemStack(item);
+        List<NBTCompound> nl = new ArrayList<>();
+        for(NBTCompound m : l){
+            if(!m.getString("Name").equals(name)){
+                nl.add(m);
+            }
+        }
+        item = NBTManager.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
         return this;
     }
 
     /**
-     * Sets a new attribute in a specific index of that item
-     * If the attribute in that index doesn't exist, that attribute will be added automatically
-     *  @param type  type of attribute
-     * @param value value
-     * @param index index
+     * Removes all attribute modifiers which has specified type out of this item stack
+     * @param type the type of attribute modifiers
+     * @return this object
      */
-    public ItemManager setAttribute(AttributeType type, double value, int index) {
-        return removeAttribute(index).addAttribute(type, value);
-    }
-
-    /**
-     * Sets a new attribute with a slot in a specific index of that item
-     * If the attribute in that index doesn't exist, that attribute will be added automatically
-     * @param type  type of attribute
-     * @param value value
-     * @param index index
-     * @param slot slot
-     */
-    public ItemManager setAttribute(AttributeType type, double value, EquipSlot slot, int index) {
-        return removeAttribute(index).addAttribute(type, value, slot);
-    }
-
-    /**
-     * Removes an attribute which has a specific index out of that item
-     *
-     * @param index index of attribute
-     */
-    public ItemManager removeAttribute(int index) {
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
-        if(l != null) {
-            if(index < l.size()) {
-                l.remove(index);
-            }
-            if(l.size() == 0){
-                item = new NBTManager(item).remove("AttributeModifiers").toItemStack(item);
-            } else {
-                item = new NBTManager(item).setList("AttributeModifiers", l).toItemStack(item);
+    public ItemManager removeAttributeModifiers(Attribute.Type type) {
+        List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
+        if(l == null){
+            return this;
+        }
+        List<NBTCompound> nl = new ArrayList<>();
+        for(NBTCompound m : l){
+            if(!m.getString("AttributeName").equals(type.getID().toLowerCase())){
+                nl.add(m);
             }
         }
+        item = NBTManager.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
         return this;
     }
 
     /**
-     * Removes all attributes which has a specific type out of that item
-     *
-     * @param type type of attribute
+     * Removes all attribute modifiers out of this item stack
+     * @return this object
      */
-    public ItemManager removeAttribute(AttributeType type) {
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
-        if(l == null){
-            l = new ArrayList<>();
-        }
-        List<Object> newCompounds = new ArrayList<>();
-        String n = type.getID();
-        for(Object w : l){
-            if(w instanceof NBTCompoundWrapper) {
-                if(!new NBTManager((NBTCompoundWrapper) w).getString("AttributeName").equals(n)) {
-                    newCompounds.add(w);
-                }
-            }
-        }
-        if(newCompounds.size() == 0){
-            item = new NBTManager(item).remove("AttributeModifiers").toItemStack(item);
-        } else {
-            item = new NBTManager(item).setList("AttributeModifiers", newCompounds).toItemStack(item);
-        }
+    public ItemManager removeAttributeModifiers() {
+        item = NBTManager.fromItem(item).setList("AttributeModifiers", new ArrayList<NBTCompound>()).toItem(item);
         return this;
     }
 
     /**
-     * Checks does that item have an attribute
-     *
-     * @param type  type of attribute
+     * Removes all attribute modifiers which has specified slot equipment out of this item stack
+     * @param slot slot equipment
+     * @return this object
      */
-    public Boolean hasAttribute(AttributeType type) {
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
+    public ItemManager removeAttributeModifiers(EquipSlot slot) {
+        List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
         if(l == null){
-            l = new ArrayList<>();
+            return this;
         }
-        String n = type.getID();
-        for(Object w : l){
-            if(w instanceof NBTCompoundWrapper) {
-                if((new NBTManager((NBTCompoundWrapper) w)).getString("AttributeName").equals(n)) {
-                    return true;
-                }
+        List<NBTCompound> nl = new ArrayList<>();
+        for(NBTCompound m : l){
+            if(!m.getString("Slot").equals(slot.toString().toLowerCase())){
+                nl.add(m);
             }
         }
-        return false;
+        item = NBTManager.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
+        return this;
     }
 
     /**
-     * Gets type of attribute which has a specific index
-     *
-     * @param index index of attribute
-     *
-     * @return type
+     * Gets all attribute modifiers of this item
+     * @return all attribute modifiers
      */
-    public AttributeType getAttributeType(int index) {
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
+    public LinkedHashMap<AttributeModifier,
+            ObjGroup<EquipSlot, Attribute.Type>> getAttributeModifiers(){
+        LinkedHashMap<AttributeModifier,
+                ObjGroup<EquipSlot, Attribute.Type>> modifiers = new LinkedHashMap<>();
+        List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
         if(l == null){
-            return null;
-        } else {
-            if(index < l.size()) {
-                if(l.get(index) instanceof NBTCompoundWrapper) {
-                    NBTCompoundWrapper w = (NBTCompoundWrapper) l.get(index);
-                    return AttributeType.getById(new NBTManager(w).getString("AttributeName"));
-                }
-            }
+            return modifiers;
         }
-        return null;
-    }
-
-    /**
-     * Gets amount of an attribute which has a specific type
-     *
-     * @param type type of attribute
-     *
-     * @return if attribute doesn't exist or it doesn't have "Amount" key, will return 0
-     */
-    public double getAttributeAmount(AttributeType type) {
-        double r = 0;
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
-        if(l == null){
-            l = new ArrayList<>();
+        for(NBTCompound modifier : l){
+            modifiers.put(new AttributeModifier(new UUID(modifier.getLong("UUIDMost"), modifier.getLong("UUIDLeast")), modifier.getString("Name"), modifier.getDouble("Amount"), AttributeModifier.Operation.getByID(modifier.getInt("Operation"))),
+                    new ObjGroup<>(EquipSlot.valueOf(modifier.getString("Slot").toUpperCase()),
+                            Attribute.Type.getByID(modifier.getString("AttributeName"))));
         }
-        String n = type.getID();
-        for(Object w : l){
-            if(w instanceof NBTCompoundWrapper) {
-                if((new NBTManager((NBTCompoundWrapper) w)).getString("AttributeName").equals(n) && (new NBTManager((NBTCompoundWrapper) w)).hasKey("Amount")) {
-                    r = (new NBTManager((NBTCompoundWrapper) w)).getDouble("Amount");
-                    break;
-                }
-            }
-        }
-        return r;
-    }
-
-    /**
-     * Gets amount of an attribute which has a specific index
-     *
-     * @param index index of attribute
-     *
-     * @return if attribute doesn't exist or it doesn't have "Amount" key, will return 0
-     */
-    public int getAttributeAmount(int index) {
-        int r = 0;
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
-        if(l == null){
-            l = new ArrayList<>();
-        }
-        if(index < l.size()) {
-            if(l.get(index) instanceof NBTCompoundWrapper) {
-                NBTCompoundWrapper w = (NBTCompoundWrapper) l.get(index);
-                if(new NBTManager(w).hasKey("Amount")) {
-                    r = new NBTManager(w).getInt("Amount");
-                }
-            }
-        }
-        return r;
-    }
-
-    /**
-     * Gets slot of an attribute which has a specific index
-     */
-    public EquipSlot getAttributeEquipSlot(int index) {
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
-        if(l != null) {
-            if(index < l.size()) {
-                if(l.get(index) instanceof NBTCompoundWrapper) {
-                    NBTCompoundWrapper w = (NBTCompoundWrapper) l.get(index);
-                    if(new NBTManager(w).hasKey("Slot")) {
-                        return EquipSlot.valueOf(new NBTManager(w).getString("Slot").toUpperCase());
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Gets slot of an attribute which has a specific type
-     */
-    public EquipSlot getAttributeEquipSlot(AttributeType type) {
-        String r = null;
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
-        if(l == null){
-            l = new ArrayList<>();
-        }
-        String n = type.getID();
-        for(Object w : l){
-            if(w instanceof NBTCompoundWrapper) {
-                if((new NBTManager((NBTCompoundWrapper) w)).getString("AttributeName").equals(n) && (new NBTManager((NBTCompoundWrapper) w)).hasKey("Slot")) {
-                    r = (new NBTManager((NBTCompoundWrapper) w)).getString("Slot").toUpperCase();
-                    break;
-                }
-            }
-        }
-        return EquipSlot.valueOf(r);
-    }
-
-    /**
-     * Gets all attributes of that item
-     */
-    public List<AttributeType> getAllAttributes() {
-        List<AttributeType> types = new ArrayList<>();
-        List<Object> l = new NBTManager(item).getList("AttributeModifiers");
-        if(l == null){
-            l = new ArrayList<>();
-        }
-        for(Object w : l){
-            if(w instanceof NBTCompoundWrapper) {
-                types.add(AttributeType.getById((new NBTManager((NBTCompoundWrapper) w)).getString("AttributeName")));
-            }
-        }
-        return types;
+        return modifiers;
     }
 }

@@ -4,21 +4,32 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
+/**
+ * A class helps you to manage the given file
+ */
 public class FileManager {
     private File file;
 
+    /**
+     * Creates a new FileManager instance
+     * @param file the File object
+     */
     public FileManager(File file){
         this.file = file;
     }
 
+    /**
+     * Creates a new FileManager instance
+     * @param path the path of the file
+     */
     public FileManager(String path){
         this.file = new File(path);
     }
 
     /**
      * Creates that file if it doesn't exist
+     * @return this object
      */
     public FileManager create(){
         if(!this.file.exists()){
@@ -32,7 +43,8 @@ public class FileManager {
     }
 
     /**
-     * Deletes that file
+     * Deletes that file if it exists
+     * @return this object
      */
     public FileManager delete(){
         if(this.file.exists()) {
@@ -41,7 +53,12 @@ public class FileManager {
         return this;
     }
 
-    public FileManager createAndWrite(byte[] data) throws IOException {
+    /**
+     * Initializes that file if it doesn't exist (creates and writes the given data)
+     * @param data an array of bytes (binary data)
+     * @return this object
+     */
+    public FileManager initFile(byte[] data) throws IOException {
         if(!this.file.exists()){
             return create().writeIfExist(data);
         }
@@ -49,10 +66,11 @@ public class FileManager {
     }
 
     /**
-     * Writes a content to that file
-     * @param data content in byte array
-     * @param append does that content append at the end of the file?
+     * Writes the given data to that file
+     * @param data an array of bytes (binary data)
+     * @param append does that data append at the end of the file?
      * @throws IOException
+     * @return this object
      */
     public FileManager write(byte[] data, boolean append) throws IOException {
         FileOutputStream stream = new FileOutputStream(this.file, append);
@@ -63,28 +81,21 @@ public class FileManager {
     }
 
     /**
-     * Writes a new content to that file
-     * @param data content in byte array
+     * Writes the given data to that file (Warning: the old data will lost)
+     * @param data an array of bytes (binary data)
      * @throws IOException
+     * @return this object
      */
     public FileManager write(byte[] data) throws IOException {
         return write(data, false);
     }
 
     /**
-     * Writes a new content to that file
-     * @param string content in string
+     * Writes the given data to that file if it exist
+     * @param data an array of bytes (binary data)
+     * @param append does that data append at the end of the file?
      * @throws IOException
-     */
-    public FileManager writeAsString(String string) throws IOException {
-        return write(string.getBytes(StandardCharsets.UTF_8));
-    }
-
-    /**
-     * Writes a content to that file if it exists
-     * @param data content in byte array
-     * @param append does that content append at the end of the file?
-     * @throws IOException
+     * @return this object
      */
     public FileManager writeIfExist(byte[] data, boolean append) throws IOException {
         if(this.file.exists()) {
@@ -97,9 +108,10 @@ public class FileManager {
     }
 
     /**
-     * Writes a new content to that file if it exists
-     * @param data content in byte array
+     * Writes the given data to that file if it exist (Warning: the old data will lost)
+     * @param data an array of bytes (binary data)
      * @throws IOException
+     * @return this object
      */
     public FileManager writeIfExist(byte[] data) throws IOException {
         if(this.file.exists()) {
@@ -110,21 +122,8 @@ public class FileManager {
     }
 
     /**
-     * Writes a new content to that file if it exists
-     * @param string content in string
-     * @throws IOException
-     */
-    public FileManager writeAsStringIfExist(String string) throws IOException {
-        if(this.file.exists()){
-            return write(string.getBytes(StandardCharsets.UTF_8));
-        } else {
-            return this;
-        }
-    }
-
-    /**
      * Reads that file
-     * @return the content of the file in byte array
+     * @return the data of the file as an array of bytes (binary data)
      * @throws IOException
      */
     public byte[] read() throws IOException {
@@ -137,22 +136,10 @@ public class FileManager {
 
     /**
      * Reads that file
-     * @return the content of the file in string
+     * @return the data of the file as a string
      * @throws IOException
      */
     public String readAsString() throws IOException {
         return new String(read());
-    }
-
-    /**
-     * Clears all UTF-8 BOM out of that file
-     * @throws IOException
-     */
-    public FileManager cleanUTF8BOM() throws IOException {
-        String s = readAsString();
-        if (s.startsWith("\uFEFF")) {
-            s = s.substring(1);
-        }
-        return writeAsString(s);
     }
 }

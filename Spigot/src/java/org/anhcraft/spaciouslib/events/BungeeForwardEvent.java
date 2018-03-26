@@ -5,6 +5,9 @@ import org.bukkit.event.HandlerList;
 
 import java.io.DataInputStream;
 
+/**
+ * An event triggers when a data was sent from a specific channel in another server
+ */
 public class BungeeForwardEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 

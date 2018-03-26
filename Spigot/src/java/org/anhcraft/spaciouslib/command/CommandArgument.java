@@ -1,5 +1,8 @@
 package org.anhcraft.spaciouslib.command;
 
+/**
+ * Represents a command argument implementation.
+ */
 public class CommandArgument {
     public enum Type{
         /**

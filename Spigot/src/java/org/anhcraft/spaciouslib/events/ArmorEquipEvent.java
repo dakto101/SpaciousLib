@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 /**
  * An event triggers when a player equip a new item
- * That item will be null if they unequipped another item
+ * That item will be null if they unequipped an item
  */
 public class ArmorEquipEvent extends Event {
     private static final HandlerList handlers = new HandlerList();

@@ -6,6 +6,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class helps you to manage current server socket.
+ */
 public class ServerSocketManager extends Thread {
     private ServerSocket socket;
     private ServerSocketRequestHandler requestHandler;
@@ -22,6 +25,12 @@ public class ServerSocketManager extends Thread {
         }
     }
 
+    /**
+     * Sends a new data to all clients.
+     * @param data the data in string
+     * @return this object
+     * @throws IOException
+     */
     public ServerSocketManager sendAll(String data) throws IOException {
         for(ServerSocketClientHandler c : clients){
             c.send(data);
@@ -29,6 +38,10 @@ public class ServerSocketManager extends Thread {
         return this;
     }
 
+    /**
+     * Closes the current thread and all socket connections.
+     * @throws IOException
+     */
     public void close() throws IOException {
         this.isStopped = true;
         this.interrupt();
@@ -39,6 +52,10 @@ public class ServerSocketManager extends Thread {
         clients.clear();
     }
 
+    /**
+     * Gets all clients which were connected to this server.
+     * @return list of ServerSocketClientHandler object
+     */
     public List<ServerSocketClientHandler> getClients(){
         return this.clients;
     }

@@ -9,20 +9,26 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/**
+ * A class helps you to manage placeholders
+ */
 public class PlaceholderManager {
     private static LinkedHashMap<String, Placeholder> data = new LinkedHashMap<>();
 
+    /**
+     * Initializes PlaceholderManager
+     */
     public PlaceholderManager(){
         new BukkitRunnable() {
             @Override
             public void run() {
                 for(Placeholder p : data.values()) {
-                    if(p instanceof FixedPlaceholder) {
-                        ((FixedPlaceholder) p).updateCache();
+                    if(p instanceof CachedPlaceholder) {
+                        ((CachedPlaceholder) p).updateCache();
                     }
                 }
             }
-        }.runTaskTimer(SpaciousLib.instance, 100, 100);
+        }.runTaskTimer(SpaciousLib.instance, 200, 200);
 
         register(new FixedPlaceholder() {
             @Override
@@ -36,7 +42,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_display_name}";
@@ -48,7 +54,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_world}";
@@ -60,7 +66,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_x}";
@@ -72,7 +78,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_y}";
@@ -84,7 +90,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_z}";
@@ -96,7 +102,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_yaw}";
@@ -108,7 +114,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_pitch}";
@@ -120,7 +126,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_max_health}";
@@ -132,7 +138,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_health}";
@@ -144,7 +150,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_health_scale}";
@@ -156,7 +162,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_exhaustion}";
@@ -168,7 +174,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_exp}";
@@ -180,7 +186,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_walk_speed}";
@@ -192,7 +198,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_fly_speed}";
@@ -204,7 +210,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_level}";
@@ -216,7 +222,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_food_level}";
@@ -228,7 +234,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_total_exp}";
@@ -240,7 +246,7 @@ public class PlaceholderManager {
             }
         });
 
-        register(new FixedPlaceholder() {
+        register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
                 return "{player_exp_to_level}";
@@ -253,6 +259,10 @@ public class PlaceholderManager {
         });
     }
 
+    /**
+     * Registers the given placeholder
+     * @param placeholder Placeholder object
+     */
     public static void register(Placeholder placeholder){
         if(data.containsKey(placeholder.getPlaceholder())){
             try {
@@ -264,18 +274,26 @@ public class PlaceholderManager {
         data.put(placeholder.getPlaceholder(), placeholder);
     }
 
+    /**
+     * Unregisters the given placeholder
+     * @param placeholder Placeholder object
+     */
     public static void unregister(Placeholder placeholder){
         data.remove(placeholder.getPlaceholder());
     }
 
+    /**
+     * Unregisters the given placeholder
+     * @param placeholder placeholder name
+     */
     public static void unregister(String placeholder){
         data.remove(placeholder);
     }
 
     public static String replace(String text, Player player){
         for(Placeholder p : data.values()){
-            if(p instanceof FixedPlaceholder){
-                text = text.replace(p.getPlaceholder(), ((FixedPlaceholder) p).getCache(player));
+            if(p instanceof CachedPlaceholder){
+                text = text.replace(p.getPlaceholder(), ((CachedPlaceholder) p).getCache(player));
             } else {
                 text = text.replace(p.getPlaceholder(), p.getValue(player));
             }
@@ -285,8 +303,8 @@ public class PlaceholderManager {
 
     public static void updateCache(Player player) {
         for(Placeholder p : data.values()) {
-            if(p instanceof FixedPlaceholder) {
-                ((FixedPlaceholder) p).updateCache(player);
+            if(p instanceof CachedPlaceholder) {
+                ((CachedPlaceholder) p).updateCache(player);
             }
         }
     }

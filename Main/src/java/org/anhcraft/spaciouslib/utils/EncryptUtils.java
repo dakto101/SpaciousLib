@@ -4,6 +4,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * A utility class about encrypting
+ */
 public class EncryptUtils {
     public enum Type {
         MD2,
@@ -14,9 +17,17 @@ public class EncryptUtils {
         SHA_512
     }
 
-    public static String create(Type type, String hash) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    /**
+     * Encrypts a given string by using a specific hashing algorithm
+     * @param type the type of hashing algorithm
+     * @param string the string
+     * @return the hash
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    public static String create(Type type, String string) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest digest = MessageDigest.getInstance(type.toString().replace("_", "-"));
-        byte[] md = digest.digest(hash.getBytes("UTF-8"));
+        byte[] md = digest.digest(string.getBytes("UTF-8"));
         StringBuilder sb = new StringBuilder();
         for(byte aMd : md) {
             sb.append(Integer.toString((aMd & 0xff) + 0x100, 16).substring(1));

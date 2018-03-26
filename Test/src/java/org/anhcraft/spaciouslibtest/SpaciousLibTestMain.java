@@ -11,7 +11,7 @@ public class SpaciousLibTestMain {
     public static void main(String[] args){
         ClientSocketManager c = SocketManager.registerClient("localhost", 25568, new ClientSocketRequestHandler() {
             @Override
-            public void request(ClientSocketManager manager, String data) {}
+            public void response(ClientSocketManager manager, String data) {}
         });
         Scanner s = new Scanner(System.in);
         while(s.hasNextLine()){

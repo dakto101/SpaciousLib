@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.inventory;
 
+import org.anhcraft.spaciouslib.nbt.NBTCompound;
 import org.anhcraft.spaciouslib.nbt.NBTManager;
 import org.anhcraft.spaciouslib.utils.JSONUtils;
 import org.anhcraft.spaciouslib.utils.Strings;
@@ -9,7 +10,16 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A manage helps you to manage books.<br>
+ * (<a href="https://minecraft.gamepedia.com/Written_Book">https://minecraft.gamepedia.com/Written_Book</a>)
+ */
 public class BookManager extends ItemManager {
+
+    /**
+     * Creates BookManager instance
+     * @param book the item stack (must be a written book) which represents for that book
+     */
     public BookManager(ItemStack book){
         super(book);
         if(book == null || !book.getType().equals(Material.WRITTEN_BOOK)){
@@ -21,49 +31,95 @@ public class BookManager extends ItemManager {
         }
     }
 
+    /**
+     * Creates a new book
+     * @param name the name of this book
+     * @param amount the amount of book
+     */
     public BookManager(String name, int amount){
         super(name, Material.WRITTEN_BOOK, amount);
     }
 
+    /**
+     * Sets the copy tier of this book
+     * @param generation the copy tier
+     * @return this object
+     */
     public BookManager setBookGeneration(BookGeneration generation){
-        this.item = new NBTManager(this.item).setInt("generation",
-                generation.getID()).toItemStack(this.item);
+        this.item = NBTManager.fromItem(this.item).setInt("generation",
+                generation.getID()).toItem(this.item);
         return this;
     }
 
+    /**
+     * Gets the copy tier of this book
+     * @return the copy tier
+     */
     public BookGeneration getBookGeneration(){
-        return BookGeneration.getById(new NBTManager(this.item).getInt("generation"));
+        return BookGeneration.getByID(NBTManager.fromItem(this.item).getInt("generation"));
     }
 
+    /**
+     * Sets a new author for this book
+     * @param author author's name
+     * @return this object
+     */
     public BookManager setAuthor(String author){
         author = Strings.color(author);
-        this.item = new NBTManager(this.item).setString("author", author).toItemStack(this.item);
+        this.item = NBTManager.fromItem(this.item).setString("author", author).toItem(this.item);
         return this;
     }
 
+    /**
+     * Gets the author of this book
+     * @return the author
+     */
     public String getAuthor(){
-        return new NBTManager(this.item).getString("author");
+        return NBTManager.fromItem(this.item).getString("author");
     }
 
+    /**
+     * Sets the title for this book
+     * @param title the title
+     * @return this object
+     */
     public BookManager setTitle(String title){
         title = Strings.color(title);
-        this.item = new NBTManager(this.item).setString("title", title).toItemStack(this.item);
+        this.item = NBTManager.fromItem(this.item).setString("title", title).toItem(this.item);
         return this;
     }
 
+    /**
+     * Gets the title of this book
+     * @return the title
+     */
     public String getTitle(){
-        return new NBTManager(this.item).getString("title");
+        return NBTManager.fromItem(this.item).getString("title");
     }
 
-    public BookManager setResolve(boolean resolved){
-        this.item = new NBTManager(this.item).setByte("resolved", (byte) (resolved ? 1 : 0)).toItemStack(this.item);
+    /**
+     * Sets the resolved status for this book
+     * @param resolve true if this book have resolved
+     * @return this object
+     */
+    public BookManager setResolve(boolean resolve){
+        this.item = NBTManager.fromItem(this.item).setByte("resolved", (byte) (resolve ? 1 : 0)).toItem(this.item);
         return this;
     }
 
+    /**
+     * Gets the resolved status of this book
+     * @return true if this book have resolved
+     */
     public boolean isResolved(){
-        return new NBTManager(this.item).getByte("resolved") == 1;
+        return NBTManager.fromItem(this.item).getByte("resolved") == 1;
     }
 
+    /**
+     * Sets new pages for this book
+     * @param contents list of page
+     * @return this object
+     */
     public BookManager setPages(List<String> contents){
         List<String> cont = new ArrayList<>();
         for(String content : contents){
@@ -73,14 +129,18 @@ public class BookManager extends ItemManager {
                 cont.add("{\"text\": \"" + Strings.color(content) + "\"}");
             }
         }
-        NBTManager nbt = new NBTManager(this.item);
+        NBTCompound nbt = NBTManager.fromItem(this.item);
         nbt.setList("pages", cont);
-        this.item = nbt.toItemStack(this.item);
+        this.item = nbt.toItem(this.item);
         return this;
     }
 
+    /**
+     * Gets all page of this book
+     * @return the pages
+     */
     public List<String> getPages(){
-        NBTManager nbt = new NBTManager(this.item);
+        NBTCompound nbt = NBTManager.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
@@ -94,82 +154,90 @@ public class BookManager extends ItemManager {
         return x;
     }
 
+    /**
+     * Gets the page with given index
+     * @param index the index of that page
+     * @return the content of that page
+     */
     public String getPage(int index){
-        NBTManager nbt = new NBTManager(this.item);
+        NBTCompound nbt = NBTManager.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
         }
-        return (String) pages.get(index);
+        return pages.get(index);
     }
 
+    /**
+     * Adds a new page into this book
+     * @param content the content of that page
+     * @return this object
+     */
     public BookManager addPage(String content){
         if(JSONUtils.isValid(content)){
             content = Strings.color(content);
         } else {
             content = "{\"text\": \"" + Strings.color(content) + "\"}";
         }
-        NBTManager nbt = new NBTManager(this.item);
+        NBTCompound nbt = NBTManager.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
         }
         pages.add(content);
         nbt.setList("pages", pages);
-        this.item = nbt.toItemStack(this.item);
+        this.item = nbt.toItem(this.item);
         return this;
     }
 
-    public BookManager addPage(int index, String content){
-        if(JSONUtils.isValid(content)){
-            content = Strings.color(content);
-        } else {
-            content = "{\"text\": \"" + Strings.color(content) + "\"}";
-        }
-        NBTManager nbt = new NBTManager(this.item);
-        List<String> pages = nbt.getList("pages");
-        if(pages == null){
-            pages = new ArrayList<>();
-        }
-        pages.add(index, content);
-        nbt.setList("pages", pages);
-        this.item = nbt.toItemStack(this.item);
-        return this;
-    }
-
+    /**
+     * Sets the new content for the page with given index
+     * @param index the index of that page
+     * @param content the content of that page
+     * @return this object
+     */
     public BookManager setPage(int index, String content){
         if(JSONUtils.isValid(content)){
             content = Strings.color(content);
         } else {
             content = "{\"text\": \"" + Strings.color(content) + "\"}";
         }
-        NBTManager nbt = new NBTManager(this.item);
+        NBTCompound nbt = NBTManager.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
         }
         pages.set(index, content);
         nbt.setList("pages", pages);
-        this.item = nbt.toItemStack(this.item);
+        this.item = nbt.toItem(this.item);
         return this;
     }
 
+    /**
+     * Removes a specific page with given page
+     * @param index the index of that page
+     * @return this object
+     */
     public BookManager removePage(int index){
-        NBTManager nbt = new NBTManager(this.item);
+        NBTCompound nbt = NBTManager.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
         }
         pages.remove(index);
         nbt.setList("pages", pages);
-        this.item = nbt.toItemStack(this.item);
+        this.item = nbt.toItem(this.item);
         return this;
     }
 
+    /**
+     * Removes all pages
+     * @return this object
+     */
     public BookManager removePages(){
-        NBTManager nbt = new NBTManager(this.item);
+        NBTCompound nbt = NBTManager.fromItem(this.item);
         nbt.setList("pages", new ArrayList<>());
-        this.item = nbt.toItemStack(this.item);
+        this.item = nbt.toItem(this.item);
         return this;
     }
 
@@ -189,7 +257,7 @@ public class BookManager extends ItemManager {
             return id;
         }
 
-        public static BookGeneration getById(int generation) {
+        public static BookGeneration getByID(int generation) {
             for(BookGeneration bg : values()){
                 if(bg.getID() == generation){
                     return bg;

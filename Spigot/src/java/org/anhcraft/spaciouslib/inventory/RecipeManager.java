@@ -11,11 +11,23 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class helps you to manage recipes
+ */
 public class RecipeManager {
+
+    /**
+     * Registers the given recipe
+     * @param recipe the Recipe object
+     */
     public static void register(Recipe recipe){
         Bukkit.getServer().addRecipe(recipe);
     }
 
+    /**
+     * Unregisters the given recipe
+     * @param recipe the Recipe object
+     */
     public static void unregister(Recipe recipe){
         try {
             Class craftingManagerClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".CraftingManager");
@@ -41,6 +53,11 @@ public class RecipeManager {
         }
     }
 
+    /**
+     * Checks is the given recipe registered
+     * @param recipe the Recipe object
+     * @return true if yes
+     */
     public static boolean isRegistered(Recipe recipe){
         try {
             Class<?> craftingManagerClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".CraftingManager");

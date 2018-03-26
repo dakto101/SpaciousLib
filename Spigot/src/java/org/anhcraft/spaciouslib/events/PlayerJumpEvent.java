@@ -22,6 +22,10 @@ public class PlayerJumpEvent extends Event {
         return this.p;
     }
 
+    /**
+     * Checks does that player jump on spot
+     * @return true if yes
+     */
     public boolean isOnSpot(){
         return this.b;
     }

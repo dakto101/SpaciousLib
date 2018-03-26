@@ -7,11 +7,13 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
- * A subcommand is one or many static arguments of a command (which created by CommandBuilder)<br>
- * A subcommand (static argument) can have unlimited dynamic arguments<br>
+ * A sub command is one or many static arguments of a command (which created by CommandBuilder)<br>
+ * A sub command (static argument) can have unlimited (dynamic) arguments<br>
  * With a dynamic argument, players can type anything they want but it needs to depend on the type of that argument<br>
+ * A argument can be optional or required.<br>
  * E.g: players can only type integer number if the type of that argument which they was typed in is INTEGER_NUMBER
  */
 public class SubCommandBuilder extends CommandString{
@@ -27,9 +29,9 @@ public class SubCommandBuilder extends CommandString{
 
     /**
      * Creates a new SubCommandBuilder instance
-     * @param name the name of this subcommand
-     * @param description the description of this subcommand
-     * @param rootRunnable a runnable which was triggered if a player run this subcommand
+     * @param name the name of this sub command
+     * @param description the description of this sub command
+     * @param rootRunnable a runnable which triggers if a player run this sub command
      * @throws Exception
      */
     public SubCommandBuilder(String name, String description, CommandRunnable rootRunnable) throws Exception {
@@ -59,25 +61,47 @@ public class SubCommandBuilder extends CommandString{
         setSuggestMessage("&6Maybe this is the command which you want: &f");
     }
 
+    /**
+     * Gets the name of this sub command
+     * @return the name
+     */
     public String getName(){
         return this.name;
     }
 
+    /**
+     * Gets the type of a given argument
+     * @param arg the argument
+     * @return the type of that argument
+     */
     public CommandArgument.Type getArgumentType(CommandArgument arg){
         return this.args.get(arg);
     }
 
-    public ArrayList<CommandArgument> getArguments(){
+    /**
+     * Get all arguments of this sub command
+     * @return list of arguments
+     */
+    public List<CommandArgument> getArguments(){
         return new ArrayList<>(this.args.keySet());
     }
 
+    /**
+     * Hides the type of arguments when you get the command string
+     * @return this object
+     */
     public SubCommandBuilder hideTypeCommandString(){
         this.hideTypeCommandString = true;
         return this;
     }
 
-    public ArrayList<CommandArgument> getArguments(boolean optional){
-        ArrayList<CommandArgument> x = new ArrayList<>();
+    /**
+     * Gets all arguments of this sub command
+     * @param optional true if you just want to get the optional command
+     * @return the list of arguments
+     */
+    public List<CommandArgument> getArguments(boolean optional){
+        List<CommandArgument> x = new ArrayList<>();
         for(CommandArgument c : getArguments()){
             if(c.isOptional() == optional){
                 x.add(c);
@@ -86,18 +110,23 @@ public class SubCommandBuilder extends CommandString{
         return x;
     }
 
+    /**
+     * Removes an argument out of this sub command
+     * @param arg argument object
+     * @return this object
+     */
     public SubCommandBuilder removeArgument(CommandArgument arg){
         this.args.remove(arg);
         return this;
     }
 
     /**
-     * Creates a new dynamic argument for this subcommand
-     * @param arg CommandArgument instance
+     * Creates a new dynamic argument for this sub command
+     * @param arg CommandArgument object
      * @param type type of this argument
-     * @return
+     * @return this object
      */
-    public SubCommandBuilder setArgument(CommandArgument arg, CommandArgument.Type type){
+    public SubCommandBuilder addArgument(CommandArgument arg, CommandArgument.Type type){
         this.args.put(arg, type);
         return this;
     }
@@ -105,27 +134,43 @@ public class SubCommandBuilder extends CommandString{
     /**
      * Creates a new dynamic argument for this subcommand
      * @param name the name of this argument
-     * @param argRunnable runnable for this argument, only triggers if a player runs a command which has this argument at the end
+     * @param argRunnable runnable for this argument, only triggers if a player runs the command which has this argument at the end
      * @param type the type of this argument
-     * @param optional
-     * @return
+     * @param optional true if you want the player can skip this argument
+     * @return this object
      * @throws Exception
      */
-    public SubCommandBuilder setArgument(String name, CommandRunnable argRunnable, CommandArgument.Type type, boolean optional) throws Exception {
-        setArgument(new CommandArgument(name, argRunnable, optional), type);
+    public SubCommandBuilder addArgument(String name, CommandRunnable argRunnable, CommandArgument.Type type, boolean optional) throws Exception {
+        addArgument(new CommandArgument(name, argRunnable, optional), type);
         return this;
     }
 
+    /**
+     * A message will sent to the command executor if there's an invalid argument.
+     * @param type the type of the argument
+     * @param message the message
+     * @return this object
+     */
     public SubCommandBuilder setArgErrorMessage(CommandArgument.Type type, String message){
         this.argErrorMessages.put(type, Strings.color(message));
         return this;
     }
 
+    /**
+     * A message will sent to the command executor if that command doesn't have enough static arguments.
+     * @param message the message
+     * @return this object
+     */
     public SubCommandBuilder setDoesNotEnoughtArgsErrorMessage(String message){
         this.doesNotEnoughtArgsErrorMessage = Strings.color(message);
         return this;
     }
 
+    /**
+     * A message will sent to the command executor if that command can't be found.
+     * @param message the message
+     * @return this object
+     */
     public SubCommandBuilder setCanNotFindCmdMessage(String message){
         this.canNotFindCmdErrorMessage = Strings.color(message);
         return this;
@@ -164,9 +209,9 @@ public class SubCommandBuilder extends CommandString{
     }
 
     /**
-     * Normalizes this subcommand<br>
-     * It'll sort optional arguments into the end of this subcommand. The order between optional arguments or non-optional arguments won't be change.
-     * @return
+     * Normalizes this sub command<br>
+     * It'll sort optional arguments into the end of this sub command. The order between optional arguments or non-optional arguments won't be change.
+     * @return this object
      */
     public SubCommandBuilder normalize(){
         LinkedHashMap<CommandArgument, CommandArgument.Type> require = new LinkedHashMap<>();
@@ -190,8 +235,8 @@ public class SubCommandBuilder extends CommandString{
     }
 
     /**
-     * Checks is this subcommand valid
-     * @return
+     * Checks is this sub command valid
+     * @return this object
      */
     public boolean isValid(){
         int a = 0;
@@ -297,6 +342,11 @@ public class SubCommandBuilder extends CommandString{
         }
     }
 
+    /**
+     * Sets the suggestion message.<br>
+     * The command string (with colors) will put at the end of this message.
+     * @param suggestMessage the suggestion message
+     */
     public void setSuggestMessage(String suggestMessage) {
         this.suggestMessage = suggestMessage;
     }

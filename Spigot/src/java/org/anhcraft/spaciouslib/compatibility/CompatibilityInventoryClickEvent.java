@@ -10,7 +10,8 @@ import java.lang.reflect.Method;
 
 public class CompatibilityInventoryClickEvent {
     /**
-     * Gets the inventory of the InventoryClickEvent event which is compatible with versions
+     * Gets the inventory of the InventoryClickEvent event.<br>
+     * Because after 1.8 versions, the method "getClickedInventory" was renamed to "getInventory"
      * @param event an InventoryClickEvent event
      * @return the inventory of that event
      */

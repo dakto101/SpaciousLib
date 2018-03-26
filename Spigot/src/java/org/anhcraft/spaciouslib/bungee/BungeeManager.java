@@ -17,10 +17,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * A class helps you to manage Bungeecord message channel
+ */
 public class BungeeManager implements PluginMessageListener {
     private static final String CHANNEL = "BungeeCord";
     private static List<BungeeResponse> queue;
 
+    /**
+     * Initializes BungeeManager
+     */
     public BungeeManager(){
         queue = new ArrayList<>();
 
@@ -28,6 +34,12 @@ public class BungeeManager implements PluginMessageListener {
         Bukkit.getServer().getMessenger().registerIncomingPluginChannel(SpaciousLib.instance, CHANNEL, this);
     }
 
+    /**
+     * Sends a connect request for the given player<br>
+     * If success, that player will be connected to the given server automatically
+     * @param player the player
+     * @param server the server which you want the player connects to
+     */
     public static void connect(Player player, String server){
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Connect");
@@ -35,14 +47,28 @@ public class BungeeManager implements PluginMessageListener {
         player.sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
     }
 
-    public static void connect(Player sender, String player, String server){
+    /**
+     * Sends a connect request for the given player who is in another server
+     * @param player the player
+     * @param server the server which you want the player connects to
+     */
+    public static void connect(String player, String server){
+        if(Bukkit.getServer().getOnlinePlayers().size() == 0){
+            return;
+        }
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("ConnectOther");
         out.writeUTF(player);
         out.writeUTF(server);
-        sender.sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
+        Bukkit.getServer().getOnlinePlayers().iterator().next()
+                .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
     }
 
+    /**
+     * Gets the IP of the given player
+     * @param player the player
+     * @param response BungeePlayerIPResponse object
+     */
     public static void getIP(Player player, BungeePlayerIPResponse response){
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("IP");
@@ -50,6 +76,11 @@ public class BungeeManager implements PluginMessageListener {
         queue.add(response);
     }
 
+    /**
+     * Gets the player amount of another server
+     * @param server the server
+     * @param response BungeePlayerAmountResponse object
+     */
     public static void getPlayerAmount(String server, BungeePlayerAmountResponse response){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -62,6 +93,10 @@ public class BungeeManager implements PluginMessageListener {
         queue.add(response);
     }
 
+    /**
+     * Gets the player amount of all servers
+     * @param response BungeePlayerAmountResponse object
+     */
     public static void getPlayerAmount(BungeePlayerAmountResponse response){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -74,6 +109,11 @@ public class BungeeManager implements PluginMessageListener {
         queue.add(response);
     }
 
+    /**
+     * Gets the list of players of another server
+     * @param server the server
+     * @param response BungeePlayerListResponse object
+     */
     public static void getPlayerList(String server, BungeePlayerListResponse response){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -86,6 +126,11 @@ public class BungeeManager implements PluginMessageListener {
         queue.add(response);
     }
 
+
+    /**
+     * Gets the list of players of all servers
+     * @param response BungeePlayerListResponse object
+     */
     public static void getPlayerList(BungeePlayerListResponse response){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -98,6 +143,10 @@ public class BungeeManager implements PluginMessageListener {
         queue.add(response);
     }
 
+    /**
+     * Gets all servers in the network
+     * @param response BungeeServerListResponse object
+     */
     public static void getServerList(BungeeServerListResponse response){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -109,6 +158,11 @@ public class BungeeManager implements PluginMessageListener {
         queue.add(response);
     }
 
+    /**
+     * Sends a message to a specific player who is in another server
+     * @param player the name of that player
+     * @param message the message
+     */
     public static void sendMessage(String player, String message){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -121,6 +175,10 @@ public class BungeeManager implements PluginMessageListener {
                 .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
     }
 
+    /**
+     * Gets the name of current server
+     * @param response BungeeServerNameResponse object
+     */
     public static void getServerName(BungeeServerNameResponse response){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -132,6 +190,11 @@ public class BungeeManager implements PluginMessageListener {
         queue.add(response);
     }
 
+    /**
+     * Gets the UUID of a player
+     * @param player the player
+     * @param response BungeePlayerUUIDResponse object
+     */
     public static void getUUID(Player player, BungeePlayerUUIDResponse response){
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("UUID");
@@ -139,14 +202,27 @@ public class BungeeManager implements PluginMessageListener {
         queue.add(response);
     }
 
-    public static void getUUIDOther(Player sender, String player, BungeeOtherPlayerUUIDResponse response){
+    /**
+     * Gets the UUID of a player who is in another server
+     * @param player the player
+     * @param response BungeeOtherPlayerUUIDResponse object
+     */
+    public static void getUUIDOther(String player, BungeeOtherPlayerUUIDResponse response){
+        if(Bukkit.getServer().getOnlinePlayers().size() == 0){
+            return;
+        }
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("UUIDOther");
         out.writeUTF(player);
-        sender.sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
+        Bukkit.getServer().getOnlinePlayers().iterator().next().sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
         queue.add(response);
     }
 
+    /**
+     * Gets the IP of the given server
+     * @param server the server
+     * @param response BungeeServerIPResponse object
+     */
     public static void getServerIP(String server, BungeeServerIPResponse response){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -159,6 +235,11 @@ public class BungeeManager implements PluginMessageListener {
         queue.add(response);
     }
 
+    /**
+     * Sends a kick request
+     * @param player the player who you want to kick
+     * @param reason the reason
+     */
     public static void kickPlayer(String player, String reason){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -171,6 +252,13 @@ public class BungeeManager implements PluginMessageListener {
                 .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
     }
 
+    /**
+     * Sends an array of bytes (binary data) to another server.<br>
+     * These data can be received by BungeeForwardEvent event if this library has already installed on that server
+     * @param server the server which youw ant to send to
+     * @param channel the channel
+     * @param bytedata the array of bytes
+     */
     public static void forwardData(String server, String channel, byte[] bytedata){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -185,6 +273,12 @@ public class BungeeManager implements PluginMessageListener {
                 .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
     }
 
+    /**
+     * Sends an array of bytes (binary data) to all servers.<br>
+     * These data can be received by BungeeForwardEvent event if this library has already installed on those server
+     * @param channel the channel
+     * @param bytedata the array of bytes
+     */
     public static void forwardData(String channel, byte[] bytedata){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;

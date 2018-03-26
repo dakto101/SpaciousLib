@@ -2,6 +2,9 @@ package org.anhcraft.spaciouslib.utils;
 
 import java.util.regex.Pattern;
 
+/**
+ * A utility class which has useful RegEx checkers
+ */
 public enum RegEx {
     JSON("^(\\{)(|.)(\\})$"),
     URL("(https?|ftp):(/{1,})((?!-)([-a-zA-Z0-9]{1,})(?<!-))\\.((?!-)([-a-zA-Z0-9]{1,})).*"),
@@ -19,6 +22,11 @@ public enum RegEx {
         return this.regex;
     }
 
+    /**
+     * Checks does the given string match the RegEx
+     * @param str the string
+     * @return true if matches
+     */
     public boolean matches(String str){
         return Pattern.compile(this.regex).matcher(str).matches();
     }

@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * A class helps you to manage current socket client.
+ */
 public class ClientSocketManager extends SocketHandler {
     private Socket server;
     private ClientSocketRequestHandler requestHandler;
@@ -24,12 +27,22 @@ public class ClientSocketManager extends SocketHandler {
         this.isStopped = false;
     }
 
+    /**
+     * Sends a new data to the server.
+     * @param data the data in string
+     * @return this object
+     * @throws IOException
+     */
     public ClientSocketManager send(String data) throws IOException {
         out.write(data + "\n");
         out.flush();
         return this;
     }
 
+    /**
+     * Closes current thread and socket connection.
+     * @throws IOException
+     */
     public void close() throws IOException {
         this.isStopped = true;
         this.interrupt();
@@ -45,7 +58,7 @@ public class ClientSocketManager extends SocketHandler {
             if(this.isStopped || this.server.isClosed()){
                 break;
             }
-            requestHandler.request(this, scan.nextLine());
+            requestHandler.response(this, scan.nextLine());
         }
     }
 }

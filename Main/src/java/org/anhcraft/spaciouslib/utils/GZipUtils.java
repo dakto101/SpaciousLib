@@ -9,6 +9,10 @@ import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * A utility class about compressing and decompressing data with GZIP format<br>
+ * Source: <a href="https://stackoverflow.com/a/34305182">https://stackoverflow.com/a/34305182</a>
+ */
 public class GZipUtils {
     public static byte[] compress(byte[] b) throws IOException {
         ByteArrayOutputStream obj = new ByteArrayOutputStream();

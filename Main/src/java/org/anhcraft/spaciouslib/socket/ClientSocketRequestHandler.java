@@ -1,5 +1,13 @@
 package org.anhcraft.spaciouslib.socket;
 
+/**
+ * Represents a socket response implementation.
+ */
 public interface ClientSocketRequestHandler {
-    void request(ClientSocketManager manager, String data);
+    /**
+     * This method will be called if there is a new response from the server.
+     * @param manager ClientSocketManager object
+     * @param data the data which was sent by that server
+     */
+    void response(ClientSocketManager manager, String data);
 }

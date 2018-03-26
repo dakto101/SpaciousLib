@@ -11,10 +11,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+/**
+ * A class helps you to manage plugin command
+ */
 public class CommandManager {
     /**
-     * Registers a command from a Bukkit plugin
-     * @param plugin the plugin which has that command
+     * Registers a command of a Bukkit plugin
+     * @param plugin the plugin which owned that command
      * @param command the command
      */
     public static void register(JavaPlugin plugin, PluginCommand command){
@@ -41,6 +44,11 @@ public class CommandManager {
         }
     }
 
+    /**
+     * Unregisters a specific plugin command
+     * @param plugin the plugin which owned that command
+     * @param command the command
+     */
     public static void unregister(JavaPlugin plugin, PluginCommand command){
         try {
             Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");

@@ -6,9 +6,17 @@ import org.bukkit.entity.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class helps you to manage regions
+ */
 public class RegionManager {
     private CuboidRegion cr;
 
+    /**
+     * Creates a new RegionManager instance
+     * @param cr CuboidRegion object
+     * @throws Exception
+     */
     public RegionManager(CuboidRegion cr) throws Exception {
         if(cr.getPosition1().getWorld() != cr.getPosition2().getWorld()){
             throw new Exception("Regions must be in a same world");
@@ -16,6 +24,10 @@ public class RegionManager {
         this.cr = cr;
     }
 
+    /**
+     * Gets the size of this region
+     * @return the size
+     */
     public double getSize(){
         if (cr.getPosition1() == null && cr.getPosition2() == null) {
             return 0;
@@ -53,6 +65,10 @@ public class RegionManager {
         return x * y * z;
     }
 
+    /**
+     * Gets all locations in this region
+     * @return list of locations
+     */
     public List<Location> getLocations(){
         List<Location> loc = new ArrayList<>();
         double x1 = cr.getPosition1().getX();
@@ -121,6 +137,10 @@ public class RegionManager {
         return loc;
     }
 
+    /**
+     * Gets all entities in this region
+     * @return list of entities
+     */
     public List<Entity> getEntities(){
         List<Entity> e = new ArrayList<>();
         for(Location loc : getLocations()){

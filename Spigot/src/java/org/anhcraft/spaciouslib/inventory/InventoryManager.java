@@ -12,13 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * A class helps you to manage inventories
+ */
 public class InventoryManager extends InteractItemListener {
     private Inventory inv;
 
     /**
-     * Creates a new inventory
+     * Creates a new InventoryManager instance
      *
-     * @param size the size of inventory
+     * @param size the size of the inventory
      * @param name the inventory name
      *
      * */
@@ -27,9 +30,9 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Creates a new inventory
+     * Creates a new InventoryManager instance
      *
-     * @param inv Bukkit inventory
+     * @param inv a Bukkit inventory
      *
      */
     public InventoryManager(Inventory inv){
@@ -37,10 +40,11 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Stores an item in that inventory
-     * @param column numerical order of column
-     * @param row    numerical order of row
-     * @param item   the item
+     * Stores the given item in this inventory
+     * @param column numerical order of column of the item
+     * @param row numerical order of row of the item
+     * @param item the item
+     * @return this object
      */
     public InventoryManager set(int column, int row, ItemStack item){
         this.inv.setItem(column*row, item);
@@ -48,9 +52,10 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Stores an item in that inventory
-     * @param index numerical order
-     * @param item   the item
+     * Stores the given item in this inventory
+     * @param index numerical order of the item
+     * @param item the item
+     * @return this object
      */
     public InventoryManager set(int index, ItemStack item){
         this.inv.setItem(index, item);
@@ -58,11 +63,12 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Stores an clickable item in that inventory
-     * @param column numerical order of column
-     * @param row    numerical order of row
-     * @param item   the item
-     * @param run    interact event
+     * Stores the given clickable item in that inventory
+     * @param column numerical order of column of the item
+     * @param row numerical order of row of the item
+     * @param item the item
+     * @param run InteractItemRunnable object
+     * @return this object
      */
     public InventoryManager set(int column, int row, ItemStack item, InteractItemRunnable run){
         this.inv.setItem(column*row, item);
@@ -71,10 +77,11 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Stores an clickable item in that inventory
-     * @param index numerical order
-     * @param item   the item
-     * @param run    interact event
+     * Stores the given clickable item in that inventory
+     * @param index numerical order of the item
+     * @param item the item
+     * @param run InteractItemRunnable object
+     * @return this object
      */
     public InventoryManager set(int index, ItemStack item, InteractItemRunnable run){
         this.inv.setItem(index, item);
@@ -83,9 +90,10 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Removes an item out of that inventory
+     * Removes an item out of this inventory
      *
-     * @param item this item
+     * @param item the item
+     * @return this object
      */
     public InventoryManager remove(ItemStack item){
         this.inv.remove(item);
@@ -93,23 +101,23 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Gets an item in that inventory
+     * Gets an item in this inventory
      *
-     * @param column numerical order of column
-     * @param row    numerical order of row
+     * @param column numerical order of column of the item
+     * @param row numerical order of row of the item
      *
-     * @return the item stack
+     * @return the item
      */
     public ItemStack get(int column, int row){
         return this.inv.getItem(column*row);
     }
 
     /**
-     * Gets an item in that inventory
+     * Gets an item in this inventory
      *
-     * @param index index
+     * @param index the index of the item
      *
-     * @return the item stack
+     * @return the item
      */
     public ItemStack get(int index){
         return this.inv.getItem(index);
@@ -117,6 +125,7 @@ public class InventoryManager extends InteractItemListener {
 
     /**
      * Clears out the whole inventory
+     * @return this object
      */
     public InventoryManager clear(){
         this.inv.clear();
@@ -124,10 +133,11 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Opens an inventory for a player
+     * Opens this inventory for the given player
      *
      * @deprecated
      * @param name the player name
+     * @return this object
      */
     @Deprecated
     public InventoryManager open(String name){
@@ -136,9 +146,10 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Opens an inventory for a player
+     * Opens this inventory for the given player
      *
-     * @param uuid the uuid
+     * @param uuid the UUID of the player
+     * @return this object
      */
     public InventoryManager open(UUID uuid){
         Bukkit.getServer().getPlayer(uuid).openInventory(this.inv);
@@ -146,9 +157,10 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Opens an inventory for a player
+     * Opens this inventory for the given player
      *
-     * @param player the player
+     * @param player Player object
+     * @return this object
      */
     public InventoryManager open(Player player){
         player.openInventory(this.inv);
@@ -156,18 +168,18 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
-     * Gets inventory
+     * Gets this inventory as a Bukkit Inventory
      *
-     * @return inventory
+     * @return a Bukkit Inventory
      */
     public Inventory getInventory(){
         return inv;
     }
 
     /**
-     * Gets all item which isn't null in that inventory
+     * Gets all items which aren't null in this inventory
      *
-     * @return all items
+     * @return list of items
      */
     public List<ItemStack> getAllItems(){
         List<ItemStack> items = new ArrayList<>();

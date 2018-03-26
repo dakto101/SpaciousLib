@@ -4,15 +4,28 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * A class helps you to manage current connection of a server socket and a socket client.
+ */
 public class ServerSocketClientHandler extends SocketHandler {
     private Socket client;
     private ServerSocketManager manager;
     private ServerSocketRequestHandler requestHandler;
 
+    /**
+     * Gets the manager of this server socket.
+     * @return ServerSocketManager object
+     */
     public ServerSocketManager getManager(){
         return this.manager;
     }
 
+    /**
+     * Sends a new data to the client.
+     * @param data the data in string
+     * @return this object
+     * @throws IOException
+     */
     public ServerSocketClientHandler send(String data) throws IOException {
         out.write(data + "\n");
         out.flush();
@@ -43,6 +56,10 @@ public class ServerSocketClientHandler extends SocketHandler {
         }
     }
 
+    /**
+     * loses current thread and socket connection.
+     * @throws IOException
+     */
     public void close() throws IOException {
         this.isStopped = true;
         this.interrupt();

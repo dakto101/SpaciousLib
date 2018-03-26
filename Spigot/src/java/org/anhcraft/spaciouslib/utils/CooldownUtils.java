@@ -5,11 +5,18 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedHashMap;
 
+/**
+ * A class helps you to manage cooldown times
+ */
 public class CooldownUtils {
     private static LinkedHashMap<Player, LinkedHashMap<String, Long>> data = new LinkedHashMap<>();
 
     private Plugin plugin;
 
+    /**
+     * Creates CooldownUtils instance
+     * @param plugin Bukkit plugin
+     */
     public CooldownUtils(Plugin plugin){
         this.plugin = plugin;
     }

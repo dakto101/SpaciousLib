@@ -4,6 +4,11 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+/**
+ * A TimedMap is a map using LinkedHashMap to store data, the key and its value will be removed after the given duration time.
+ * @param <K> key
+ * @param <V> value
+ */
 public class TimedMap<K, V> {
     private LinkedHashMap<K, V> a = new LinkedHashMap<>();
     private LinkedHashMap<K, Long> b = new LinkedHashMap<>();
@@ -16,6 +21,12 @@ public class TimedMap<K, V> {
         }
     }
 
+    /**
+     * Checks does the given key expire<br>
+     * By default, all keys and values which were expired will be removed automatically, so you don't need to use this method.
+     * @param key the key
+     * @return true if it expired
+     */
     public boolean isExpired(K key){
         return System.currentTimeMillis() > b.get(key);
     }

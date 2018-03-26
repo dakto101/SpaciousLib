@@ -5,12 +5,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Represents a database implementation.
+ */
 public abstract class Database {
     protected Connection conn;
     protected Statement state;
 
     /**
-     * Disconnects from current connection
+     * Disconnects from current database
      * @throws SQLException
      */
     public void disconnect() throws SQLException {
@@ -39,7 +42,7 @@ public abstract class Database {
     /**
      * Executes the given SQL statement (for statement that contains result such as SELECT)
      * @param sql an SQL statement
-     * @return result
+     * @return the result after executes that statement
      * @throws SQLException
      */
     public ResultSet query(String sql) throws SQLException {
@@ -50,16 +53,16 @@ public abstract class Database {
     }
 
     /**
-     * Gets the connection
-     * @return the connection
+     * Gets the database connection
+     * @return connection object
      */
     public Connection getConnection(){
         return conn;
     }
 
     /**
-     * Gets the statement of current connection
-     * @return the statement
+     * Gets the statement of current database connection
+     * @return statement object
      */
     public Statement getStatement(){
         return state;

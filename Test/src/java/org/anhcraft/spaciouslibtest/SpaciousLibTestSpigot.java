@@ -1,5 +1,7 @@
 package org.anhcraft.spaciouslibtest;
 
+import org.anhcraft.spaciouslib.attribute.Attribute;
+import org.anhcraft.spaciouslib.attribute.AttributeModifier;
 import org.anhcraft.spaciouslib.bungee.BungeeManager;
 import org.anhcraft.spaciouslib.bungee.BungeePlayerIPResponse;
 import org.anhcraft.spaciouslib.command.CommandArgument;
@@ -8,7 +10,6 @@ import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SubCommandBuilder;
 import org.anhcraft.spaciouslib.events.BungeeForwardEvent;
 import org.anhcraft.spaciouslib.events.PacketHandleEvent;
-import org.anhcraft.spaciouslib.inventory.AttributeType;
 import org.anhcraft.spaciouslib.inventory.BookManager;
 import org.anhcraft.spaciouslib.inventory.EquipSlot;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
@@ -44,7 +45,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
     public void onEnable() {
         new DirectoryManager("plugins/SpaciousLibTest/").mkdirs();
         try {
-            new FileManager("plugins/SpaciousLibTest/test.txt").createAndWrite(IOUtils.toByteArray(getClass().getResourceAsStream("/test.txt")));
+            new FileManager("plugins/SpaciousLibTest/test.txt").initFile(IOUtils.toByteArray(getClass().getResourceAsStream("/test.txt")));
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -59,12 +60,12 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                         }
                     })
 
-                    .addSubCommandBuilder(new SubCommandBuilder("particle spawn", "Spawn a specific type of particle at your location", new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("particle spawn", "Spawn a specific type of particle at your location", new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                             commandSender.sendMessage(sCommand.getCommandAsString(subCommand, true));
                         }
-                    }).setArgument(
+                    }).addArgument(
                             new CommandArgument("type", new CommandRunnable() {
                                 @Override
                                 public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
@@ -87,7 +88,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                                 }
                             }, false),
                             CommandArgument.Type.CUSTOM
-                    ).setArgument(
+                    ).addArgument(
                             new CommandArgument("count", new CommandRunnable() {
                                 @Override
                                 public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
@@ -112,7 +113,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                             CommandArgument.Type.INTEGER_NUMBER
                     ).hideTypeCommandString())
 
-                    .addSubCommandBuilder(new SubCommandBuilder("particle list", "show all types of particle", new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("particle list", "show all types of particle", new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                             StringBuilder pls = new StringBuilder();
@@ -123,20 +124,20 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                         }
                     }))
 
-                    .addSubCommandBuilder(
+                    .addSubCommand(
                             new SubCommandBuilder("playerlist set", null, new CommandRunnable() {
                                 @Override
                                 public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                                     commandSender.sendMessage(sCommand.getCommandAsString(subCommand, true));
                                 }
                             })
-                                    .setArgument("header", new CommandRunnable() {
+                                    .addArgument("header", new CommandRunnable() {
                                         @Override
                                         public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                                             commandSender.sendMessage(sCommand.getCommandAsString(subCommand, true));
                                         }
                                     }, CommandArgument.Type.CUSTOM, false)
-                                    .setArgument("footer", new CommandRunnable() {
+                                    .addArgument("footer", new CommandRunnable() {
                                         @Override
                                         public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                                             PlayerList.create(strings[0], strings[1]).sendAll();
@@ -144,14 +145,14 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                                     }, CommandArgument.Type.CUSTOM, false)
                     )
 
-                    .addSubCommandBuilder(new SubCommandBuilder("playerlist remove", null, new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("playerlist remove", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
-                            PlayerList.remove();
+                            PlayerList.remove().sendAll();
                         }
                     }))
 
-                    .addSubCommandBuilder(new SubCommandBuilder("camera", "View as a random nearby entity", new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("camera", "View as a random nearby entity", new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] strings, String s) {
                             if(sender instanceof Player) {
@@ -162,7 +163,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                     }))
 
 
-                    .addSubCommandBuilder(new SubCommandBuilder("camera reset", "Reset your view to normal", new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("camera reset", "Reset your view to normal", new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] strings, String s) {
                             if(sender instanceof Player) {
@@ -173,12 +174,12 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                         }
                     }))
 
-                    .addSubCommandBuilder(new SubCommandBuilder("bungee tp", "Teleport you or a specific player to a server in Bungee network", new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("bungee tp", "Teleport you or a specific player to a server in Bungee network", new CommandRunnable() {
                                 @Override
                                 public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                                     sender.sendMessage(cmd.getCommandAsString(subcmd, true));
                                 }
-                            }).setArgument("server", new CommandRunnable() {
+                            }).addArgument("server", new CommandRunnable() {
                                 @Override
                                 public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                                     if(sender instanceof Player) {
@@ -186,17 +187,17 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                                     }
                                 }
                             }, CommandArgument.Type.CUSTOM, false)
-                                    .setArgument("player", new CommandRunnable() {
+                                    .addArgument("player", new CommandRunnable() {
                                         @Override
                                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                                             if(sender instanceof Player) {
-                                                BungeeManager.connect((Player) sender, value, args[0]);
+                                                BungeeManager.connect(value, args[0]);
                                             }
                                         }
                                     }, CommandArgument.Type.ONLINE_PLAYER, true)
                     )
 
-                    .addSubCommandBuilder(new SubCommandBuilder("bungee ip", "Get your real IP", new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("bungee ip", "Get your real IP", new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             if(sender instanceof Player) {
@@ -211,7 +212,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                     }))
                     .buildExecutor(this)
 
-                    .addSubCommandBuilder(new SubCommandBuilder("bungee data", null, new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("bungee data", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             sender.sendMessage("sent successfully!");
@@ -226,8 +227,8 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                         }
                     }))
                     .buildExecutor(this)
-                    .newAlias("sl").buildExecutor(this)
-                    .newAlias("spaciouslib").buildExecutor(this);
+                    .clone("sl").buildExecutor(this)
+                    .clone("spaciouslib").buildExecutor(this);
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -265,7 +266,14 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                                     .addPage("Second page")
                                     .addPage("Third page")
                                     .setUnbreakable(true)
-                                    .addAttribute(AttributeType.MOVEMENT_SPEED, 0.05, EquipSlot.MAINHAND)
+                                    .addAttributeModifier(
+                                            Attribute.Type.GENERIC_MOVEMENT_SPEED,
+                                            new AttributeModifier(
+                                                    "test",
+                                                    0.05,
+                                                    AttributeModifier.Operation.ADD
+                                            ),
+                                            EquipSlot.MAINHAND)
                                     .addLore("This is the rule book of this server!")
                                     .addEnchant(Enchantment.DAMAGE_ALL, 1)
                                     .addFlag(ItemFlag.HIDE_ENCHANTS)

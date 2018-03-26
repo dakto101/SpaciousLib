@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class SQLiteManager extends Database{
     /**
      * Creates a new SQLite connection
-     * @param db database file
+     * @param db the database file
      * @throws SQLException
      * @throws ClassNotFoundException
      */

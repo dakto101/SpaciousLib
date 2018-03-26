@@ -9,7 +9,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
- * A command builder helps you create a new command and register it in runtime
+ * A command builder helps you to create a new command and register it in runtime
  */
 public class CommandBuilder extends CommandString {
     private Command command;
@@ -18,10 +18,10 @@ public class CommandBuilder extends CommandString {
     private List<SubCommandBuilder> subcmds = new ArrayList<>();
 
     /**
-     * Create a new CommandBuilder instance
+     * Creates a new CommandBuilder instance
      * @param name the name of that command (e.g: test is the name of the command /test a b c)
-     * @param rootRunnable a runnable which was triggered if a player run that command with no arguments
-     * @param rootDescription the description for this command if a player run that command with no arguments
+     * @param rootRunnable a runnable which triggers if a player run that command with no arguments
+     * @param rootDescription the description for that command
      * @throws Exception
      */
     public CommandBuilder(String name, CommandRunnable rootRunnable, String rootDescription) throws Exception {
@@ -30,14 +30,14 @@ public class CommandBuilder extends CommandString {
             throw new Exception("Invalid command name!");
         }
         this.rootCmd = new SubCommandBuilder("", rootDescription, rootRunnable);
-        addSubCommandBuilder(this.rootCmd);
+        addSubCommand(this.rootCmd);
     }
 
     /**
-     * Creates a new CommandBuilder instance (which doesn't need a description for the command)<br>
-     * The description: &cShows all commands
+     * Creates a new CommandBuilder instance<br>
+     * The default description: &cShows all commands
      * @param name the name of this command
-     * @param rootRunnable a runnable which was triggered if a player run that command with no arguments
+     * @param rootRunnable a runnable which triggers if a player run that command with no arguments
      * @throws Exception
      */
     public CommandBuilder(String name, CommandRunnable rootRunnable) throws Exception {
@@ -46,14 +46,14 @@ public class CommandBuilder extends CommandString {
             throw new Exception("Invalid command name!");
         }
         this.rootCmd = new SubCommandBuilder("", "&cShows all commands", rootRunnable);
-        addSubCommandBuilder(this.rootCmd);
+        addSubCommand(this.rootCmd);
     }
 
     /**
      * Creates a new CommandBuilder instance<br>
-     * This subcommand must have a blank name
-     * @param name the name of this command
-     * @param rootCmd the subcommand instance
+     * The sub command must have <b>a blank name</b>
+     * @param name the name of the command
+     * @param rootCmd SubCommandBuilder object
      * @throws Exception
      */
     public CommandBuilder(String name, SubCommandBuilder rootCmd) throws Exception {
@@ -67,15 +67,28 @@ public class CommandBuilder extends CommandString {
         }
     }
 
-    public CommandBuilder addSubCommandBuilder(SubCommandBuilder subCommand){
+    /**
+     * Adds a sub command
+     * @param subCommand SubCommandBuilder object
+     * @return this object
+     */
+    public CommandBuilder addSubCommand(SubCommandBuilder subCommand){
         this.subcmds.add(subCommand);
         return this;
     }
 
-    public List<SubCommandBuilder> getSubCommandBuilders(){
+    /**
+     * Gets all sub commands
+     * @return list of sub commands
+     */
+    public List<SubCommandBuilder> getSubCommands(){
         return this.subcmds;
     }
 
+    /**
+     * Get the Bukkit command
+     * @return Bukkit command
+     */
     public Command getCommand(){
         return this.command;
     }
@@ -87,14 +100,14 @@ public class CommandBuilder extends CommandString {
      */
     public List<String> getCommandsAsString(boolean color){
         List<String> a = new ArrayList<>();
-        for(SubCommandBuilder sc : getSubCommandBuilders()){
+        for(SubCommandBuilder sc : getSubCommands()){
             a.add(Strings.color((color ? gcs(Type.BEGIN_COMMAND) : "") + this.name + (0 < sc.getName().length() ? " " : "") + sc.getCommandString(color)));
         }
         return a;
     }
 
     /**
-     * Gets the string format of a specific subcommand
+     * Gets the string format of a specific sub command
      * @param color true if you want to "color" that string
      * @return the command in string format
      */
@@ -105,8 +118,8 @@ public class CommandBuilder extends CommandString {
     /**
      * Builds a new executor for this command<br>
      * Also registers this command with "CommandManager" if the command hasn't registered yet<br>
-     * @param plugin
-     * @return
+     * @param plugin the plugin
+     * @return this object
      * @throws Exception
      */
     public CommandBuilder buildExecutor(JavaPlugin plugin) throws Exception {
@@ -160,7 +173,7 @@ public class CommandBuilder extends CommandString {
             cmdb.append(" ").append(t);
         }
         String cmd = cmdb.toString().replaceFirst(" ", "").trim().toLowerCase();
-        for(SubCommandBuilder sc : getSubCommandBuilders()){
+        for(SubCommandBuilder sc : getSubCommands()){
             if(sc.getName().startsWith(cmd)) {
                 String[] m = sc.getName().split(" ");
                 String[] j = cmd.split(" ");
@@ -217,7 +230,7 @@ public class CommandBuilder extends CommandString {
         } else {
             if(!xt) {
                 s.sendMessage(Strings.color(rootCmd.canNotFindCmdErrorMessage));
-                for(SubCommandBuilder sc : getSubCommandBuilders()){
+                for(SubCommandBuilder sc : getSubCommands()){
                     if(sc.getName().startsWith(cmd)){
                         s.sendMessage(Strings.color(rootCmd.suggestMessage));
                         s.sendMessage(getCommandAsString(sc, true));
@@ -244,12 +257,23 @@ public class CommandBuilder extends CommandString {
         return true;
     }
 
-    public CommandBuilder setSubCommandBuilders(List<SubCommandBuilder> subCommands) {
+    /**
+     * Sets new sub commands
+     * @param subCommands lsit of sub commands
+     * @return this object
+     */
+    public CommandBuilder setSubCommands(List<SubCommandBuilder> subCommands) {
         this.subcmds = subCommands;
         return this;
     }
 
-    public CommandBuilder newAlias(String name) throws Exception {
-        return new CommandBuilder(name, rootCmd).setSubCommandBuilders(subcmds);
+    /**
+     * Clones this object
+     * @param name new command name
+     * @return new object
+     * @throws Exception
+     */
+    public CommandBuilder clone(String name) throws Exception {
+        return new CommandBuilder(name, rootCmd).setSubCommands(subcmds);
     }
 }
