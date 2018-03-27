@@ -1,6 +1,6 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.GVersion;
+import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.bukkit.block.Block;
 
@@ -20,7 +20,7 @@ public class BlockBreakAnimation {
      * @return PacketSender object
      */
     public static PacketSender create(int id, Block block, int stage) {
-        GVersion v = GameVersion.getVersion();
+        GameVersion v = GameVersion.getVersion();
         try {
             Class<?> blockPositionClass = Class.forName("net.minecraft.server." + v.toString() + ".BlockPosition");
             Class<?> packetPlayOutBlockBreakAnimationClass = Class.forName("net.minecraft.server." + v.toString() + ".PacketPlayOutBlockBreakAnimation");

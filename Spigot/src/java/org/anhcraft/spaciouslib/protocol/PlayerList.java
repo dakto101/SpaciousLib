@@ -1,9 +1,8 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.GVersion;
+import org.anhcraft.spaciouslib.utils.Chat;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.JSONUtils;
-import org.anhcraft.spaciouslib.utils.Strings;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -23,18 +22,18 @@ public class PlayerList {
      */
     public static PacketSender create(String header, String footer){
         if(JSONUtils.isValid(header)){
-            header = Strings.color(header);
+            header = Chat.color(header);
         } else {
-            header = "{\"text\": \"" + Strings.color(header) + "\"}";
+            header = "{\"text\": \"" + Chat.color(header) + "\"}";
         }
         if(JSONUtils.isValid(footer)){
-            footer = Strings.color(footer);
+            footer = Chat.color(footer);
         } else {
-            footer = "{\"text\": \"" + Strings.color(footer) + "\"}";
+            footer = "{\"text\": \"" + Chat.color(footer) + "\"}";
         }
-        GVersion v = GameVersion.getVersion();
+        GameVersion v = GameVersion.getVersion();
         try {
-            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GVersion.v1_8_R1) ? "" : "IChatBaseComponent$") + "ChatSerializer");
+            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GameVersion.v1_8_R1) ? "" : "IChatBaseComponent$") + "ChatSerializer");
             Class<?> packetPlayOutPlayerListHeaderFooterClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutPlayerListHeaderFooter");
             Method chatSerializer = chatSerializerClass.getDeclaredMethod("a", String.class);
             Object chatBaseComponentHeader = chatSerializer.invoke(null, header);

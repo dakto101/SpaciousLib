@@ -20,7 +20,7 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BowArrowHitEventListener(), this);
         getServer().getPluginManager().registerEvents(new AnvilFormListener(), this);
         getServer().getPluginManager().registerEvents(new PacketListener(), this);
-        getServer().getPluginManager().registerEvents(new FixedPlaceholderListener(), this);
+        getServer().getPluginManager().registerEvents(new PlaceholderListener(), this);
 
         new Updater1520156620("1520156620", this);
         new ArmorEquipEventTask().runTaskTimerAsynchronously(this, 0, 20);

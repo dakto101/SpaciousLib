@@ -1,6 +1,6 @@
 package org.anhcraft.spaciouslib.command;
 
-import org.anhcraft.spaciouslib.utils.Strings;
+import org.anhcraft.spaciouslib.utils.Chat;
 import org.bukkit.command.*;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -101,7 +101,7 @@ public class CommandBuilder extends CommandString {
     public List<String> getCommandsAsString(boolean color){
         List<String> a = new ArrayList<>();
         for(SubCommandBuilder sc : getSubCommands()){
-            a.add(Strings.color((color ? gcs(Type.BEGIN_COMMAND) : "") + this.name + (0 < sc.getName().length() ? " " : "") + sc.getCommandString(color)));
+            a.add(Chat.color((color ? gcs(Type.BEGIN_COMMAND) : "") + this.name + (0 < sc.getName().length() ? " " : "") + sc.getCommandString(color)));
         }
         return a;
     }
@@ -112,7 +112,7 @@ public class CommandBuilder extends CommandString {
      * @return the command in string format
      */
     public String getCommandAsString(SubCommandBuilder subCommand, boolean color){
-        return Strings.color((color ? gcs(Type.BEGIN_COMMAND) : "") + this.name + " " + subCommand.getCommandString(color));
+        return Chat.color((color ? gcs(Type.BEGIN_COMMAND) : "") + this.name + " " + subCommand.getCommandString(color));
     }
 
     /**
@@ -229,10 +229,10 @@ public class CommandBuilder extends CommandString {
             }
         } else {
             if(!xt) {
-                s.sendMessage(Strings.color(rootCmd.canNotFindCmdErrorMessage));
+                s.sendMessage(Chat.color(rootCmd.canNotFindCmdErrorMessage));
                 for(SubCommandBuilder sc : getSubCommands()){
                     if(sc.getName().startsWith(cmd)){
-                        s.sendMessage(Strings.color(rootCmd.suggestMessage));
+                        s.sendMessage(Chat.color(rootCmd.suggestMessage));
                         s.sendMessage(getCommandAsString(sc, true));
                         break;
                     }

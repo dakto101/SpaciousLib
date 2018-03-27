@@ -5,7 +5,7 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import org.anhcraft.spaciouslib.events.PacketHandleEvent;
-import org.anhcraft.spaciouslib.utils.GVersion;
+import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ public class PacketListener implements Listener {
     }
 
     public static Channel getChannel(Player player){
-        GVersion v = GameVersion.getVersion();
+        GameVersion v = GameVersion.getVersion();
         try {
             Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftPlayer");
             Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v.toString() + ".EntityPlayer");

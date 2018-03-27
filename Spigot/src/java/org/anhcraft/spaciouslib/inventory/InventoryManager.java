@@ -1,7 +1,7 @@
 package org.anhcraft.spaciouslib.inventory;
 
 import org.anhcraft.spaciouslib.listeners.InteractItemListener;
-import org.anhcraft.spaciouslib.utils.Strings;
+import org.anhcraft.spaciouslib.utils.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -26,7 +26,7 @@ public class InventoryManager extends InteractItemListener {
      *
      * */
     public InventoryManager(String name, int size){
-        inv = Bukkit.getServer().createInventory(null, size, Strings.color(name));
+        inv = Bukkit.getServer().createInventory(null, size, Chat.color(name));
     }
 
     /**

@@ -10,6 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocationUtils {
+
+    /**
+     * Serializes a location to string
+     * @param loc Location object
+     * @return the string
+     */
+    public static String loc2str(Location loc) {
+        return loc.getWorld().getName() + ":" + Double.toString(loc.getX()) + ":" +
+                Double.toString(loc.getY()) + ":" + Double.toString(loc.getZ()) +
+                ":" + Float.toString(loc.getPitch()) + ":" + Float.toString(loc.getYaw());
+    }
+
+    /**
+     * Deserializes a string to its location
+     * @param str the string
+     * @return the location
+     */
     public static Location str2loc(String str) {
         if(str.equalsIgnoreCase("null")){
             return Bukkit.getServer().getWorld("world").getSpawnLocation();
@@ -24,6 +41,14 @@ public class LocationUtils {
         return loc;
     }
 
+    /**
+     * Gets all nearby blocks
+     * @param loc the center location
+     * @param rx nearby distance in the x axis
+     * @param ry nearby distance in the y axis
+     * @param rz nearby distance in the z axis
+     * @return the list of all nearby blocks
+     */
     public static List<Block> getNearbyBlocks(Location loc, int rx, int ry, int rz){
         List<Block> list = new ArrayList<>();
         for (int x = -(rx); x <= rx; x++){
@@ -40,12 +65,11 @@ public class LocationUtils {
         return list;
     }
 
-    public static String loc2str(Location loc) {
-        return loc.getWorld().getName() + ":" + Double.toString(loc.getX()) + ":" +
-                Double.toString(loc.getY()) + ":" + Double.toString(loc.getZ()) +
-                ":" + Float.toString(loc.getPitch()) + ":" + Float.toString(loc.getYaw());
-    }
-
+    /**
+     * Check is the player under a block
+     * @param p the player
+     * @return true if yes
+     */
     public static boolean isUnderBlock(Player p) {
         Location l = p.getLocation();
         if(l.getY() > 256){

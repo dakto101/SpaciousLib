@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MaterialUtils {
+    /**
+     * Gets all material types for armor
+     * @return list of material types
+     */
     public static List<Material> getArmors(){
         List<Material> m = new ArrayList<>();
         m.add(Material.LEATHER_HELMET);

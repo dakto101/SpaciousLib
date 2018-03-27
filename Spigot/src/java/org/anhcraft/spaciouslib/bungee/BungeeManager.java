@@ -5,7 +5,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.events.BungeeForwardEvent;
-import org.anhcraft.spaciouslib.utils.Strings;
+import org.anhcraft.spaciouslib.utils.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -170,7 +170,7 @@ public class BungeeManager implements PluginMessageListener {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Message");
         out.writeUTF(player);
-        out.writeUTF(Strings.color(message));
+        out.writeUTF(Chat.color(message));
         Bukkit.getServer().getOnlinePlayers().iterator().next()
                 .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
     }
@@ -247,7 +247,7 @@ public class BungeeManager implements PluginMessageListener {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("KickPlayer");
         out.writeUTF(player);
-        out.writeUTF(Strings.color(reason));
+        out.writeUTF(Chat.color(reason));
         Bukkit.getServer().getOnlinePlayers().iterator().next()
                 .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
     }

@@ -1,6 +1,5 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.GVersion;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.bukkit.entity.Entity;
 
@@ -20,7 +19,7 @@ public class Animation {
      * @return PacketSender object
      */
     public static PacketSender create(Entity entity, Type type) {
-        GVersion v = GameVersion.getVersion();
+        GameVersion v = GameVersion.getVersion();
         try {
             Class<?> craftEntityClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftEntity");
             Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v.toString() + ".Entity");

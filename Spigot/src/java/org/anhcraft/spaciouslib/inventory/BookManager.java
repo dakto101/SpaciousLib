@@ -3,7 +3,7 @@ package org.anhcraft.spaciouslib.inventory;
 import org.anhcraft.spaciouslib.nbt.NBTCompound;
 import org.anhcraft.spaciouslib.nbt.NBTManager;
 import org.anhcraft.spaciouslib.utils.JSONUtils;
-import org.anhcraft.spaciouslib.utils.Strings;
+import org.anhcraft.spaciouslib.utils.Chat;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -65,7 +65,7 @@ public class BookManager extends ItemManager {
      * @return this object
      */
     public BookManager setAuthor(String author){
-        author = Strings.color(author);
+        author = Chat.color(author);
         this.item = NBTManager.fromItem(this.item).setString("author", author).toItem(this.item);
         return this;
     }
@@ -84,7 +84,7 @@ public class BookManager extends ItemManager {
      * @return this object
      */
     public BookManager setTitle(String title){
-        title = Strings.color(title);
+        title = Chat.color(title);
         this.item = NBTManager.fromItem(this.item).setString("title", title).toItem(this.item);
         return this;
     }
@@ -124,9 +124,9 @@ public class BookManager extends ItemManager {
         List<String> cont = new ArrayList<>();
         for(String content : contents){
             if(JSONUtils.isValid(content)){
-                cont.add(Strings.color(content));
+                cont.add(Chat.color(content));
             } else {
-                cont.add("{\"text\": \"" + Strings.color(content) + "\"}");
+                cont.add("{\"text\": \"" + Chat.color(content) + "\"}");
             }
         }
         NBTCompound nbt = NBTManager.fromItem(this.item);
@@ -175,9 +175,9 @@ public class BookManager extends ItemManager {
      */
     public BookManager addPage(String content){
         if(JSONUtils.isValid(content)){
-            content = Strings.color(content);
+            content = Chat.color(content);
         } else {
-            content = "{\"text\": \"" + Strings.color(content) + "\"}";
+            content = "{\"text\": \"" + Chat.color(content) + "\"}";
         }
         NBTCompound nbt = NBTManager.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
@@ -198,9 +198,9 @@ public class BookManager extends ItemManager {
      */
     public BookManager setPage(int index, String content){
         if(JSONUtils.isValid(content)){
-            content = Strings.color(content);
+            content = Chat.color(content);
         } else {
-            content = "{\"text\": \"" + Strings.color(content) + "\"}";
+            content = "{\"text\": \"" + Chat.color(content) + "\"}";
         }
         NBTCompound nbt = NBTManager.fromItem(this.item);
         List<String> pages = nbt.getList("pages");

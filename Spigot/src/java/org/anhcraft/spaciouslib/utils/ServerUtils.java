@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServerUtils {
+    /**
+     * Gets all entities in the server
+     * @return list of entities
+     */
     public static List<Entity> getAllEntities(){
         List<Entity> e = new ArrayList<>();
         for(World w : Bukkit.getServer().getWorlds()){
@@ -16,6 +20,10 @@ public class ServerUtils {
         return e;
     }
 
+    /**
+     * Gets all entities by class in the server
+     * @return list of entities
+     */
     public static <E extends Entity> List<Entity> getAllEntitiesByClass(Class<E> c){
         List<Entity> e = new ArrayList<>();
         for(World w : Bukkit.getServer().getWorlds()){

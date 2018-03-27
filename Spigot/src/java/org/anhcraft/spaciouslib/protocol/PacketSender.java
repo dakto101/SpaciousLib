@@ -1,6 +1,5 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.GVersion;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,7 +30,7 @@ public class PacketSender {
      * @return this object
      */
     public PacketSender sendPlayer(Player player){
-        GVersion v = GameVersion.getVersion();
+        GameVersion v = GameVersion.getVersion();
         try {
             Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftPlayer");
             Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v.toString() + ".EntityPlayer");

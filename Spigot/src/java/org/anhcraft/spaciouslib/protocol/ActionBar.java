@@ -1,9 +1,9 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.GVersion;
+import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.JSONUtils;
-import org.anhcraft.spaciouslib.utils.Strings;
+import org.anhcraft.spaciouslib.utils.Chat;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -36,19 +36,19 @@ public class ActionBar {
      */
     public static PacketSender create(String text, int fadeIn, int stay, int fadeOut) {
         if(JSONUtils.isValid(text)){
-            text = Strings.color(text);
+            text = Chat.color(text);
         } else {
-            text = "{\"text\": \"" + Strings.color(text) + "\"}";
+            text = "{\"text\": \"" + Chat.color(text) + "\"}";
         }
-        GVersion v = GameVersion.getVersion();
+        GameVersion v = GameVersion.getVersion();
         try {
-            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GVersion.v1_8_R1) ? "" : "IChatBaseComponent$") + "ChatSerializer");
+            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GameVersion.v1_8_R1) ? "" : "IChatBaseComponent$") + "ChatSerializer");
             Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v.toString() + ".IChatBaseComponent");
             Method chatSerializer = chatSerializerClass.getDeclaredMethod("a", String.class);
             Object chatBaseComponent = chatSerializer.invoke(null, text);
 
             // 1.11 - 1.12
-            if(v.equals(GVersion.v1_11_R1) || v.equals(GVersion.v1_12_R1)){
+            if(v.equals(GameVersion.v1_11_R1) || v.equals(GameVersion.v1_12_R1)){
                 Class<?> packetPlayOutTitleClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutTitle");
                 Class<?> enumTitleActionClass = Class.forName("net.minecraft.server." + v.toString() + ".PacketPlayOutTitle$EnumTitleAction");
                 Field enumActionBarField = enumTitleActionClass.getDeclaredField("ACTIONBAR");

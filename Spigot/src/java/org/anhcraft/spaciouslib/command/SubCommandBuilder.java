@@ -1,7 +1,7 @@
 package org.anhcraft.spaciouslib.command;
 
 import org.anhcraft.spaciouslib.utils.RegEx;
-import org.anhcraft.spaciouslib.utils.Strings;
+import org.anhcraft.spaciouslib.utils.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -152,7 +152,7 @@ public class SubCommandBuilder extends CommandString{
      * @return this object
      */
     public SubCommandBuilder setArgErrorMessage(CommandArgument.Type type, String message){
-        this.argErrorMessages.put(type, Strings.color(message));
+        this.argErrorMessages.put(type, Chat.color(message));
         return this;
     }
 
@@ -162,7 +162,7 @@ public class SubCommandBuilder extends CommandString{
      * @return this object
      */
     public SubCommandBuilder setDoesNotEnoughtArgsErrorMessage(String message){
-        this.doesNotEnoughtArgsErrorMessage = Strings.color(message);
+        this.doesNotEnoughtArgsErrorMessage = Chat.color(message);
         return this;
     }
 
@@ -172,7 +172,7 @@ public class SubCommandBuilder extends CommandString{
      * @return this object
      */
     public SubCommandBuilder setCanNotFindCmdMessage(String message){
-        this.canNotFindCmdErrorMessage = Strings.color(message);
+        this.canNotFindCmdErrorMessage = Chat.color(message);
         return this;
     }
 

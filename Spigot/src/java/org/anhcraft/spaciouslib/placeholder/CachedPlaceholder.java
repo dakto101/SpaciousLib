@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
  * By default, the cached placeholder will renew every 10 seconds.
  */
 public abstract class CachedPlaceholder extends Placeholder {
-    protected LinkedHashMap<String, String> cache;
+    protected LinkedHashMap<String, String> cache = new LinkedHashMap<>();
 
     protected void updateCache(){
         this.cache = new LinkedHashMap<>();

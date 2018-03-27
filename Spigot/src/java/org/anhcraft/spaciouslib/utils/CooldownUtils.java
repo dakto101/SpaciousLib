@@ -1,28 +1,24 @@
 package org.anhcraft.spaciouslib.utils;
 
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedHashMap;
 
 /**
- * A class helps you to manage cooldown times
+ * A class helps you to manage cooldown times<br>
+ * One player can have unlimited cooldown times<br>
+ * A cooldown time is defined by its name<br>
+ * The name of the cooldown time must be unique
  */
 public class CooldownUtils {
     private static LinkedHashMap<Player, LinkedHashMap<String, Long>> data = new LinkedHashMap<>();
 
-    private Plugin plugin;
-
     /**
-     * Creates CooldownUtils instance
-     * @param plugin Bukkit plugin
+     * Initializes the given cooldown time
+     * @param name the name of the cooldown time
+     * @param p the player
      */
-    public CooldownUtils(Plugin plugin){
-        this.plugin = plugin;
-    }
-
     public void setCooldown(String name, Player p){
-        name = this.plugin.getName()+"#"+name;
         LinkedHashMap<String, Long> cooldownData = new LinkedHashMap<>();
         if(data.containsKey(p)){
             cooldownData = data.get(p);
@@ -31,8 +27,15 @@ public class CooldownUtils {
         data.put(p, cooldownData);
     }
 
+    /**
+     * Checks do the current time exceed the cooldown time<br>
+     * With different cooldown time, there will different result
+     * @param name the name of the cooldown time
+     * @param p the player
+     * @param seconds the duration of the cooldown (in seconds)
+     * @return true if the current time exceed the cooldown time
+     */
     public boolean isTimeout(String name, Player p, int seconds){
-        name = this.plugin.getName()+"#"+name;
         if(data.containsKey(p)){
             LinkedHashMap<String, Long> cooldownData = data.get(p);
             if(cooldownData.containsKey(name)){
@@ -44,12 +47,18 @@ public class CooldownUtils {
         return true;
     }
 
-    public int timeLeft(String name, Player p, int i){
-        name = this.plugin.getName()+"#"+name;
+    /**
+     * Gets the time left until the end of the cooldown time
+     * @param name the name of the cooldown time
+     * @param p the player
+     * @param seconds the duration of the cooldown (in seconds)
+     * @return the time left
+     */
+    public int timeLeft(String name, Player p, int seconds){
         if(data.containsKey(p)){
             LinkedHashMap<String, Long> cooldownData = data.get(p);
             if(cooldownData.containsKey(name)){
-                return i - ((int) ((System.currentTimeMillis()-cooldownData.get(name))/1000));
+                return seconds - ((int) ((System.currentTimeMillis()-cooldownData.get(name))/1000));
             }
         }
         return 0;

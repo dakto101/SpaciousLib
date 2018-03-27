@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslibtest;
 
+import org.anhcraft.spaciouslib.anvil.AnvilForm;
 import org.anhcraft.spaciouslib.attribute.Attribute;
 import org.anhcraft.spaciouslib.attribute.AttributeModifier;
 import org.anhcraft.spaciouslib.bungee.BungeeManager;
@@ -8,17 +9,18 @@ import org.anhcraft.spaciouslib.command.CommandArgument;
 import org.anhcraft.spaciouslib.command.CommandBuilder;
 import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SubCommandBuilder;
+import org.anhcraft.spaciouslib.entity.EntityManager;
 import org.anhcraft.spaciouslib.events.BungeeForwardEvent;
 import org.anhcraft.spaciouslib.events.PacketHandleEvent;
 import org.anhcraft.spaciouslib.inventory.BookManager;
 import org.anhcraft.spaciouslib.inventory.EquipSlot;
+import org.anhcraft.spaciouslib.inventory.ItemManager;
+import org.anhcraft.spaciouslib.inventory.RecipeManager;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
 import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.placeholder.Placeholder;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderManager;
-import org.anhcraft.spaciouslib.protocol.Camera;
-import org.anhcraft.spaciouslib.protocol.Particle;
-import org.anhcraft.spaciouslib.protocol.PlayerList;
+import org.anhcraft.spaciouslib.protocol.*;
 import org.anhcraft.spaciouslib.socket.ServerSocketClientHandler;
 import org.anhcraft.spaciouslib.socket.ServerSocketRequestHandler;
 import org.anhcraft.spaciouslib.socket.SocketManager;
@@ -27,6 +29,8 @@ import org.anhcraft.spaciouslib.utils.StringUtils;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -34,6 +38,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayOutputStream;
@@ -251,7 +256,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
     public void ev(PacketHandleEvent ev) {
         if(ev.getType().equals(PacketHandleEvent.Type.SERVER_BOUND)) {
             if(ev.getPacket().getClass().getSimpleName().equals("PacketPlayInChat")) {
-                if(ev.getPacketValue("a").toString().equalsIgnoreCase("tchat")) {
+                if(ev.getPacketValue("a").toString().equalsIgnoreCase("testslt")) {
                     ev.getPlayer().getInventory().addItem(
                             new BookManager("&aRule", 1)
                                     .setAuthor("anhcraft")
@@ -280,6 +285,31 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                                     .getItem());
                     ev.getPlayer().updateInventory();
                     ev.setCancelled(true);
+
+                    new EntityManager(ev.getPlayer()).setAttribute(
+                            new Attribute(Attribute.Type.GENERIC_ARMOR)
+                            .addModifier(new AttributeModifier("1", 3, AttributeModifier.Operation.ADD)));
+
+                    AnvilForm.create(new ItemManager("test", Material.DIAMOND, 1).getItem(),
+                            new AnvilForm.AnvilRunnable() {
+                                @Override
+                                public void run(String input) {
+                                    ev.getPlayer().sendMessage(input);
+                                }
+                            }, ev.getPlayer(), this);
+
+                    ShapedRecipe r = new ShapedRecipe(new ItemManager("test111", Material.DIAMOND_SWORD, 1).setUnbreakable(true).addEnchant(Enchantment.DAMAGE_ALL, 5).addLore("tesssssss").addAttributeModifier(Attribute.Type.GENERIC_MAX_HEALTH, new AttributeModifier("1", 5, AttributeModifier.Operation.ADD), EquipSlot.MAINHAND).addAttributeModifier(Attribute.Type.GENERIC_ATTACK_SPEED, new AttributeModifier("2", 10, AttributeModifier.Operation.ADD), EquipSlot.MAINHAND).addAttributeModifier(Attribute.Type.GENERIC_ATTACK_DAMAGE, new AttributeModifier("3", 20, AttributeModifier.Operation.ADD), EquipSlot.MAINHAND).getItem());
+                    r.shape("aaa", "aaa", "aaa");
+                    r.setIngredient('a', Material.DIAMOND);
+                    RecipeManager.register(r);
+
+                    ActionBar.create("test").sendAll();
+                    Animation.create(ev.getPlayer(), Animation.Type.SWING_MAIN_HAND).sendPlayer(ev.getPlayer());
+                    BlockBreakAnimation.create(0, ev.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN), 5).sendWorld(ev.getPlayer().getWorld());
+                    Particle.create(Particle.Type.BARRIER, ev.getPlayer().getLocation(), 5).sendWorld(ev.getPlayer().getWorld());
+                    PlayerList.create("aaa", "bbb").sendAll();
+                    Title.create("wwwwwwwww", Title.Type.TITLE).sendPlayer(ev.getPlayer());
+                    Camera.create(ev.getPlayer()).sendPlayer(ev.getPlayer());
                 }
             }
         }

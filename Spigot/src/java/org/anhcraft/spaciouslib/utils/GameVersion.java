@@ -2,39 +2,52 @@ package org.anhcraft.spaciouslib.utils;
 
 import org.bukkit.Bukkit;
 
-public class GameVersion {
-    public static GVersion getVersion(){
-        return GVersion.valueOf(Bukkit.getServer().getClass().getPackage()
+public enum GameVersion {
+    v1_8_R1(0),
+    v1_8_R2(1),
+    v1_8_R3(2),
+    v1_9_R1(3),
+    v1_9_R2(4),
+    v1_10_R1(5),
+    v1_11_R1(6),
+    v1_12_R1(7);
+
+    private int id;
+
+    GameVersion(int id){
+        this.id = id;
+    }
+
+    public int getID(){
+        return this.id;
+    }
+
+    /**
+     * Gets Minecraft version of this server
+     * @return current Minecraft version
+     */
+    public static GameVersion getVersion(){
+        return GameVersion.valueOf(Bukkit.getServer().getClass().getPackage()
                 .getName().replace(".",  ",").split(",")[3]);
     }
 
     public static Boolean is1_8Above(){
-        return (Bukkit.getBukkitVersion().contains("1.8") ||
-                Bukkit.getBukkitVersion().contains("1.9") ||
-            Bukkit.getBukkitVersion().contains("1.10") ||
-            Bukkit.getBukkitVersion().contains("1.11") ||
-                Bukkit.getBukkitVersion().contains("1.12"));
+        return GameVersion.v1_8_R1.getID() <= getVersion().getID();
     }
 
     public static Boolean is1_9Above(){
-        return (Bukkit.getBukkitVersion().contains("1.9") ||
-                Bukkit.getBukkitVersion().contains("1.10") ||
-                Bukkit.getBukkitVersion().contains("1.11") ||
-                Bukkit.getBukkitVersion().contains("1.12"));
+        return GameVersion.v1_9_R1.getID() <= getVersion().getID();
     }
 
     public static Boolean is1_10Above(){
-        return (Bukkit.getBukkitVersion().contains("1.10") ||
-                Bukkit.getBukkitVersion().contains("1.11") ||
-                Bukkit.getBukkitVersion().contains("1.12"));
+        return GameVersion.v1_10_R1.getID() <= getVersion().getID();
     }
 
     public static Boolean is1_11Above(){
-        return (Bukkit.getBukkitVersion().contains("1.11") ||
-                Bukkit.getBukkitVersion().contains("1.12"));
+        return GameVersion.v1_11_R1.getID() <= getVersion().getID();
     }
 
     public static Boolean is1_12Above(){
-        return (Bukkit.getBukkitVersion().contains("1.12"));
+        return GameVersion.v1_12_R1.getID() <= getVersion().getID();
     }
 }

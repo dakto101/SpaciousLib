@@ -4,8 +4,8 @@ import org.anhcraft.spaciouslib.attribute.Attribute;
 import org.anhcraft.spaciouslib.attribute.AttributeModifier;
 import org.anhcraft.spaciouslib.nbt.NBTCompound;
 import org.anhcraft.spaciouslib.nbt.NBTManager;
-import org.anhcraft.spaciouslib.utils.ObjGroup;
-import org.anhcraft.spaciouslib.utils.Strings;
+import org.anhcraft.spaciouslib.utils.Group;
+import org.anhcraft.spaciouslib.utils.Chat;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -71,7 +71,7 @@ public class ItemManager {
      */
     public ItemManager setName(String name) {
         ItemMeta a = this.item.getItemMeta();
-        a.setDisplayName(Strings.color(name));
+        a.setDisplayName(Chat.color(name));
         this.item.setItemMeta(a);
         return this;
     }
@@ -135,7 +135,7 @@ public class ItemManager {
         } else {
             lores = new ArrayList<>();
         }
-        lores.add(Strings.color(text));
+        lores.add(Chat.color(text));
         a.setLore(lores);
         this.item.setItemMeta(a);
         return this;
@@ -156,7 +156,7 @@ public class ItemManager {
             lores = new ArrayList<>();
         }
         for(String b : texts) {
-            lores.add(Strings.color(b));
+            lores.add(Chat.color(b));
         }
         a.setLore(lores);
         this.item.setItemMeta(a);
@@ -173,7 +173,7 @@ public class ItemManager {
         ItemMeta a = this.item.getItemMeta();
         List<String> lores = new ArrayList<>();
         for(String b : texts) {
-            lores.add(Strings.color(b));
+            lores.add(Chat.color(b));
         }
         a.setLore(lores);
         this.item.setItemMeta(a);
@@ -431,16 +431,16 @@ public class ItemManager {
      * @return all attribute modifiers
      */
     public LinkedHashMap<AttributeModifier,
-            ObjGroup<EquipSlot, Attribute.Type>> getAttributeModifiers(){
+            Group<EquipSlot, Attribute.Type>> getAttributeModifiers(){
         LinkedHashMap<AttributeModifier,
-                ObjGroup<EquipSlot, Attribute.Type>> modifiers = new LinkedHashMap<>();
+               Group<EquipSlot, Attribute.Type>> modifiers = new LinkedHashMap<>();
         List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
         if(l == null){
             return modifiers;
         }
         for(NBTCompound modifier : l){
             modifiers.put(new AttributeModifier(new UUID(modifier.getLong("UUIDMost"), modifier.getLong("UUIDLeast")), modifier.getString("Name"), modifier.getDouble("Amount"), AttributeModifier.Operation.getByID(modifier.getInt("Operation"))),
-                    new ObjGroup<>(EquipSlot.valueOf(modifier.getString("Slot").toUpperCase()),
+                    new Group<>(EquipSlot.valueOf(modifier.getString("Slot").toUpperCase()),
                             Attribute.Type.getByID(modifier.getString("AttributeName"))));
         }
         return modifiers;

@@ -23,7 +23,8 @@ public class PlaceholderManager {
             @Override
             public void run() {
                 for(Placeholder p : data.values()) {
-                    if(p instanceof CachedPlaceholder) {
+                    if(p instanceof CachedPlaceholder
+                            && !(p instanceof FixedPlaceholder)) {
                         ((CachedPlaceholder) p).updateCache();
                     }
                 }
