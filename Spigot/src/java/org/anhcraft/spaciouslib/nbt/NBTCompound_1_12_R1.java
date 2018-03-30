@@ -273,9 +273,12 @@ public class NBTCompound_1_12_R1 extends NBTCompound {
 
     @Override
     protected void fromEntity(Entity entity) {
+        net.minecraft.server.v1_12_R1.Entity ce = ((CraftEntity) entity).getHandle();
+        MinecraftKey minecraftkey = EntityTypes.a(ce);
+        String k = minecraftkey == null ? null : minecraftkey.toString();
         NBTTagCompound tag = new NBTTagCompound();
-        ((CraftEntity) entity).getHandle().c(tag);
-        tags.putAll(decode(tag).tags);
+        tags.put("id", k);
+        tags.putAll(decode(ce.save(tag)).tags);
     }
 
     @Override

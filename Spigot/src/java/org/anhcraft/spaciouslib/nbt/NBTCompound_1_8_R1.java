@@ -265,8 +265,10 @@ public class NBTCompound_1_8_R1 extends NBTCompound {
 
     @Override
     protected void fromEntity(Entity entity) {
+        net.minecraft.server.v1_8_R1.Entity ce = ((CraftEntity) entity).getHandle();
         NBTTagCompound tag = new NBTTagCompound();
-        ((CraftEntity) entity).getHandle().c(tag);
+        tags.put("id", EntityTypes.b(ce));
+        ce.e(tag);
         tags.putAll(decode(tag).tags);
     }
 

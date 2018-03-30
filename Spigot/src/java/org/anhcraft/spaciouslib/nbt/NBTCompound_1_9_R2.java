@@ -8,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class NBTCompound_1_9_R2 extends NBTCompound {
@@ -274,9 +273,10 @@ public class NBTCompound_1_9_R2 extends NBTCompound {
 
     @Override
     protected void fromEntity(Entity entity) {
+        net.minecraft.server.v1_9_R2.Entity ce = ((CraftEntity) entity).getHandle();
         NBTTagCompound tag = new NBTTagCompound();
-        ((CraftEntity) entity).getHandle().c(tag);
-        tags.putAll(decode(tag).tags);
+        tags.put("id", EntityTypes.b(ce));
+        tags.putAll(decode(ce.e(tag)).tags);
     }
 
     @Override

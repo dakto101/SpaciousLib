@@ -1,6 +1,8 @@
 package org.anhcraft.spaciouslibtest;
 
-import org.anhcraft.spaciouslib.anvil.AnvilForm;
+import org.anhcraft.spaciouslib.anvil.AnvilBuilder;
+import org.anhcraft.spaciouslib.anvil.AnvilHandler;
+import org.anhcraft.spaciouslib.anvil.AnvilSlot;
 import org.anhcraft.spaciouslib.attribute.Attribute;
 import org.anhcraft.spaciouslib.attribute.AttributeModifier;
 import org.anhcraft.spaciouslib.bungee.BungeeManager;
@@ -38,6 +40,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -48,6 +51,7 @@ import java.io.IOException;
 public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
+        System.out.println(Bukkit.getServer().getBukkitVersion());
         new DirectoryManager("plugins/SpaciousLibTest/").mkdirs();
         try {
             new FileManager("plugins/SpaciousLibTest/test.txt").initFile(IOUtils.toByteArray(getClass().getResourceAsStream("/test.txt")));
@@ -231,6 +235,66 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                             BungeeManager.forwardData("slt", bytedata.toByteArray());
                         }
                     }))
+                    .addSubCommand(new SubCommandBuilder("test", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player p = (Player) sender;
+                                p.getInventory().addItem(
+                                        new BookManager("&aRule", 1)
+                                                .setAuthor("anhcraft")
+                                                .setTitle("GUIDE")
+                                                .setBookGeneration(BookManager.BookGeneration.ORIGINAL)
+                                                .addPage(PlaceholderManager.replace(
+                                                        "Name: {player_name}\n" +
+                                                                "Level: {player_level}\n" +
+                                                                "Exp: {player_exp}\n" +
+                                                                "Health: {player_health}/{player_max_health}",
+                                                        p))
+                                                .addPage("Second page")
+                                                .addPage("Third page")
+                                                .setUnbreakable(true)
+                                                .addAttributeModifier(
+                                                        Attribute.Type.GENERIC_MOVEMENT_SPEED,
+                                                        new AttributeModifier(
+                                                                "test",
+                                                                0.05,
+                                                                AttributeModifier.Operation.ADD
+                                                        ),
+                                                        EquipSlot.MAINHAND)
+                                                .addLore("This is the guide book of this server!")
+                                                .addEnchant(Enchantment.DAMAGE_ALL, 1)
+                                                .addFlag(ItemFlag.HIDE_ENCHANTS)
+                                                .getItem());
+                                p.updateInventory();
+
+                                new EntityManager(p).setAttribute(
+                                        new Attribute(Attribute.Type.GENERIC_ARMOR)
+                                                .addModifier(new AttributeModifier("1", 3, AttributeModifier.Operation.ADD)));
+
+                                new AnvilBuilder(p, new AnvilHandler() {
+                                    @Override
+                                    public void result(Player player, String input, ItemStack item, AnvilSlot slot) {
+                                        p.sendMessage(input);
+                                        p.closeInventory();
+                                    }
+                                }).setItem(AnvilSlot.INPUT_LEFT, new ItemManager("test", Material.DIAMOND, 1).getItem()).open();
+
+                                ShapedRecipe r = new ShapedRecipe(new ItemManager("test111", Material.DIAMOND_SWORD, 1).setUnbreakable(true).addEnchant(Enchantment.DAMAGE_ALL, 5).addLore("tesssssss").addAttributeModifier(Attribute.Type.GENERIC_MAX_HEALTH, new AttributeModifier("1", 5, AttributeModifier.Operation.ADD), EquipSlot.MAINHAND).addAttributeModifier(Attribute.Type.GENERIC_ATTACK_SPEED, new AttributeModifier("2", 10, AttributeModifier.Operation.ADD), EquipSlot.MAINHAND).addAttributeModifier(Attribute.Type.GENERIC_ATTACK_DAMAGE, new AttributeModifier("3", 20, AttributeModifier.Operation.ADD), EquipSlot.MAINHAND).getItem());
+                                r.shape("aaa", "aaa", "aaa");
+                                r.setIngredient('a', Material.DIAMOND);
+                                RecipeManager.register(r);
+
+                                ActionBar.create("test").sendAll();
+                                Animation.create(p, Animation.Type.SWING_MAIN_HAND).sendPlayer(p);
+                                BlockBreakAnimation.create(0, p.getLocation().getBlock().getRelative(BlockFace.DOWN), 5).sendWorld(p.getWorld());
+                                Particle.create(Particle.Type.BARRIER, p.getLocation(), 5).sendWorld(p.getWorld());
+                                PlayerList.create("aaa", "bbb").sendAll();
+                                Title.create("wwwwwwwww", Title.Type.TITLE).sendPlayer(p);
+                                Camera.create(p).sendPlayer(p);
+                            }
+                        }
+                    }))
                     .buildExecutor(this)
                     .clone("sl").buildExecutor(this)
                     .clone("spaciouslib").buildExecutor(this);
@@ -256,60 +320,8 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
     public void ev(PacketHandleEvent ev) {
         if(ev.getType().equals(PacketHandleEvent.Type.SERVER_BOUND)) {
             if(ev.getPacket().getClass().getSimpleName().equals("PacketPlayInChat")) {
-                if(ev.getPacketValue("a").toString().equalsIgnoreCase("testslt")) {
-                    ev.getPlayer().getInventory().addItem(
-                            new BookManager("&aRule", 1)
-                                    .setAuthor("anhcraft")
-                                    .setTitle("RULE")
-                                    .setBookGeneration(BookManager.BookGeneration.ORIGINAL)
-                                    .addPage(PlaceholderManager.replace(
-                                               "Name: {player_name}\n"+
-                                                    "Level: {player_level}\n" +
-                                                    "Exp: {player_exp}\n" +
-                                                    "Health: {player_health}/{player_max_health}",
-                                            ev.getPlayer()))
-                                    .addPage("Second page")
-                                    .addPage("Third page")
-                                    .setUnbreakable(true)
-                                    .addAttributeModifier(
-                                            Attribute.Type.GENERIC_MOVEMENT_SPEED,
-                                            new AttributeModifier(
-                                                    "test",
-                                                    0.05,
-                                                    AttributeModifier.Operation.ADD
-                                            ),
-                                            EquipSlot.MAINHAND)
-                                    .addLore("This is the rule book of this server!")
-                                    .addEnchant(Enchantment.DAMAGE_ALL, 1)
-                                    .addFlag(ItemFlag.HIDE_ENCHANTS)
-                                    .getItem());
-                    ev.getPlayer().updateInventory();
+                if(ev.getPacketValue("a").toString().equalsIgnoreCase("fuck")) {
                     ev.setCancelled(true);
-
-                    new EntityManager(ev.getPlayer()).setAttribute(
-                            new Attribute(Attribute.Type.GENERIC_ARMOR)
-                            .addModifier(new AttributeModifier("1", 3, AttributeModifier.Operation.ADD)));
-
-                    AnvilForm.create(new ItemManager("test", Material.DIAMOND, 1).getItem(),
-                            new AnvilForm.AnvilRunnable() {
-                                @Override
-                                public void run(String input) {
-                                    ev.getPlayer().sendMessage(input);
-                                }
-                            }, ev.getPlayer(), this);
-
-                    ShapedRecipe r = new ShapedRecipe(new ItemManager("test111", Material.DIAMOND_SWORD, 1).setUnbreakable(true).addEnchant(Enchantment.DAMAGE_ALL, 5).addLore("tesssssss").addAttributeModifier(Attribute.Type.GENERIC_MAX_HEALTH, new AttributeModifier("1", 5, AttributeModifier.Operation.ADD), EquipSlot.MAINHAND).addAttributeModifier(Attribute.Type.GENERIC_ATTACK_SPEED, new AttributeModifier("2", 10, AttributeModifier.Operation.ADD), EquipSlot.MAINHAND).addAttributeModifier(Attribute.Type.GENERIC_ATTACK_DAMAGE, new AttributeModifier("3", 20, AttributeModifier.Operation.ADD), EquipSlot.MAINHAND).getItem());
-                    r.shape("aaa", "aaa", "aaa");
-                    r.setIngredient('a', Material.DIAMOND);
-                    RecipeManager.register(r);
-
-                    ActionBar.create("test").sendAll();
-                    Animation.create(ev.getPlayer(), Animation.Type.SWING_MAIN_HAND).sendPlayer(ev.getPlayer());
-                    BlockBreakAnimation.create(0, ev.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN), 5).sendWorld(ev.getPlayer().getWorld());
-                    Particle.create(Particle.Type.BARRIER, ev.getPlayer().getLocation(), 5).sendWorld(ev.getPlayer().getWorld());
-                    PlayerList.create("aaa", "bbb").sendAll();
-                    Title.create("wwwwwwwww", Title.Type.TITLE).sendPlayer(ev.getPlayer());
-                    Camera.create(ev.getPlayer()).sendPlayer(ev.getPlayer());
                 }
             }
         }
