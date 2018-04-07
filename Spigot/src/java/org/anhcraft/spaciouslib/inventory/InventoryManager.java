@@ -2,6 +2,7 @@ package org.anhcraft.spaciouslib.inventory;
 
 import org.anhcraft.spaciouslib.listeners.InteractItemListener;
 import org.anhcraft.spaciouslib.utils.Chat;
+import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -124,6 +125,37 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
+     * Adds an item into this inventory
+     *
+     * @param item the item
+     * @return this object
+     */
+    public InventoryManager addItem(ItemStack item) {
+        this.inv.addItem(item);
+        return this;
+    }
+
+    /**
+     * Adds an item (if it doesn't exist) into the inventory
+     *
+     * @param item the item
+     * @return this object
+     */
+    public InventoryManager addUniqueItem(ItemStack item) {
+        boolean has = false;
+        for(ItemStack i : this.inv){
+            if(InventoryUtils.compare(i, item)){
+                has = true;
+                break;
+            }
+        }
+        if(!has){
+            addItem(item);
+        }
+        return this;
+    }
+
+    /**
      * Clears out the whole inventory
      * @return this object
      */
@@ -177,11 +209,23 @@ public class InventoryManager extends InteractItemListener {
     }
 
     /**
+     * Applies this inventory as the inventory of a player
+     *
+     * @param player the player
+     * @return this object
+     */
+    public InventoryManager apply(Player player){
+        player.getInventory().setContents(this.inv.getContents());
+        player.updateInventory();
+        return this;
+    }
+
+    /**
      * Gets all items which aren't null in this inventory
      *
      * @return list of items
      */
-    public List<ItemStack> getAllItems(){
+    public List<ItemStack> getItems(){
         List<ItemStack> items = new ArrayList<>();
         for(ItemStack i : inv.getContents()){
             if(i != null && !i.getType().equals(Material.AIR)){

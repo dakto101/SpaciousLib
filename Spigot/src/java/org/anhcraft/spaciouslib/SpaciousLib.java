@@ -2,6 +2,7 @@ package org.anhcraft.spaciouslib;
 
 import org.anhcraft.spaciouslib.bungee.BungeeManager;
 import org.anhcraft.spaciouslib.listeners.*;
+import org.anhcraft.spaciouslib.npc.NPCManager;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderManager;
 import org.anhcraft.spaciouslib.socket.SocketManager;
 import org.anhcraft.spaciouslib.tasks.ArmorEquipEventTask;
@@ -20,6 +21,7 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PacketListener(), this);
         getServer().getPluginManager().registerEvents(new PlaceholderListener(), this);
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);
+        getServer().getPluginManager().registerEvents(new NPCManager(), this);
 
         new Updater1520156620("1520156620", this);
         new ArmorEquipEventTask().runTaskTimerAsynchronously(this, 0, 20);

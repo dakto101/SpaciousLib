@@ -1,5 +1,8 @@
 package org.anhcraft.spaciouslib.database;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -66,5 +69,20 @@ public abstract class Database {
      */
     public Statement getStatement(){
         return state;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            Database db = (Database) o;
+            return new EqualsBuilder().append(db.conn, this.conn).append(db.state, this.state).build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(4, 31)
+                .append(conn).append(state).toHashCode();
     }
 }

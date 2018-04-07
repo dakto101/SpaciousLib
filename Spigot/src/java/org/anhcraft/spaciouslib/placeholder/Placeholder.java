@@ -1,5 +1,7 @@
 package org.anhcraft.spaciouslib.placeholder;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bukkit.entity.Player;
 
 /**
@@ -20,4 +22,21 @@ public abstract class Placeholder {
      * @return the data of the placeholder
      */
     public abstract String getValue(Player player);
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            Placeholder p = (Placeholder) o;
+            return new EqualsBuilder()
+                    .append(p.getPlaceholder(), this.getPlaceholder())
+                    .build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(11, 52)
+                .append(getPlaceholder()).toHashCode();
+    }
 }

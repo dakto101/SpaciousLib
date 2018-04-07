@@ -1,12 +1,17 @@
 package org.anhcraft.spaciouslib.nbt;
 
 import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A class helps you to load or apply NBT tags
@@ -92,5 +97,51 @@ public class NBTManager {
             e1.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Loads all NBT tags from the given configuration section
+     * @param configurationSection configuration section
+     * @return NBTCompound object
+     */
+    public static NBTCompound fromConfigurationSection(ConfigurationSection configurationSection){
+        NBTCompound nbt = newCompound();
+        HashSet<String> sections = new HashSet<>();
+        nbt = handlecs(nbt, configurationSection);
+        for(String k : configurationSection.getKeys(true)){
+            String[] css = k.split("\\.");
+            if(1 < css.length){
+                String sec = k.substring(0, k.length()-css[css.length-1].length()-1);
+                sections.add(sec);
+            }
+        }
+        for(String s : sections){
+            nbt = handlecs(nbt, configurationSection.getConfigurationSection(s));
+        }
+        return nbt;
+    }
+
+    private static NBTCompound handlecs(NBTCompound nbt, ConfigurationSection configurationSection) {
+        for(String k : configurationSection.getKeys(true)){
+            String[] css = k.split("\\.");
+            Object v = configurationSection.get(k);
+            if(css.length == 1 && !(v instanceof MemorySection)){
+                if(v instanceof List){
+                    List<NBTCompound> compoundList = new ArrayList<>();
+                    List<?> list = (List<?>) v;
+                    if(0 < list.size() && list.get(0) instanceof ConfigurationSection){
+                        int i = 0;
+                        while(i < list.size()){
+                            compoundList.add(fromConfigurationSection((ConfigurationSection) list.get(i)));
+                            i++;
+                        }
+                    }
+                    nbt = nbt.set(k, compoundList);
+                } else {
+                    nbt = nbt.set(k, v);
+                }
+            }
+        }
+        return nbt;
     }
 }

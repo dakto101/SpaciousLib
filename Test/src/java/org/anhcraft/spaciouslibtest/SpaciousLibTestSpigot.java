@@ -20,6 +20,12 @@ import org.anhcraft.spaciouslib.inventory.ItemManager;
 import org.anhcraft.spaciouslib.inventory.RecipeManager;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
 import org.anhcraft.spaciouslib.io.FileManager;
+import org.anhcraft.spaciouslib.mojang.GameProfileBuilder;
+import org.anhcraft.spaciouslib.mojang.Skin;
+import org.anhcraft.spaciouslib.nbt.NBTManager;
+import org.anhcraft.spaciouslib.npc.NPC;
+import org.anhcraft.spaciouslib.npc.NPCManager;
+import org.anhcraft.spaciouslib.npc.NPCWrapper;
 import org.anhcraft.spaciouslib.placeholder.Placeholder;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderManager;
 import org.anhcraft.spaciouslib.protocol.*;
@@ -34,6 +40,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -46,15 +54,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
+    public static File f = new File("plugins/SpaciousLibTest/test.txt");
+    public static NPCWrapper npc;
+
     @Override
     public void onEnable() {
-        System.out.println(Bukkit.getServer().getBukkitVersion());
         new DirectoryManager("plugins/SpaciousLibTest/").mkdirs();
         try {
-            new FileManager("plugins/SpaciousLibTest/test.txt").initFile(IOUtils.toByteArray(getClass().getResourceAsStream("/test.txt")));
+            new FileManager(f).initFile(IOUtils.toByteArray(getClass().getResourceAsStream("/test.txt")));
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -295,6 +306,44 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                             }
                         }
                     }))
+                    .addSubCommand(new SubCommandBuilder("npc spawn", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player && npc == null) {
+                                Player p = (Player) sender;
+                                npc = NPCManager.register("test", new NPC(
+                                        new GameProfileBuilder("test")
+                                                .setSkin(Skin.Default.STEVE.getSkin()).getGameProfile(),
+                                        p.getLocation(),
+                                        NPC.Addition.INTERACT_HANDLER,
+                                        NPC.Addition.NEARBY_RENDER,
+                                        NPC.Addition.LOOK_VIEWER).setNearbyRadius(20));
+                            }
+                        }
+                    }))
+                    .addSubCommand(new SubCommandBuilder("npc despawn", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player && npc != null) {
+                                Player p = (Player) sender;
+                                NPCManager.unregister("test");
+                                npc = null;
+                            }
+                        }
+                    }))
+                    .addSubCommand(new SubCommandBuilder("npc rename", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            sender.sendMessage(cmd.getCommandAsString(subcmd, true));
+                        }
+                    }).addArgument("name", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player && npc != null) {
+                                npc.setCustomName(value, !value.equals("null"));
+                            }
+                        }
+                    }, CommandArgument.Type.CUSTOM, false))
                     .buildExecutor(this)
                     .clone("sl").buildExecutor(this)
                     .clone("spaciouslib").buildExecutor(this);
@@ -320,8 +369,20 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
     public void ev(PacketHandleEvent ev) {
         if(ev.getType().equals(PacketHandleEvent.Type.SERVER_BOUND)) {
             if(ev.getPacket().getClass().getSimpleName().equals("PacketPlayInChat")) {
-                if(ev.getPacketValue("a").toString().equalsIgnoreCase("fuck")) {
+                if(ev.getPacketValue("a").toString().equalsIgnoreCase("savemydata")) {
                     ev.setCancelled(true);
+                    FileConfiguration fc = YamlConfiguration.loadConfiguration(f);
+                    NBTManager.fromEntity(ev.getPlayer()).toConfigurationSection(fc);
+                    try {
+                        fc.save(f);
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(ev.getPacketValue("a").toString().equalsIgnoreCase("applymydata")) {
+                    ev.setCancelled(true);
+                    FileConfiguration fc = YamlConfiguration.loadConfiguration(f);
+                    NBTManager.fromConfigurationSection(fc).toEntity(ev.getPlayer());
                 }
             }
         }

@@ -1,5 +1,8 @@
 package org.anhcraft.spaciouslib.attribute;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.UUID;
 
 /**
@@ -78,5 +81,28 @@ public class AttributeModifier {
 
     public UUID getUniqueID() {
         return this.uuid;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            AttributeModifier am = (AttributeModifier) o;
+            return new EqualsBuilder()
+                    .append(am.amount, this.amount)
+                    .append(am.uuid, this.uuid)
+                    .append(am.operation, this.operation)
+                    .append(am.name, this.name)
+                    .build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(5, 14)
+                .append(amount)
+                .append(uuid)
+                .append(operation)
+                .append(name).toHashCode();
     }
 }

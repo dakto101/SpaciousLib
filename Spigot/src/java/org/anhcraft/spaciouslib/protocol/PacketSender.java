@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.protocol;
 
+import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -9,23 +10,40 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * A class helps you to send packet
  */
 public class PacketSender {
-    private Object packet;
+    private Object[] packets;
 
     /**
-     * Creates PacketSender instance
+     * Creates PacketSender instance from the given packet
      * @param packet the packet
      */
     public PacketSender(Object packet){
-        this.packet = packet;
+        this.packets = new Object[]{ packet };
     }
 
     /**
-     * Sends that packet to the given player
+     * Creates PacketSender instance from the given packet array
+     * @param packetArray the packet array
+     */
+    public PacketSender(Object... packetArray){
+        this.packets = packetArray;
+    }
+
+    /**
+     * Creates PacketSender instance from the given packet list
+     * @param packetArray the packet list
+     */
+    public PacketSender(List<Object> packetArray){
+        this.packets = CommonUtils.toArray(packetArray, Object.class);
+    }
+
+    /**
+     * Sends these packets to the given player
      * @param player the player
      * @return this object
      */
@@ -44,7 +62,9 @@ public class PacketSender {
             playerConnField.setAccessible(true);
             Object playerConn = playerConnField.get(nmsEntityPlayer);
             Method sendPacket = playerConnClass.getDeclaredMethod("sendPacket", packetClass);
-            sendPacket.invoke(playerConn, packet);
+            for(Object packet : this.packets){
+                sendPacket.invoke(playerConn, packet);
+            }
         } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -52,7 +72,31 @@ public class PacketSender {
     }
 
     /**
-     * Sends that packet to all players in the given world
+     * Sends these packets to all given players
+     * @param players players
+     * @return this object
+     */
+    public PacketSender sendPlayers(Player... players){
+        for(Player p : players){
+            sendPlayer(p);
+        }
+        return this;
+    }
+
+    /**
+     * Sends these packets to all given players
+     * @param players the list of players
+     * @return this object
+     */
+    public PacketSender sendPlayers(List<Player> players){
+        for(Player p : players){
+            sendPlayer(p);
+        }
+        return this;
+    }
+
+    /**
+     * Sends these packets to all players in the given world
      * @param world the world
      * @return this object
      */
@@ -64,7 +108,7 @@ public class PacketSender {
     }
 
     /**
-     * Sends that packet to all players who is nearby the given location
+     * Sends these packets to all players who is nearby the given location
      * @param location the location
      * @param distance the maximum distance from the location
      * @return this object
@@ -80,7 +124,7 @@ public class PacketSender {
     }
 
     /**
-     * Sends that packet to all players
+     * Sends these packets to all players
      * @return this object
      */
     public PacketSender sendAll(){
@@ -91,10 +135,10 @@ public class PacketSender {
     }
 
     /**
-     * Gets that packet
-     * @return the packet
+     * Gets all packets
+     * @return the packet array
      */
-    public Object getPacket(){
-        return this.packet;
+    public Object[] getPackets(){
+        return this.packets;
     }
 }

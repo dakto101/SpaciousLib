@@ -1,9 +1,14 @@
 package org.anhcraft.spaciouslib.nbt;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -98,6 +103,10 @@ public abstract class NBTCompound {
         return this;
     }
 
+    public Object get(String name) {
+        return tags.get(name);
+    }
+
     public String getString(String name) {
         return (String) tags.get(name);
     }
@@ -142,20 +151,22 @@ public abstract class NBTCompound {
         return (List<E>) tags.get(name);
     }
 
-    public void setTags(LinkedHashMap<String, Object> tags) {
-        tags = tags;
-    }
-
-    public LinkedHashMap<String, Object> getTags() {
-        return tags;
-    }
-
-    public void setCompound(NBTCompound compound, String name) {
+    public NBTCompound setCompound(String name, NBTCompound compound) {
         tags.put(name, compound);
+        return this;
     }
 
     public NBTCompound getCompound(String name) {
         return (NBTCompound) tags.get(name);
+    }
+
+    public NBTCompound setTags(LinkedHashMap<String, Object> tags) {
+        this.tags = tags;
+        return this;
+    }
+
+    public LinkedHashMap<String, Object> getTags() {
+        return tags;
     }
 
     public NBTCompound remove(String name) {
@@ -169,5 +180,55 @@ public abstract class NBTCompound {
 
     public Boolean hasValue(String value) {
         return tags.containsValue(value);
+    }
+
+
+    /**
+     * Saves all NBT tags to the given configuration section
+     * @param configurationSection configuration section
+     */
+    public void toConfigurationSection(ConfigurationSection configurationSection){
+        handle2cs(configurationSection, this);
+    }
+
+    private static void handle2cs(ConfigurationSection configurationSection, NBTCompound nbtCompound) {
+        for(String k : nbtCompound.tags.keySet()){
+            Object v = nbtCompound.tags.get(k);
+            if(v instanceof NBTCompound){
+                handle2cs(configurationSection.createSection(k), (NBTCompound) v);
+            } else if(v instanceof List){
+                List<?> vlist = (List<?>) v;
+                if(0 < vlist.size() && vlist.get(0) instanceof NBTCompound) {
+                    List<ConfigurationSection> cs = new ArrayList<>();
+                    int i = 0;
+                    while(i < vlist.size()){
+                        ConfigurationSection c = new YamlConfiguration();
+                        handle2cs(c, (NBTCompound) ((List) v).get(i));
+                        cs.add(c);
+                        i++;
+                    }
+                    configurationSection.set(k, cs);
+                }
+            } else {
+                configurationSection.set(k, v);
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            NBTCompound nbt = (NBTCompound) o;
+            return new EqualsBuilder()
+                    .append(nbt.tags, this.tags)
+                    .build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(23, 47)
+                .append(tags).toHashCode();
     }
 }

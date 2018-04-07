@@ -6,6 +6,7 @@ import com.google.common.io.ByteStreams;
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.events.BungeeForwardEvent;
 import org.anhcraft.spaciouslib.utils.Chat;
+import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -13,7 +14,6 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -325,11 +325,11 @@ public class BungeeManager implements PluginMessageListener {
                 b = true;
             }
             if (sc.equals("PlayerList") && br instanceof BungeePlayerListResponse) {
-                ((BungeePlayerListResponse) br).result(i.readUTF(), new ArrayList<>(Arrays.asList(i.readUTF().split(", "))));
+                ((BungeePlayerListResponse) br).result(i.readUTF(), CommonUtils.toList(i.readUTF().split(", ")));
                 b = true;
             }
             if (sc.equals("GetServers") && br instanceof BungeeServerListResponse) {
-                ((BungeeServerListResponse) br).result(new ArrayList<>(Arrays.asList(i.readUTF().split(", "))));
+                ((BungeeServerListResponse) br).result(CommonUtils.toList(i.readUTF().split(", ")));
                 b = true;
             }
             if (sc.equals("GetServer") && br instanceof BungeeServerNameResponse) {

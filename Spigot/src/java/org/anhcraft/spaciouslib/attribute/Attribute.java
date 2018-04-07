@@ -1,5 +1,8 @@
 package org.anhcraft.spaciouslib.attribute;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,5 +101,20 @@ public class Attribute {
 
     public Type getType(){
         return this.type;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            Attribute a = (Attribute) o;
+            return new EqualsBuilder().append(a.modifiers, this.modifiers).append(a.type, this.type).build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(7, 30)
+                .append(modifiers).append(type).toHashCode();
     }
 }
