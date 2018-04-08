@@ -142,7 +142,7 @@ public class GameProfileManager {
 
     /**
      * Applies this game profile to the human entity.<br>
-     * Warning: you have to send game info packets to make these changes are applied in the player client
+     * Warning: you have to request the player client to reload the player
      * @param entity the human entity
      * @return this object
      */

@@ -51,9 +51,11 @@ public class HologramManager {
                                 location.getPitch(),
                         }
                 ));
-                ReflectionUtils.getMethod("setMarker", nmsArmorStandClass, nmsArmorStand,
-                        new Group<>(new Class<?>[]{boolean.class}, new Object[]{true})
-                );
+                if(GameVersion.is1_9Above()) {
+                    ReflectionUtils.getMethod("setMarker", nmsArmorStandClass, nmsArmorStand,
+                            new Group<>(new Class<?>[]{boolean.class}, new Object[]{true})
+                    );
+                }
                 ReflectionUtils.getMethod("setBasePlate", nmsArmorStandClass, nmsArmorStand,
                         new Group<>(new Class<?>[]{boolean.class}, new Object[]{false})
                 );
@@ -69,9 +71,15 @@ public class HologramManager {
                 ReflectionUtils.getMethod("setSmall", nmsArmorStandClass, nmsArmorStand,
                         new Group<>(new Class<?>[]{boolean.class}, new Object[]{true})
                 );
-                ReflectionUtils.getMethod("setNoGravity", nmsEntityClass, nmsArmorStand,
-                        new Group<>(new Class<?>[]{boolean.class}, new Object[]{true})
-                );
+                if(GameVersion.is1_10Above()) {
+                    ReflectionUtils.getMethod("setNoGravity", nmsEntityClass, nmsArmorStand,
+                            new Group<>(new Class<?>[]{boolean.class}, new Object[]{true})
+                    );
+                } else {
+                    ReflectionUtils.getMethod("setGravity", nmsArmorStandClass, nmsArmorStand,
+                            new Group<>(new Class<?>[]{boolean.class}, new Object[]{true})
+                    );
+                }
                 ReflectionUtils.getMethod("setArms", nmsArmorStandClass, nmsArmorStand,
                         new Group<>(new Class<?>[]{boolean.class}, new Object[]{false})
                 );

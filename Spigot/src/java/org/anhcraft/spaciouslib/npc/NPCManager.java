@@ -68,15 +68,8 @@ public class NPCManager implements Listener {
                             es = EquipSlot.OFFHAND;
                         }
                     }
-                    EquipSlot es_ = es;
-                    // switches to the main thread
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            NPCInteractEvent e = new NPCInteractEvent(ev.getPlayer(), n.getNPC(), ev.getPacketValue("action").toString().equals("ATTACK"), es_);
-                            Bukkit.getServer().getPluginManager().callEvent(e);
-                        }
-                    }.runTaskLater(SpaciousLib.instance, 1);
+                    NPCInteractEvent e = new NPCInteractEvent(ev.getPlayer(), n.getNPC(), ev.getPacketValue("action").toString().equals("ATTACK"), es);
+                    Bukkit.getServer().getPluginManager().callEvent(e);
                     ev.setCancelled(true);
                     break;
                 }

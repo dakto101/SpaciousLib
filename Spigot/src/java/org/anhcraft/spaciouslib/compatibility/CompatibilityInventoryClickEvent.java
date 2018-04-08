@@ -1,12 +1,10 @@
 package org.anhcraft.spaciouslib.compatibility;
 
+import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.inventory.Inventory;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class CompatibilityInventoryClickEvent {
     /**
@@ -21,13 +19,6 @@ public class CompatibilityInventoryClickEvent {
         || event.getClass().equals(CraftItemEvent.class)) {
             c = c.getSuperclass();
         }
-        try {
-            Method m = c.getDeclaredMethod("getInventory");
-            return (Inventory) m.invoke(event);
-        } catch(NoSuchMethodException | IllegalAccessException
-                | InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return (Inventory) ReflectionUtils.getMethod("getInventory", c, event);
     }
 }
