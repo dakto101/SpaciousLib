@@ -18,17 +18,13 @@ public class NPC {
          */
         INTERACT_HANDLER,
         /**
-         * Enables the feature that makes NPCs always look the nearest viewer
-         */
-        LOOK_VIEWER,
-        /**
          * Enables the feature that only show the NPC for its nearby players
          */
         NEARBY_RENDER
     }
 
 
-    private GameProfile gameProfile;
+    protected GameProfile gameProfile;
     private List<Addition> additions;
     protected Location location;
     private double nearbyRadius;

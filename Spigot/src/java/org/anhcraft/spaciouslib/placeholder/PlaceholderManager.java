@@ -1,7 +1,9 @@
 package org.anhcraft.spaciouslib.placeholder;
 
 import org.anhcraft.spaciouslib.SpaciousLib;
+import org.anhcraft.spaciouslib.entity.PlayerPing;
 import org.anhcraft.spaciouslib.utils.MathUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -52,6 +54,18 @@ public class PlaceholderManager {
             @Override
             public String getValue(Player player) {
                 return player.getDisplayName();
+            }
+        });
+
+        register(new CachedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{player_ping}";
+            }
+
+            @Override
+            public String getValue(Player player) {
+                return Integer.toString(PlayerPing.get(player));
             }
         });
 
@@ -258,6 +272,10 @@ public class PlaceholderManager {
                 return Integer.toString(player.getExpToLevel());
             }
         });
+
+        for(Player player : Bukkit.getServer().getOnlinePlayers()){
+            PlaceholderManager.updateCache(player);
+        }
     }
 
     /**

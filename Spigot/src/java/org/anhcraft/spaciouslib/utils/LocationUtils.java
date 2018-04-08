@@ -12,7 +12,7 @@ import java.util.List;
 public class LocationUtils {
 
     /**
-     * Serializes a location to string
+     * Serializes the given location to string
      * @param loc Location object
      * @return the string
      */
@@ -23,7 +23,7 @@ public class LocationUtils {
     }
 
     /**
-     * Deserializes a string to its location
+     * Deserializes the given string to its location
      * @param str the string
      * @return the location
      */

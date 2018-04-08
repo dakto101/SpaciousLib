@@ -2,14 +2,13 @@ package org.anhcraft.spaciouslib.protocol;
 
 import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.Group;
+import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -54,18 +53,16 @@ public class PacketSender {
             Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v.toString() + ".EntityPlayer");
             Class<?> packetClass = Class.forName("net.minecraft.server." + v.toString() + ".Packet");
             Class<?> playerConnClass = Class.forName("net.minecraft.server." + v.toString() + ".PlayerConnection");
-            Object craftPlayer = craftPlayerClass.cast(player);
-            Method handle = craftPlayerClass.getDeclaredMethod("getHandle");
-            Object nmsEntity = handle.invoke(craftPlayer);
-            Object nmsEntityPlayer = nmsEntityPlayerClass.cast(nmsEntity);
-            Field playerConnField = nmsEntityPlayerClass.getDeclaredField("playerConnection");
-            playerConnField.setAccessible(true);
-            Object playerConn = playerConnField.get(nmsEntityPlayer);
-            Method sendPacket = playerConnClass.getDeclaredMethod("sendPacket", packetClass);
+            Object craftPlayer = ReflectionUtils.cast(craftPlayerClass, player);
+            Object nmsEntityPlayer = ReflectionUtils.getMethod("getHandle", craftPlayerClass, craftPlayer);
+            Object playerConn = ReflectionUtils.getField("playerConnection", nmsEntityPlayerClass, nmsEntityPlayer);
             for(Object packet : this.packets){
-                sendPacket.invoke(playerConn, packet);
+                ReflectionUtils.getMethod("sendPacket", playerConnClass, playerConn, new Group<>(
+                        new Class<?>[]{packetClass},
+                        new Object[]{packet}
+                ));
             }
-        } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
         return this;

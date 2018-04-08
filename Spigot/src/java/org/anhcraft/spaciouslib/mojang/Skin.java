@@ -51,6 +51,11 @@ public class Skin {
     private String value;
     private String signature;
 
+    /**
+     * Creates a new Skin instance
+     * @param value the value of the skin
+     * @param signature the signature of the skin
+     */
     public Skin(String value, String signature){
         this.value = value;
         this.signature = signature;

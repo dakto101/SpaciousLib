@@ -1,13 +1,6 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.Chat;
-import org.anhcraft.spaciouslib.utils.GameVersion;
-import org.anhcraft.spaciouslib.utils.JSONUtils;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.anhcraft.spaciouslib.utils.*;
 
 /**
  * A class helps you to send PlayerListHeaderFooter packet
@@ -21,12 +14,12 @@ public class PlayerList {
      * @return PacketSender object
      */
     public static PacketSender create(String header, String footer){
-        if(JSONUtils.isValid(header)){
+        if(CommonUtils.isValidJSON(header)){
             header = Chat.color(header);
         } else {
             header = "{\"text\": \"" + Chat.color(header) + "\"}";
         }
-        if(JSONUtils.isValid(footer)){
+        if(CommonUtils.isValidJSON(footer)){
             footer = Chat.color(footer);
         } else {
             footer = "{\"text\": \"" + Chat.color(footer) + "\"}";
@@ -35,19 +28,21 @@ public class PlayerList {
         try {
             Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GameVersion.v1_8_R1) ? "" : "IChatBaseComponent$") + "ChatSerializer");
             Class<?> packetPlayOutPlayerListHeaderFooterClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutPlayerListHeaderFooter");
-            Method chatSerializer = chatSerializerClass.getDeclaredMethod("a", String.class);
-            Object chatBaseComponentHeader = chatSerializer.invoke(null, header);
-            Object chatBaseComponentFooter = chatSerializer.invoke(null, footer);
-            Constructor<?> packetCons = packetPlayOutPlayerListHeaderFooterClass.getDeclaredConstructor();
-            Object packet = packetCons.newInstance();
-            Field headerField = packetPlayOutPlayerListHeaderFooterClass.getDeclaredField("a");
-            headerField.setAccessible(true);
-            headerField.set(packet, chatBaseComponentHeader);
-            Field footerField = packetPlayOutPlayerListHeaderFooterClass.getDeclaredField("b");
-            footerField.setAccessible(true);
-            footerField.set(packet, chatBaseComponentFooter);
+            Object chatBaseComponentHeader = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
+                    new Group<>(
+                            new Class<?>[]{String.class},
+                            new String[]{header}
+                    ));
+            Object chatBaseComponentFooter = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
+                    new Group<>(
+                            new Class<?>[]{String.class},
+                            new String[]{footer}
+                    ));
+            Object packet = ReflectionUtils.getConstructor(packetPlayOutPlayerListHeaderFooterClass);
+            ReflectionUtils.setField("a", packetPlayOutPlayerListHeaderFooterClass, packet, chatBaseComponentHeader);
+            ReflectionUtils.setField("b", packetPlayOutPlayerListHeaderFooterClass, packet, chatBaseComponentFooter);
             return new PacketSender(packet);
-        } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchFieldException e) {
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;

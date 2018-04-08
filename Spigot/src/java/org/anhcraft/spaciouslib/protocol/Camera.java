@@ -1,17 +1,14 @@
 package org.anhcraft.spaciouslib.protocol;
 
 import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.Group;
+import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.entity.Entity;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * A class helps you to send camera packets
  */
 public class Camera {
-
     /**
      * Creates a new camera packet
      * @param entity the entity
@@ -22,12 +19,13 @@ public class Camera {
             Class<?> packetClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutCamera");
             Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".Entity");
             Class<?> craftEntityClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".entity.CraftEntity");
-            Object craftEntity = craftEntityClass.cast(entity);
-            Method nmsEntityHandle = craftEntityClass.getDeclaredMethod("getHandle");
-            Object nmsEntity = nmsEntityHandle.invoke(craftEntity);
-            Constructor cons = packetClass.getConstructor(nmsEntityClass);
-            return new PacketSender(cons.newInstance(nmsEntity));
-        } catch(ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
+            Object craftEntity = ReflectionUtils.cast(craftEntityClass, entity);
+            Object nmsEntity = ReflectionUtils.getMethod("getHandle", craftEntityClass, craftEntity);
+            return new PacketSender(ReflectionUtils.getConstructor(packetClass, new Group<>(
+                    new Class<?>[]{nmsEntityClass},
+                    new Object[]{nmsEntity}
+            )));
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;

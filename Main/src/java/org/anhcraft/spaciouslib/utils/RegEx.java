@@ -10,7 +10,8 @@ public enum RegEx {
     URL("(https?|ftp):(/{1,})((?!-)([-a-zA-Z0-9]{1,})(?<!-))\\.((?!-)([-a-zA-Z0-9]{1,})).*"),
     EMAIL("[A-Za-z0-9\\.\\-\\_]+@[A-Za-z0-9\\-\\_]+\\.[A-Za-z0-9\\-\\_]+"),
     REAL_NUMBER("(^(-|)[0-9]+$)|(^(-|)[0-9]+\\.[0-9]+$)"),
-    INTEGER_NUMBER("^(-|)[0-9]+$");
+    INTEGER_NUMBER("^(-|)[0-9]+$"),
+    UUID("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
 
     private String regex;
 

@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.nbt;
 
+import com.google.gson.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bukkit.configuration.ConfigurationSection;
@@ -182,7 +183,6 @@ public abstract class NBTCompound {
         return tags.containsValue(value);
     }
 
-
     /**
      * Saves all NBT tags to the given configuration section
      * @param configurationSection configuration section
@@ -208,9 +208,73 @@ public abstract class NBTCompound {
                         i++;
                     }
                     configurationSection.set(k, cs);
+                } else {
+                    configurationSection.set(k, v);
                 }
             } else {
                 configurationSection.set(k, v);
+            }
+        }
+    }
+
+    /**
+     * Saves all NBT tags to JSON string
+     * @return the JSON string
+     */
+    public String toJSON(){
+        JsonObject jo = new JsonObject();
+        handle2jo(jo, this);
+        return new Gson().toJson(jo);
+    }
+
+    private void handle2jo(JsonObject jsonObject, NBTCompound nbtCompound) {
+        for(String k : nbtCompound.tags.keySet()){
+            Object v = nbtCompound.tags.get(k);
+            if(v instanceof NBTCompound){
+                JsonObject jo = new JsonObject();
+                handle2jo(jo, (NBTCompound) v);
+                jsonObject.add(k, jo);
+            } else if(v instanceof List){
+                List<?> vlist = (List<?>) v;
+                if(0 < vlist.size()) {
+                    JsonArray array = new JsonArray();
+                    if(vlist.get(0) instanceof NBTCompound) {
+                        int i = 0;
+                        while(i < vlist.size()) {
+                            JsonObject jo = new JsonObject();
+                            handle2jo(jo, (NBTCompound) ((List) v).get(i));
+                            array.add(jo);
+                            i++;
+                        }
+                    } else {
+                        if(v instanceof Number){
+                            array.add(new JsonPrimitive((Number) v));
+                        }
+                        if(v instanceof Boolean){
+                            array.add(new JsonPrimitive((Boolean) v));
+                        }
+                        if(v instanceof String){
+                            array.add(new JsonPrimitive((String) v));
+                        }
+                        if(v instanceof Character){
+                            array.add(new JsonPrimitive((Character) v));
+                        }
+                    }
+                    jsonObject.add(k, array);
+                }
+            } else {
+                if(v instanceof Number){
+                    jsonObject.addProperty(k, (Number) v);
+                }
+                if(v instanceof Boolean){
+                    jsonObject.addProperty(k, (Boolean) v);
+                }
+                if(v instanceof String){
+                    jsonObject.addProperty(k, (String) v);
+                }
+                if(v instanceof Character){
+                    jsonObject.addProperty(k, (Character) v);
+                }
             }
         }
     }

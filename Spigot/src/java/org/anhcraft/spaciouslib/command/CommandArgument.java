@@ -36,7 +36,11 @@ public class CommandArgument {
         /**
          * A player only can type a loaded world
          */
-        WORLD
+        WORLD,
+        /**
+         * A player only can type a valid UUID
+         */
+        UUID
     }
 
     private String name;

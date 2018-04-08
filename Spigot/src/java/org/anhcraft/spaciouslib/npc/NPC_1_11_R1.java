@@ -3,7 +3,6 @@ package org.anhcraft.spaciouslib.npc;
 import net.minecraft.server.v1_11_R1.*;
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.protocol.PacketSender;
-import org.anhcraft.spaciouslib.utils.Chat;
 import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_11_R1.CraftServer;
@@ -18,11 +17,17 @@ public class NPC_1_11_R1 extends NPCWrapper {
 
     public NPC_1_11_R1(NPC npc) {
         this.npc = npc;
+        init();
+    }
+
+    @Override
+    protected void init() {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-        WorldServer w = ((CraftWorld) npc.getLocation().getWorld()).getHandle();
-        this.entity = new EntityPlayer(server, w, npc.getGameProfile(), new PlayerInteractManager(w));
-        this.entity.setLocation(npc.getLocation().getX(), npc.getLocation().getY(),
-                npc.getLocation().getZ(), npc.getLocation().getYaw(), npc.getLocation().getPitch());
+        WorldServer w = ((CraftWorld) this.npc.getLocation().getWorld()).getHandle();
+        this.entity = new EntityPlayer(server, w, this.npc.getGameProfile(), new PlayerInteractManager(w));
+        this.entity.setLocation(this.npc.getLocation().getX(), this.npc.getLocation().getY(),
+                this.npc.getLocation().getZ(), this.npc.getLocation().getYaw(),
+                this.npc.getLocation().getPitch());
     }
 
     @Override
@@ -31,46 +36,32 @@ public class NPC_1_11_R1 extends NPCWrapper {
     }
 
     @Override
-    public void rotate(double yaw, double pitch) {
-        new PacketSender(new PacketPlayOutEntity.PacketPlayOutEntityLook(
-                this.entity.getId(), (byte) yaw, (byte) pitch, true)
-        ).sendPlayers(this.viewers);
-    }
-
-    @Override
-    public void setCustomName(String name, boolean show) {
-        DataWatcher dw = this.entity.getDataWatcher();
-        dw.set(new DataWatcherObject<>(2, DataWatcherRegistry.d), name == null ? "" : Chat.color(name));
-        dw.set(new DataWatcherObject<>(3, DataWatcherRegistry.h), show);
-        new PacketSender(new PacketPlayOutEntityMetadata(this.entity.getId(), dw, true)).sendPlayers(this.viewers);
-    }
-
-    @Override
     public void addViewer(Player player){
         this.viewers.add(player);
-        new PacketSender(new PacketPlayOutNamedEntitySpawn(this.entity)).sendPlayer(player);
-
         // https://www.spigotmc.org/threads/protocollib-hide-change-player-npc-name.298555/
+        // must send the tablist packet first
         tablist(true, player);
+
+        new PacketSender(new PacketPlayOutNamedEntitySpawn(this.entity)).sendPlayer(player);
         new BukkitRunnable() {
             @Override
             public void run() {
                 tablist(false, player);
             }
-        }.runTaskLaterAsynchronously(SpaciousLib.instance, 20);
+        }.runTaskLaterAsynchronously(SpaciousLib.instance, 10);
     }
 
     @Override
     public void addViewers(Player... players){
         this.viewers.addAll(CommonUtils.toList(players));
-        new PacketSender(new PacketPlayOutNamedEntitySpawn(this.entity)).sendPlayers(players);
         tablist(true, CommonUtils.toList(players));
+        new PacketSender(new PacketPlayOutNamedEntitySpawn(this.entity)).sendPlayers(players);
         new BukkitRunnable() {
             @Override
             public void run() {
                 tablist(false, CommonUtils.toList(players));
             }
-        }.runTaskLaterAsynchronously(SpaciousLib.instance, 20);
+        }.runTaskLaterAsynchronously(SpaciousLib.instance, 10);
     }
 
     @Override
@@ -89,11 +80,13 @@ public class NPC_1_11_R1 extends NPCWrapper {
 
     @Override
     public void addTabList() {
+        this.tabList = true;
         tablist(true, this.viewers);
     }
 
     @Override
     public void removeTabList() {
+        this.tabList = false;
         tablist(false, this.viewers);
     }
 

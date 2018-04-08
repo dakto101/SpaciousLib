@@ -1,14 +1,6 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.GameVersion;
-import org.anhcraft.spaciouslib.utils.GameVersion;
-import org.anhcraft.spaciouslib.utils.JSONUtils;
-import org.anhcraft.spaciouslib.utils.Chat;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.anhcraft.spaciouslib.utils.*;
 
 /**
  * A class helps you to send title/subtitle packets
@@ -36,7 +28,7 @@ public class Title {
      * @return PacketSender object
      */
     public static PacketSender create(String text, Type type, int fadeIn, int stay, int fadeOut) {
-        if(JSONUtils.isValid(text)){
+        if(CommonUtils.isValidJSON(text)){
             text = Chat.color(text);
         } else {
             text = "{\"text\": \"" + Chat.color(text) + "\"}";
@@ -45,18 +37,21 @@ public class Title {
         try {
             Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GameVersion.v1_8_R1) ? "" : "IChatBaseComponent$") + "ChatSerializer");
             Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v.toString() + ".IChatBaseComponent");
-            Method chatSerializer = chatSerializerClass.getDeclaredMethod("a", String.class);
-            Object chatBaseComponent = chatSerializer.invoke(null, text);
+            Object chatBaseComponent = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
+                    new Group<>(
+                            new Class<?>[]{String.class},
+                            new String[]{text}
+                    ));
 
             Class<?> packetPlayOutTitleClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutTitle");
             Class<?> enumTitleActionClass = Class.forName("net.minecraft.server." + v.toString() + "."+(v.equals(GameVersion.v1_8_R1) ? "" : "PacketPlayOutTitle$")+"EnumTitleAction");
-            Field enumTitleField = enumTitleActionClass.getDeclaredField(type.toString());
-            enumTitleField.setAccessible(true);
-            Object enumTitle = enumTitleField.get(null);
-            Constructor<?> packetCons = packetPlayOutTitleClass.getDeclaredConstructor(enumTitleActionClass, chatBaseComponentClass, int.class, int.class, int.class);
-            Object packet = packetCons.newInstance(enumTitle, chatBaseComponent, fadeIn, stay, fadeOut);
-            return new PacketSender(packet);
-        } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchFieldException e) {
+            Object enumTitle = ReflectionUtils.getEnum(type.toString(), enumTitleActionClass);
+            return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutTitleClass, new Group<>(
+                    new Class<?>[]{enumTitleActionClass, chatBaseComponentClass,
+                            int.class, int.class, int.class},
+                    new Object[]{enumTitle, chatBaseComponent, fadeIn, stay, fadeOut}
+            )));
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;

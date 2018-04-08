@@ -56,6 +56,8 @@ public class SubCommandBuilder extends CommandString{
                 "&cYou must type a valid boolean! (true, false)");
         setArgErrorMessage(CommandArgument.Type.WORLD,
                 "&cCouldn't find that world!");
+        setArgErrorMessage(CommandArgument.Type.UUID,
+                "&cYou must type a valid UUID!");
         setDoesNotEnoughtArgsErrorMessage("&cNot enough arguments!");
         setCanNotFindCmdMessage("&cCan't find that command. Please recheck the syntax.");
         setSuggestMessage("&6Maybe this is the command which you want: &f");
@@ -323,6 +325,13 @@ public class SubCommandBuilder extends CommandString{
                         case ONLINE_PLAYER:
                             if(!Bukkit.getServer().getOfflinePlayer(value).isOnline()) {
                                 s.sendMessage(sc.argErrorMessages.get(CommandArgument.Type.ONLINE_PLAYER));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case UUID:
+                            if(!RegEx.UUID.matches(value)) {
+                                s.sendMessage(sc.argErrorMessages.get(CommandArgument.Type.UUID));
                                 hasError = true;
                                 break argTypeValidator;
                             }

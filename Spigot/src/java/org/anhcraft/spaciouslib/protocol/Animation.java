@@ -1,17 +1,14 @@
 package org.anhcraft.spaciouslib.protocol;
 
 import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.Group;
+import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.entity.Entity;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * A class helps you to send animation packets
  */
 public class Animation {
-
     /**
      * Creates an animation packet
      * @param entity the entity
@@ -24,13 +21,13 @@ public class Animation {
             Class<?> craftEntityClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftEntity");
             Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v.toString() + ".Entity");
             Class<?> packetPlayOutAnimationClass = Class.forName("net.minecraft.server." + v.toString() + ".PacketPlayOutAnimation");
-            Object craftEntity = craftEntityClass.cast(entity);
-            Method handle = craftEntityClass.getDeclaredMethod("getHandle");
-            Object nmsEntity = handle.invoke(craftEntity);
-            Constructor<?> packetCons = packetPlayOutAnimationClass.getDeclaredConstructor(nmsEntityClass, int.class);
-            Object packet = packetCons.newInstance(nmsEntity, type.getID());
-            return new PacketSender(packet);
-        } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            Object craftEntity = ReflectionUtils.cast(craftEntityClass, entity);
+            Object nmsEntity = ReflectionUtils.getMethod("getHandle", craftEntityClass, craftEntity);
+            return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutAnimationClass, new Group<>(
+                   new Class<?>[]{nmsEntityClass, int.class},
+                   new Object[]{nmsEntity, type.getID()}
+            )));
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;

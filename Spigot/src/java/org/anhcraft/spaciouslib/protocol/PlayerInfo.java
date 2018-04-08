@@ -1,12 +1,11 @@
 package org.anhcraft.spaciouslib.protocol;
 
 import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.Group;
+import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 public class PlayerInfo {
     public enum Type {
@@ -23,17 +22,17 @@ public class PlayerInfo {
             Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftPlayer");
             Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v.toString() + ".EntityPlayer");
             Class<?> packetPlayOutPlayerInfoClass = Class.forName("net.minecraft.server." + v.toString() + ".PacketPlayOutPlayerInfo");
-            Class<?> enumPlayerInfoActionClass = Class.forName("net.minecraft.server." + v.toString() + ".PacketPlayOutPlayerInfo.EnumPlayerInfoAction");
-            Object craftPlayer = craftPlayerClass.cast(player);
-            Method handle = craftPlayerClass.getDeclaredMethod("getHandle");
-            Object nmsEntityPlayer = nmsEntityPlayerClass.cast(handle.invoke(craftPlayer));
-            Field enumPlayerInfoActionField = enumPlayerInfoActionClass.getDeclaredField(type.toString());
-            enumPlayerInfoActionField.setAccessible(true);
-            Object enumPlayerInfoAction = enumPlayerInfoActionField.get(null);
-            Constructor<?> packetCons = packetPlayOutPlayerInfoClass.getDeclaredConstructor(enumPlayerInfoActionClass, nmsEntityPlayerClass);
-            Object packet = packetCons.newInstance(enumPlayerInfoAction, nmsEntityPlayer);
-            return new PacketSender(packet);
-        } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException | InstantiationException e) {
+            Class<?> enumPlayerInfoActionClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GameVersion.v1_8_R1) ? "" : "PacketPlayOutPlayerInfo$") + "EnumPlayerInfoAction");
+            Object craftPlayer = ReflectionUtils.cast(craftPlayerClass, player);
+            Object nmsEntityPlayer = ReflectionUtils.getMethod("getHandle", craftPlayerClass, craftPlayer);
+            Object enumPlayerInfoAction = ReflectionUtils.getEnum(type.toString(), enumPlayerInfoActionClass);
+            Object[] x = (Object[]) Array.newInstance(nmsEntityPlayerClass, 1);
+            x[0] = nmsEntityPlayer;
+            return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutPlayerInfoClass, new Group<>(
+                    new Class[]{enumPlayerInfoActionClass, Array.newInstance(nmsEntityPlayerClass, 0).getClass()},
+                    new Object[]{enumPlayerInfoAction, x}
+            )));
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;

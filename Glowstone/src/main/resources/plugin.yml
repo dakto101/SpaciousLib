@@ -1,6 +1,0 @@
-name: SpaciousLib
-version: 1.5.0
-main: org.anhcraft.spaciouslib.SpaciousLib
-authors: [anhcraft]
-description: A useful library for your Spigot plugins and Java programs
-website: https://anhcraft.org/

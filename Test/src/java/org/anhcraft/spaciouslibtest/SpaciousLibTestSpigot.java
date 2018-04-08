@@ -12,16 +12,18 @@ import org.anhcraft.spaciouslib.command.CommandBuilder;
 import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SubCommandBuilder;
 import org.anhcraft.spaciouslib.entity.EntityManager;
+import org.anhcraft.spaciouslib.entity.PlayerPing;
 import org.anhcraft.spaciouslib.events.BungeeForwardEvent;
+import org.anhcraft.spaciouslib.events.NPCInteractEvent;
 import org.anhcraft.spaciouslib.events.PacketHandleEvent;
-import org.anhcraft.spaciouslib.inventory.BookManager;
-import org.anhcraft.spaciouslib.inventory.EquipSlot;
-import org.anhcraft.spaciouslib.inventory.ItemManager;
-import org.anhcraft.spaciouslib.inventory.RecipeManager;
+import org.anhcraft.spaciouslib.hologram.Hologram;
+import org.anhcraft.spaciouslib.hologram.HologramManager;
+import org.anhcraft.spaciouslib.inventory.*;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
 import org.anhcraft.spaciouslib.io.FileManager;
-import org.anhcraft.spaciouslib.mojang.GameProfileBuilder;
-import org.anhcraft.spaciouslib.mojang.Skin;
+import org.anhcraft.spaciouslib.mojang.CachedSkin;
+import org.anhcraft.spaciouslib.mojang.GameProfileManager;
+import org.anhcraft.spaciouslib.mojang.SkinManager;
 import org.anhcraft.spaciouslib.nbt.NBTManager;
 import org.anhcraft.spaciouslib.npc.NPC;
 import org.anhcraft.spaciouslib.npc.NPCManager;
@@ -32,8 +34,10 @@ import org.anhcraft.spaciouslib.protocol.*;
 import org.anhcraft.spaciouslib.socket.ServerSocketClientHandler;
 import org.anhcraft.spaciouslib.socket.ServerSocketRequestHandler;
 import org.anhcraft.spaciouslib.socket.SocketManager;
+import org.anhcraft.spaciouslib.utils.CommonUtils;
+import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.anhcraft.spaciouslib.utils.RandomUtils;
-import org.anhcraft.spaciouslib.utils.StringUtils;
+import org.anhcraft.spaciouslib.utils.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -47,22 +51,33 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
-    public static File f = new File("plugins/SpaciousLibTest/test.txt");
-    public static NPCWrapper npc;
+    private static File f = new File("plugins/SpaciousLibTest/test.txt");
+    private static NPCWrapper npc;
+    private static Hologram hg;
 
     @Override
     public void onEnable() {
+        try {
+            SkinManager.get(UUID.fromString("2c8d5050-eae7-438d-88c4-c29fbcebede9"), (int) TimeUnit.WEEK.getSeconds());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
         new DirectoryManager("plugins/SpaciousLibTest/").mkdirs();
         try {
             new FileManager(f).initFile(IOUtils.toByteArray(getClass().getResourceAsStream("/test.txt")));
@@ -90,7 +105,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                                 @Override
                                 public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                                     if(commandSender instanceof Player) {
-                                        Particle.Type type = StringUtils.get(strings[0].toUpperCase(), Particle.Type.values());
+                                        Particle.Type type = CommonUtils.getObject(strings[0].toUpperCase(), Particle.Type.values());
                                         if(type == null) {
                                             commandSender.sendMessage("Invalid particle type!");
                                         } else {
@@ -113,7 +128,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                                 @Override
                                 public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
                                     if(commandSender instanceof Player) {
-                                        Particle.Type type = StringUtils.get(strings[0], Particle.Type.values());
+                                        Particle.Type type = CommonUtils.getObject(strings[0], Particle.Type.values());
                                         if(type == null) {
                                             commandSender.sendMessage("Invalid particle type!");
                                         } else {
@@ -123,7 +138,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                                                 double x = Math.cos(radians) * 3;
                                                 double z = Math.sin(radians) * 3;
                                                 location.add(x, 0, z);
-                                                Particle.create(type, location, StringUtils.toIntegerNumber(strings[1])).sendWorld(((Player) commandSender).getWorld());
+                                                Particle.create(type, location, CommonUtils.toIntegerNumber(strings[1])).sendWorld(((Player) commandSender).getWorld());
                                                 location.subtract(x, 0, z);
                                             }
                                         }
@@ -172,6 +187,26 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                         }
                     }))
 
+                    .addSubCommand(new SubCommandBuilder("skin", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder sCommand, SubCommandBuilder subCommand, CommandSender commandSender, String[] strings, String s) {
+                            commandSender.sendMessage(sCommand.getCommandAsString(subCommand, true));
+                        }
+                    }).addArgument("uuid", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            try {
+                                CachedSkin cs = SkinManager.get(UUID.fromString(value));
+                                if(sender instanceof Player) {
+                                    Player player = (Player) sender;
+                                    SkinManager.changeSkin(player, cs.getSkin());
+                                }
+                            } catch(Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, CommandArgument.Type.UUID, false))
+
                     .addSubCommand(new SubCommandBuilder("camera", "View as a random nearby entity", new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] strings, String s) {
@@ -187,9 +222,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] strings, String s) {
                             if(sender instanceof Player) {
-                                if(sender instanceof Player) {
-                                    Camera.create((Player) sender).sendPlayer((Player) sender);
-                                }
+                                Camera.create((Player) sender).sendPlayer((Player) sender);
                             }
                         }
                     }))
@@ -252,7 +285,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                             if(sender instanceof Player) {
                                 Player p = (Player) sender;
                                 p.getInventory().addItem(
-                                        new BookManager("&aRule", 1)
+                                        new BookManager("&aGuide", 1)
                                                 .setAuthor("anhcraft")
                                                 .setTitle("GUIDE")
                                                 .setBookGeneration(BookManager.BookGeneration.ORIGINAL)
@@ -260,6 +293,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                                                         "Name: {player_name}\n" +
                                                                 "Level: {player_level}\n" +
                                                                 "Exp: {player_exp}\n" +
+                                                                "Ping: {player_ping}\n" +
                                                                 "Health: {player_health}/{player_max_health}",
                                                         p))
                                                 .addPage("Second page")
@@ -311,21 +345,32 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             if(sender instanceof Player && npc == null) {
                                 Player p = (Player) sender;
-                                npc = NPCManager.register("test", new NPC(
-                                        new GameProfileBuilder("test")
-                                                .setSkin(Skin.Default.STEVE.getSkin()).getGameProfile(),
-                                        p.getLocation(),
-                                        NPC.Addition.INTERACT_HANDLER,
-                                        NPC.Addition.NEARBY_RENDER,
-                                        NPC.Addition.LOOK_VIEWER).setNearbyRadius(20));
+                                try {
+                                    npc = NPCManager.register("test", new NPC(
+                                            new GameProfileManager("test")
+                                                    .setSkin(SkinManager.get(UUID.fromString("2c8d5050-eae7-438d-88c4-c29fbcebede9")).getSkin()).getGameProfile(),
+                                            p.getLocation(),
+                                            NPC.Addition.INTERACT_HANDLER,
+                                            NPC.Addition.NEARBY_RENDER).setNearbyRadius(20));
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }))
-                    .addSubCommand(new SubCommandBuilder("npc despawn", null, new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("npc tphere", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             if(sender instanceof Player && npc != null) {
                                 Player p = (Player) sender;
+                                npc.teleport(p.getLocation());
+                            }
+                        }
+                    }))
+                    .addSubCommand(new SubCommandBuilder("npc remove", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player && npc != null) {
                                 NPCManager.unregister("test");
                                 npc = null;
                             }
@@ -340,10 +385,48 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             if(sender instanceof Player && npc != null) {
-                                npc.setCustomName(value, !value.equals("null"));
+                                npc.setName(value);
                             }
                         }
                     }, CommandArgument.Type.CUSTOM, false))
+
+                    .addSubCommand(new SubCommandBuilder("hg add", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                hg = new Hologram("test", player.getLocation());
+                                hg.addLine("test 1");
+                                hg.addLine("test 2");
+                                hg.addLine("test 3");
+                                hg.addViewer(player);
+                                HologramManager.register(hg);
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("hg remove", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                HologramManager.unregister(hg);
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("json", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                try {
+                                    new FileManager(f).writeIfExist(NBTManager.fromEntity(player).toJSON().getBytes(StandardCharsets.UTF_8));
+                                } catch(IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }))
                     .buildExecutor(this)
                     .clone("sl").buildExecutor(this)
                     .clone("spaciouslib").buildExecutor(this);
@@ -359,9 +442,34 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                 System.out.println("Client >> " + data);
             }
         });
-
         for(Placeholder placeholder : PlaceholderManager.getPlaceholders()){
             System.out.println(placeholder.getPlaceholder());
+        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for(Player player : Bukkit.getServer().getOnlinePlayers()){
+                    ActionBar.create(Integer.toString(PlayerPing.get(player))+" ms", 60, 80, 60).sendPlayer(player);
+                }
+            }
+        }.runTaskTimerAsynchronously(this, 40, 40);
+    }
+
+    @EventHandler
+    public void npc(NPCInteractEvent event){
+        if(event.getNPC().equals(npc.getNPC())){
+            InventoryManager inv = new InventoryManager(npc.getNPC().getGameProfile().getName(), 54);
+            int i = 0;
+            while(i < 54){
+                inv.set(i, new ItemManager("", RandomUtils.pickRandom(InventoryUtils.getArmors()), 1).getItem(), new InteractItemRunnable() {
+                    @Override
+                    public void run(Player player, ItemStack item, ClickType action, int slot) {
+
+                    }
+                });
+                i++;
+            }
+            inv.open(event.getPlayer());
         }
     }
 

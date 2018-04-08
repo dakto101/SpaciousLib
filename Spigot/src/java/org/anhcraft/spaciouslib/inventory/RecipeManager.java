@@ -2,10 +2,10 @@ package org.anhcraft.spaciouslib.inventory;
 
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
+import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.*;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,23 +32,19 @@ public class RecipeManager {
         try {
             Class craftingManagerClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".CraftingManager");
             Class recipeClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".IRecipe");
-            Method craftingManagerIns = craftingManagerClass.getDeclaredMethod("getInstance");
-            Object craftingManager = craftingManagerIns.invoke(null);
+            Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", craftingManagerClass);
             Method nmsRecipesMethod = craftingManagerClass.getDeclaredMethod("getRecipes");
             List<Object> newNmsRecipes = new ArrayList<>();
             List<Object> nmsRecipes = (List<Object>) nmsRecipesMethod.invoke(craftingManager);
             for(Object nr : nmsRecipes){
-                Method recipeBukkitMethod = recipeClass.getDeclaredMethod("toBukkitRecipe");
-                Recipe recipeBukkit = (Recipe) recipeBukkitMethod.invoke(nr);
+                Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, nr);
                 if(compare(recipeBukkit, recipe)){
                     continue;
                 }
                 newNmsRecipes.add(nr);
             }
-            Field recipeListField = craftingManagerClass.getDeclaredField("recipes");
-            recipeListField.setAccessible(true);
-            recipeListField.set(craftingManager, newNmsRecipes);
-        } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
+            ReflectionUtils.setField("recipes", craftingManagerClass, craftingManager, newNmsRecipes);
+        } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -62,23 +58,26 @@ public class RecipeManager {
         try {
             Class<?> craftingManagerClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".CraftingManager");
             Class<?> recipeClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".IRecipe");
-            Method craftingManagerIns = craftingManagerClass.getDeclaredMethod("getInstance");
-            Object craftingManager = craftingManagerIns.invoke(null);
-            Method nmsRecipesMethod = craftingManagerClass.getDeclaredMethod("getRecipes");
-            List<Object> nmsRecipes = (List<Object>) nmsRecipesMethod.invoke(craftingManager);
+            Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", craftingManagerClass);
+            List<Object> nmsRecipes = (List<Object>) ReflectionUtils.getMethod("getRecipes", craftingManagerClass, craftingManager);
             for(Object nr : nmsRecipes){
-                Method recipeBukkitMethod = recipeClass.getDeclaredMethod("toBukkitRecipe");
-                Recipe recipeBukkit = (Recipe) recipeBukkitMethod.invoke(nr);
+                Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, nr);
                 if(compare(recipeBukkit, recipe)){
                     return true;
                 }
             }
-        } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
         return false;
     }
 
+    /**
+     * Compares two recipes
+     * @param recipeA the first recipe
+     * @param recipeB the second recipe
+     * @return true if these recipes are same
+     */
     public static boolean compare(Recipe recipeA, Recipe recipeB){
         if(recipeA instanceof ShapedRecipe && recipeB instanceof ShapedRecipe) {
             ShapedRecipe a = (ShapedRecipe) recipeA;

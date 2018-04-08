@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Constructor;
@@ -39,38 +41,16 @@ public class NPCManager implements Listener {
                         }
                         n.removeViewers(CommonUtils.toArray(removePlayers, Player.class));
                         List<Player> players = npc.getLocation().getWorld().getPlayers();
-                        players.removeAll(removePlayers);
+                        players.removeAll(n.getViewers());
                         for(Player player : players){
                             if(player.getLocation().distance(npc.getLocation()) <= npc.getNearbyRadius()) {
                                 n.addViewer(player);
                             }
                         }
                     }
-                    if(npc.getAdditions().contains(NPC.Addition.LOOK_VIEWER)
-                             && 0 < n.getViewers().size()){
-                        Player nearest = null;
-                        double last = 0;
-                        for(Player player : n.getViewers()) {
-                            double dis = player.getLocation().distance(npc.getLocation());
-                            if(dis < last){
-                                nearest = player;
-                                last = dis;
-                            }
-                        }
-                        double dx = nearest.getLocation().getX()-npc.getLocation().getX();
-                        double dy = nearest.getLocation().getY()-npc.getLocation().getY();
-                        double dz = nearest.getLocation().getZ()-npc.getLocation().getZ();
-                        double r = Math.sqrt(dx*dx + dy*dy + dz*dz);
-                        double yaw = -Math.atan2(dx,dz)/Math.PI*180;
-                        if (yaw < 0) {
-                            yaw = 360 + yaw;
-                        }
-                        double pitch = -Math.asin(dy/r)/Math.PI*180;
-                        n.rotate(yaw, pitch);
-                    }
                 }
             }
-        }.runTaskTimerAsynchronously(SpaciousLib.instance, 20, 20);
+        }.runTaskTimerAsynchronously(SpaciousLib.instance, 0, 20);
     }
 
     @EventHandler
@@ -79,17 +59,58 @@ public class NPCManager implements Listener {
             for(NPCWrapper n : data.values()){
                 if(n.getEntityID() == (int) ev.getPacketValue("a")){
                     EquipSlot es = EquipSlot.MAINHAND;
-                    if(GameVersion.is1_9Above() && ev.getPacketValue("d").toString().equals("OFF_HAND")){
-                        es = EquipSlot.OFFHAND;
+                    if(GameVersion.is1_9Above()){
+                        Object d = ev.getPacketValue("d");
+                        if(d != null && d.toString().equals("OFF_HAND")) {
+                            es = EquipSlot.OFFHAND;
+                        }
                     }
-                    NPCInteractEvent e = new NPCInteractEvent(ev.getPlayer(), n.getNPC(), ev.getPacketValue("action").toString().equals("ATTACK"), es);
-                    Bukkit.getServer().getPluginManager().callEvent(e);
+                    EquipSlot es_ = es;
+                    // switches to the main thread
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            NPCInteractEvent e = new NPCInteractEvent(ev.getPlayer(), n.getNPC(), ev.getPacketValue("action").toString().equals("ATTACK"), es_);
+                            Bukkit.getServer().getPluginManager().callEvent(e);
+                        }
+                    }.runTaskLater(SpaciousLib.instance, 1);
+                    ev.setCancelled(true);
                     break;
                 }
             }
         }
     }
 
+    @EventHandler
+    public void playerQuitHandler(PlayerQuitEvent ev){
+        for(String n : data.keySet()){
+            NPCWrapper npc = data.get(n);
+            if(npc.getViewers().contains(ev.getPlayer())){
+                npc.removeViewer(ev.getPlayer());
+            }
+        }
+    }
+
+    @EventHandler
+    public void worldUnloadHandler(WorldUnloadEvent ev){
+        List<String> remove = new ArrayList<>();
+        for(String n : data.keySet()){
+            NPCWrapper npc = data.get(n);
+            if(npc.getNPC().getLocation().getWorld().getName().equals(ev.getWorld().getName())){
+                remove.add(n);
+            }
+        }
+        for(String i : remove){
+            unregister(i);
+        }
+    }
+
+    /**
+     * Registers a new NPC
+     * @param id the id of that NPC
+     * @param npc the NPC Object
+     * @return NPCWrapper object
+     */
     public static NPCWrapper register(String id, NPC npc){
         NPCWrapper wrapper = null;
         try {
@@ -104,10 +125,26 @@ public class NPCManager implements Listener {
         return wrapper;
     }
 
+    /**
+     * Unregisters a specific NPC
+     * @param id the id of the NPC
+     */
     public static void unregister(String id){
         if(data.containsKey(id)){
             NPCWrapper w = data.get(id);
-            w.despawn();
+            w.remove();
+            data.remove(id);
+        }
+    }
+
+    /**
+     * Unregisters all NPCs
+     */
+    public static void unregisterAll() {
+        for(String id : data.keySet()){
+            NPCWrapper w = data.get(id);
+            w.remove();
+            data.remove(id);
         }
     }
 }

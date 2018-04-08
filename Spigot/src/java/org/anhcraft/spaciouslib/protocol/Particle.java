@@ -1,12 +1,11 @@
 package org.anhcraft.spaciouslib.protocol;
 
 import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.Group;
+import org.anhcraft.spaciouslib.utils.ReflectionUtils;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * A class helps you to send particle packets
@@ -75,57 +74,54 @@ public class Particle {
     }
 
     public static PacketSender create(Type type, Location location, int count){
-        return create(type, (float) location.getX(), (float) location.getY(), (float) location.getZ(), count, 0, 0, 0, false, 0, Material.AIR, 0);
+        return create(type, location, count, 0, 0, 0, false, 0, Material.AIR, 0);
     }
 
-    public static PacketSender create(Type type, float x, float y, float z, int count){
-        return create(type, x, y, z, count, 0, 0, 0, false, 0, Material.AIR, 0);
+    public static PacketSender create(Type type, Location location, int count, Color color){
+        float offsetX = (float) color.getRed() / 255;
+        float offsetY = (float) color.getGreen() / 255;
+        float offsetZ = (float) color.getBlue() / 255;
+
+        if (offsetX < 0) {
+            offsetX = 0;
+        }
+        if (offsetY < 0) {
+            offsetY = 0;
+        }
+        if (offsetZ < 0) {
+            offsetZ = 0;
+        }
+
+        return create(type, location, count, offsetX, offsetY, offsetZ, false, 1, Material.AIR, 0);
+    }
+
+    public static PacketSender create(Type type, Location location, int count, int speed){
+        return create(type, location, count, 0, 0, 0, false, speed, Material.AIR, 0);
     }
 
     public static PacketSender create(Type type, Location location, int count, Material material, int data){
-        return create(type, (float) location.getX(), (float) location.getY(), (float) location.getZ(), count, 0, 0, 0, false, 0, material, data);
-    }
-
-    public static PacketSender create(Type type, float x, float y, float z, int count, Material material, int data){
-        return create(type, x, y, z, count, 0, 0, 0, false, 0, material, data);
+        return create(type, location, count, 0, 0, 0, false, 0, material, data);
     }
 
     public static PacketSender create(Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed, Material material, int data){
-        return create(type, (float) location.getX(), (float) location.getY(), (float) location.getZ(), count, offsetX, offsetY, offsetZ, longDistance, speed, material, data);
-    }
-
-    public static PacketSender create(Type type, float x, float y, float z, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed, Material material, int data){
         try {
             Class<?> enumParticleClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".EnumParticle");
-            Field enumParticleField = enumParticleClass.getDeclaredField(type.toString());
-            enumParticleField.setAccessible(true);
-            Object enumParticle = enumParticleField.get(null);
-            Class<?> particleClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".PacketPlayOutWorldParticles");
-            Constructor<?> packetCons = particleClass.getDeclaredConstructor(enumParticleClass, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class, int[].class);
-            Object packet;
+            Object enumParticle = ReflectionUtils.getEnum(type.toString(), enumParticleClass);
+            Class<?> packetPlayOutWorldParticlesClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".PacketPlayOutWorldParticles");
+            int[] i = new int[]{};
             if(type.equals(Type.ITEM_CRACK)){
-                packet = packetCons.newInstance(enumParticle, longDistance,
-                        x, y, z, offsetX, offsetY, offsetZ, speed, count, (Object) new int[] {
-                                data << 12 | material.getId() & 0xFFF
-                        });
+                i = new int[]{material.getId(), data};
             }
-            else if(type.equals(Type.BLOCK_CRACK)){
-                packet = packetCons.newInstance(enumParticle, longDistance,
-                        x, y, z, offsetX, offsetY, offsetZ, speed, count, (Object) new int[] {
-                                material.getId()
-                        });
+            else if(type.equals(Type.BLOCK_CRACK) || type.equals(Type.BLOCK_DUST) ||
+                    type.equals(Type.FALLING_DUST)){
+                i = new int[]{material.getId() + (data << 12)};
             }
-            else if(type.equals(Type.BLOCK_DUST)){
-                packet = packetCons.newInstance(enumParticle, longDistance,
-                        x, y, z, offsetX, offsetY, offsetZ, speed, count, (Object) new int[] {
-                                material.getId()
-                        });
-            } else {
-                packet = packetCons.newInstance(enumParticle, longDistance,
-                        x, y, z, offsetX, offsetY, offsetZ, speed, count, (Object) new int[0]);
-            }
-            return new PacketSender(packet);
-        } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchFieldException e) {
+            return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutWorldParticlesClass, new Group<>(
+                    new Class<?>[]{enumParticleClass, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class, int[].class},
+                    new Object[]{enumParticle, longDistance,
+                            (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count, i}
+            )));
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;

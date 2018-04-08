@@ -9,7 +9,8 @@ import java.lang.reflect.Field;
 
 /**
  * An event triggers when a packet was sent from the server or received by the server.<br>
- * Warning when it was <b>sent from the server</b>, you may have stack overflow error if you <b>send a new packet</b> or access some <b>Bukkit APIs</b> by using that event.
+ * Warning: when it was <b>sent from the server</b>, if you use this event to <b>send new packets</b> or access some <b>Bukkit APIs</b>, you may have the stack overflow error.<br>
+ * Warning: This event always asynchronous. If you want to access some Bukkit APIs (e.g: update some data), I recommend you to create an asynchronous task to switch to the main thread.
  */
 public class PacketHandleEvent extends Event implements Cancellable {
     public enum Type{

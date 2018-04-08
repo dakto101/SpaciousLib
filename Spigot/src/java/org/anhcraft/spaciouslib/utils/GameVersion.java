@@ -31,23 +31,23 @@ public enum GameVersion {
                 .getName().replace(".",  ",").split(",")[3]);
     }
 
-    public static Boolean is1_8Above(){
+    public static boolean is1_8Above(){
         return GameVersion.v1_8_R1.getID() <= getVersion().getID();
     }
 
-    public static Boolean is1_9Above(){
+    public static boolean is1_9Above(){
         return GameVersion.v1_9_R1.getID() <= getVersion().getID();
     }
 
-    public static Boolean is1_10Above(){
+    public static boolean is1_10Above(){
         return GameVersion.v1_10_R1.getID() <= getVersion().getID();
     }
 
-    public static Boolean is1_11Above(){
+    public static boolean is1_11Above(){
         return GameVersion.v1_11_R1.getID() <= getVersion().getID();
     }
 
-    public static Boolean is1_12Above(){
+    public static boolean is1_12Above(){
         return GameVersion.v1_12_R1.getID() <= getVersion().getID();
     }
 }

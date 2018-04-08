@@ -2,8 +2,8 @@ package org.anhcraft.spaciouslib.inventory;
 
 import org.anhcraft.spaciouslib.nbt.NBTCompound;
 import org.anhcraft.spaciouslib.nbt.NBTManager;
-import org.anhcraft.spaciouslib.utils.JSONUtils;
 import org.anhcraft.spaciouslib.utils.Chat;
+import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -123,7 +123,7 @@ public class BookManager extends ItemManager {
     public BookManager setPages(List<String> contents){
         List<String> cont = new ArrayList<>();
         for(String content : contents){
-            if(JSONUtils.isValid(content)){
+            if(CommonUtils.isValidJSON(content)){
                 cont.add(Chat.color(content));
             } else {
                 cont.add("{\"text\": \"" + Chat.color(content) + "\"}");
@@ -174,7 +174,7 @@ public class BookManager extends ItemManager {
      * @return this object
      */
     public BookManager addPage(String content){
-        if(JSONUtils.isValid(content)){
+        if(CommonUtils.isValidJSON(content)){
             content = Chat.color(content);
         } else {
             content = "{\"text\": \"" + Chat.color(content) + "\"}";
@@ -197,7 +197,7 @@ public class BookManager extends ItemManager {
      * @return this object
      */
     public BookManager setPage(int index, String content){
-        if(JSONUtils.isValid(content)){
+        if(CommonUtils.isValidJSON(content)){
             content = Chat.color(content);
         } else {
             content = "{\"text\": \"" + Chat.color(content) + "\"}";

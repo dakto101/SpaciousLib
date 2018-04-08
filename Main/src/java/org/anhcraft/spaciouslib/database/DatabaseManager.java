@@ -30,4 +30,17 @@ public class DatabaseManager {
         data.get(id).disconnect();
         data.remove(id);
     }
+
+    /**
+     * Unregisters all database connections
+     */
+    public static void unregisterAll() {
+        for(String id : data.keySet()){
+            try {
+                unregister(id);
+            } catch(SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

@@ -74,7 +74,7 @@ public class InventoryUtils {
         String[] x = s.split(":");
         Material mt;
         if(StringUtils.isNumeric(x[0])) {
-            mt = Material.getMaterial(org.anhcraft.spaciouslib.utils.StringUtils.toIntegerNumber(x[0]));
+            mt = Material.getMaterial(CommonUtils.toIntegerNumber(x[0]));
         } else {
             mt = Material.valueOf(x[0].toUpperCase());
         }

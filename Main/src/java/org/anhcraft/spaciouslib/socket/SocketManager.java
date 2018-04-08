@@ -64,7 +64,7 @@ public class SocketManager {
     }
 
     /**
-     * Unregisters all socket.
+     * Unregisters all socket connections.
      */
     public static void unregisterAll(){
         for(ClientSocketManager c : clients) {
