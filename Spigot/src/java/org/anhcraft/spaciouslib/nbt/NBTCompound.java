@@ -1,6 +1,7 @@
 package org.anhcraft.spaciouslib.nbt;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bukkit.configuration.ConfigurationSection;
@@ -224,7 +225,7 @@ public abstract class NBTCompound {
     public String toJSON(){
         JsonObject jo = new JsonObject();
         handle2jo(jo, this);
-        return new Gson().toJson(jo);
+        return new Gson().toJson(jo, new TypeToken<JsonObject>(){}.getType());
     }
 
     private void handle2jo(JsonObject jsonObject, NBTCompound nbtCompound) {
@@ -246,18 +247,33 @@ public abstract class NBTCompound {
                             array.add(jo);
                             i++;
                         }
-                    } else {
-                        if(v instanceof Number){
-                            array.add(new JsonPrimitive((Number) v));
+                    }
+                    else if(vlist.get(0) instanceof Number){
+                        int i = 0;
+                        while(i < vlist.size()) {
+                            array.add(new JsonPrimitive((Number) ((List) v).get(i)));
+                            i++;
                         }
-                        if(v instanceof Boolean){
-                            array.add(new JsonPrimitive((Boolean) v));
+                    }
+                    else if(vlist.get(0) instanceof Boolean){
+                        int i = 0;
+                        while(i < vlist.size()) {
+                            array.add(new JsonPrimitive((Boolean) ((List) v).get(i)));
+                            i++;
                         }
-                        if(v instanceof String){
-                            array.add(new JsonPrimitive((String) v));
+                    }
+                    else if(vlist.get(0) instanceof String){
+                        int i = 0;
+                        while(i < vlist.size()) {
+                            array.add(new JsonPrimitive((String) ((List) v).get(i)));
+                            i++;
                         }
-                        if(v instanceof Character){
-                            array.add(new JsonPrimitive((Character) v));
+                    }
+                    else if(vlist.get(0) instanceof Character){
+                        int i = 0;
+                        while(i < vlist.size()) {
+                            array.add(new JsonPrimitive((Character) ((List) v).get(i)));
+                            i++;
                         }
                     }
                     jsonObject.add(k, array);

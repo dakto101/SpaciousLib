@@ -13,6 +13,7 @@ import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SubCommandBuilder;
 import org.anhcraft.spaciouslib.entity.EntityManager;
 import org.anhcraft.spaciouslib.entity.PlayerPing;
+import org.anhcraft.spaciouslib.events.ArmorEquipEvent;
 import org.anhcraft.spaciouslib.events.BungeeForwardEvent;
 import org.anhcraft.spaciouslib.events.NPCInteractEvent;
 import org.anhcraft.spaciouslib.events.PacketHandleEvent;
@@ -56,6 +57,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.ByteArrayOutputStream;
@@ -503,6 +506,15 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                 Bukkit.getServer().broadcastMessage("Forward from: " + ev.getData().readUTF());
             } catch(IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    @EventHandler
+    public void equip(ArmorEquipEvent event){
+        if(!InventoryUtils.isNull(event.getNewArmor())){
+            if(event.getNewArmor().getType().equals(Material.DIAMOND_HELMET)){
+                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 100000, 1));
             }
         }
     }

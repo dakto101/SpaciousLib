@@ -1,7 +1,6 @@
 package org.anhcraft.spaciouslib.mojang;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.anhcraft.spaciouslib.SpaciousLib;
@@ -10,7 +9,6 @@ import org.anhcraft.spaciouslib.protocol.EntityDestroy;
 import org.anhcraft.spaciouslib.protocol.NamedEntitySpawn;
 import org.anhcraft.spaciouslib.protocol.PlayerInfo;
 import org.anhcraft.spaciouslib.utils.*;
-import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -18,15 +16,20 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * A class helps you to manage player skins
+ */
 public class SkinManager {
     private static LinkedHashMap<UUID, CachedSkin> cachedSkins;
 
+    /**
+     * Initializes SkinManager
+     */
     public SkinManager() {
         try {
             cachedSkins = new LinkedHashMap<>();
@@ -72,20 +75,8 @@ public class SkinManager {
      * @return the CachedSkin object
      */
     public static CachedSkin downloadCachedSkin(UUID player, int cachedTime) throws Exception {
-        String url = "https://sessionserver.mojang.com/session/minecraft/profile/"+player.toString().replace("-", "")+"?unsigned=false";
-        String json = IOUtils.toString(new URL(url));
-        JsonObject obj = new Gson().fromJson(json, new TypeToken<JsonObject>(){}.getType());
-        if(obj.has("properties")){
-            JsonArray properties = obj.get("properties").getAsJsonArray();
-            if(0 < properties.size()){
-                JsonObject property = properties.get(0).getAsJsonObject();
-                if(property.get("name").getAsString().equals("textures")){
-                    return new CachedSkin(new Skin(property.get("value").getAsString(),
-                            property.get("signature").getAsString()), player, cachedTime);
-                }
-            }
-        }
-        return null;
+        Group<String, String> data = MojangAPI.getSkin(player);
+        return new CachedSkin(new Skin(data.getA(), data.getB()), player, cachedTime);
     }
 
     /**

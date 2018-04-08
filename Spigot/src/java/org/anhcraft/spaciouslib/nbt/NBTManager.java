@@ -1,5 +1,8 @@
 package org.anhcraft.spaciouslib.nbt;
 
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
@@ -9,9 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * A class helps you to load or apply NBT tags
@@ -101,8 +102,8 @@ public class NBTManager {
 
     /**
      * Loads all NBT tags from the given configuration section
-     * @param configurationSection configuration section
-     * @return NBTCompound object
+     * @param configurationSection the configuration section
+     * @return the NBTCompound object
      */
     public static NBTCompound fromConfigurationSection(ConfigurationSection configurationSection){
         NBTCompound nbt = newCompound();
@@ -143,5 +144,52 @@ public class NBTManager {
             }
         }
         return nbt;
+    }
+
+    /**
+     * Loads all NBT tags from the given JSON string
+     * @param json the JSON string
+     * @return the NBTCompound object
+     */
+    public static NBTCompound fromJSON(String json){
+        if(!CommonUtils.isValidJSON(json)){
+            return newCompound();
+        }
+        return handlejo(newCompound(), new Gson().fromJson(json, new TypeToken<JsonObject>(){}.getType()));
+    }
+
+    private static NBTCompound handlejo(NBTCompound nbtCompound, JsonObject json) {
+        for(Map.Entry<String, JsonElement> data : json.entrySet()){
+            nbtCompound.set(data.getKey(), handlejoe(data.getValue()));
+        }
+        return nbtCompound;
+    }
+
+    private static Object handlejoe(JsonElement e) {
+        Object value = null;
+        if(e.isJsonPrimitive()){
+            JsonPrimitive p = e.getAsJsonPrimitive();
+            if(p.isNumber()){
+                value = p.getAsNumber();
+            }
+            else if(p.isBoolean()){
+                value = p.getAsBoolean();
+            }
+            else if(p.isString()){
+                value = p.getAsString();
+            }
+        }
+        else if(e.isJsonArray()){
+            List<Object> list = new ArrayList<>();
+            JsonArray a = e.getAsJsonArray();
+            for(JsonElement je : a) {
+                list.add(handlejoe(je));
+            }
+            value = list;
+        }
+        else if(e.isJsonObject()){
+            value = handlejo(newCompound(), e.getAsJsonObject());
+        }
+        return value;
     }
 }

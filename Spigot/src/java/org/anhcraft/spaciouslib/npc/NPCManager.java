@@ -26,6 +26,9 @@ import java.util.List;
 public class NPCManager implements Listener {
     protected static LinkedHashMap<String, NPCWrapper> data = new LinkedHashMap<>();
 
+    /**
+     * Initializes NPCManager
+     */
     public NPCManager(){
         new BukkitRunnable() {
             @Override
