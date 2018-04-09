@@ -46,7 +46,6 @@ public class SocketManager {
     /**
      * Unregisters a specific server socket from the given ServerSocketManager object.
      * @param manager ServerSocketManager object
-     * @throws IOException
      */
     public static void unregisterServer(ServerSocketManager manager) throws IOException {
         manager.close();
@@ -56,7 +55,6 @@ public class SocketManager {
     /**
      * Unregisters a specific socket client from the given ClientSocketManager object.
      * @param manager ClientSocketManager object
-     * @throws IOException
      */
     public static void unregisterClient(ClientSocketManager manager) throws IOException {
         manager.close();

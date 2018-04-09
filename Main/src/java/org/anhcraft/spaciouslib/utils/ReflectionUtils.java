@@ -5,6 +5,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * A class helps you to use reflection
+ */
 public class ReflectionUtils {
     public static Object cast(Class<?> clazz, Object castObj){
         return clazz.cast(castObj);

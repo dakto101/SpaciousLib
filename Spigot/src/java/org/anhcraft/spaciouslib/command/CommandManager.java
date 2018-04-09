@@ -1,6 +1,7 @@
 package org.anhcraft.spaciouslib.command;
 
 import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
@@ -8,7 +9,6 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
@@ -23,23 +23,16 @@ public class CommandManager {
     public static void register(JavaPlugin plugin, PluginCommand command){
         try {
             Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");
-            Object craftServer = craftServerClass.cast(Bukkit.getServer());
-            Field commandMapField = craftServerClass.getDeclaredField("commandMap");
-            commandMapField.setAccessible(true);
-            SimpleCommandMap commandMap = (SimpleCommandMap) commandMapField.get(craftServer);
+            Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
+            SimpleCommandMap commandMap = (SimpleCommandMap) ReflectionUtils.getField("commandMap", craftServerClass, craftServer);
             commandMap.register(plugin.getDescription().getName(), command);
-            commandMapField.set(craftServer, commandMap);
-
-            Field simplePluginManagerField = craftServerClass.getDeclaredField("pluginManager");
-            simplePluginManagerField.setAccessible(true);
-            SimplePluginManager simplePluginManager = (SimplePluginManager) simplePluginManagerField.get(craftServer);
-            Field commandMapPluginManagerField = SimplePluginManager.class.getDeclaredField("commandMap");
-            commandMapPluginManagerField.setAccessible(true);
-            SimpleCommandMap commandPluginManagerMap = (SimpleCommandMap) commandMapPluginManagerField.get(simplePluginManager);
+            ReflectionUtils.setField("commandMap", craftServerClass, craftServer, commandMap);
+            SimplePluginManager simplePluginManager = (SimplePluginManager) ReflectionUtils.getField("pluginManager", craftServerClass, craftServer);
+            SimpleCommandMap commandPluginManagerMap = (SimpleCommandMap) ReflectionUtils.getField("commandMap", simplePluginManager.getClass(), simplePluginManager);
             commandPluginManagerMap.register(plugin.getDescription().getName(), command);
-            commandMapPluginManagerField.set(simplePluginManager, commandPluginManagerMap);
-            simplePluginManagerField.set(craftServer, simplePluginManager);
-        } catch(IllegalAccessException | NoSuchFieldException | ClassNotFoundException e) {
+            ReflectionUtils.setField("commandMap", simplePluginManager.getClass(), simplePluginManager, commandPluginManagerMap);
+            ReflectionUtils.setField("pluginManager", craftServerClass, craftServer, simplePluginManager);
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -53,13 +46,9 @@ public class CommandManager {
         try {
             Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");
 
-            Object craftServer = craftServerClass.cast(Bukkit.getServer());
-            Field commandMapField = craftServerClass.getDeclaredField("commandMap");
-            commandMapField.setAccessible(true);
-            SimpleCommandMap commandMap = (SimpleCommandMap) commandMapField.get(craftServer);
-            Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
-            knownCommandsField.setAccessible(true);
-            Map<String, Command> knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
+            Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
+            SimpleCommandMap commandMap = (SimpleCommandMap) ReflectionUtils.getField("commandMap", craftServerClass, craftServer);
+            Map<String, Command> knownCommands = (Map<String, Command>) ReflectionUtils.getField("knownCommands", commandMap.getClass(), commandMap);
             knownCommands.remove(plugin.getName()+":"+command.getName());
             for (String alias : command.getAliases()){
                 alias = plugin.getName()+":"+alias;
@@ -68,19 +57,13 @@ public class CommandManager {
                     knownCommands.remove(alias);
                 }
             }
-            knownCommandsField.set(commandMap, knownCommands);
-            commandMapField.set(craftServer, commandMap);
+            ReflectionUtils.setField("knownCommands", commandMap.getClass(), commandMap, knownCommands);
+            ReflectionUtils.setField("commandMap", craftServerClass, craftServer, commandMap);
 
-            Field simplePluginManagerField = craftServerClass.getDeclaredField("pluginManager");
-            simplePluginManagerField.setAccessible(true);
-            SimplePluginManager simplePluginManager = (SimplePluginManager) simplePluginManagerField.get(craftServer);
-            Field commandMapPluginManagerField = SimplePluginManager.class.getDeclaredField("commandMap");
-            commandMapPluginManagerField.setAccessible(true);
-            SimpleCommandMap commandPluginManagerMap = (SimpleCommandMap) commandMapPluginManagerField.get(simplePluginManager);
+            SimplePluginManager simplePluginManager = (SimplePluginManager) ReflectionUtils.getField("pluginManager", craftServerClass, craftServer);
+            SimpleCommandMap commandPluginManagerMap = (SimpleCommandMap) ReflectionUtils.getField("commandMap", simplePluginManager.getClass(), simplePluginManager);
 
-            Field knownCommandsPluginManagerField = commandPluginManagerMap.getClass().getDeclaredField("knownCommands");
-            knownCommandsPluginManagerField.setAccessible(true);
-            Map<String, Command> knownCommandsPluginManager = (Map<String, Command>) knownCommandsPluginManagerField.get(commandPluginManagerMap);
+            Map<String, Command> knownCommandsPluginManager = (Map<String, Command>) ReflectionUtils.getField("knownCommands", commandPluginManagerMap.getClass(), commandPluginManagerMap);
             knownCommandsPluginManager.remove(plugin.getName()+":"+command.getName());
             for (String alias : command.getAliases()){
                 alias = plugin.getName()+":"+alias;
@@ -89,10 +72,10 @@ public class CommandManager {
                     knownCommandsPluginManager.remove(alias);
                 }
             }
-            knownCommandsPluginManagerField.set(commandPluginManagerMap, knownCommandsPluginManager);
-            commandMapPluginManagerField.set(simplePluginManager, commandPluginManagerMap);
-            simplePluginManagerField.set(craftServer, simplePluginManager);
-        } catch(IllegalAccessException | NoSuchFieldException | ClassNotFoundException e) {
+            ReflectionUtils.setField("knownCommands", commandPluginManagerMap.getClass(), commandPluginManagerMap, knownCommandsPluginManager);
+            ReflectionUtils.setField("commandMap", simplePluginManager.getClass(), simplePluginManager, commandPluginManagerMap);
+            ReflectionUtils.setField("pluginManager", craftServerClass, craftServer, simplePluginManager);
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

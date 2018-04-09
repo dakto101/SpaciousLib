@@ -24,7 +24,6 @@ public class ServerSocketClientHandler extends SocketHandler {
      * Sends a new data to the client.
      * @param data the data in string
      * @return this object
-     * @throws IOException
      */
     public ServerSocketClientHandler send(String data) throws IOException {
         out.write(data + "\n");
@@ -58,7 +57,6 @@ public class ServerSocketClientHandler extends SocketHandler {
 
     /**
      * loses current thread and socket connection.
-     * @throws IOException
      */
     public void close() throws IOException {
         this.isStopped = true;

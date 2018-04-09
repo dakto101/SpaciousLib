@@ -29,7 +29,6 @@ public class ServerSocketManager extends Thread {
      * Sends a new data to all clients.
      * @param data the data in string
      * @return this object
-     * @throws IOException
      */
     public ServerSocketManager sendAll(String data) throws IOException {
         for(ServerSocketClientHandler c : clients){
@@ -40,7 +39,6 @@ public class ServerSocketManager extends Thread {
 
     /**
      * Closes the current thread and all socket connections.
-     * @throws IOException
      */
     public void close() throws IOException {
         this.isStopped = true;

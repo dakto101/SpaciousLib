@@ -68,8 +68,7 @@ public class FileManager {
     /**
      * Writes the given data to that file
      * @param data an array of bytes (binary data)
-     * @param append does that data append at the end of the file?
-     * @throws IOException
+     * @param append does that data append at the end of the file
      * @return this object
      */
     public FileManager write(byte[] data, boolean append) throws IOException {
@@ -83,7 +82,6 @@ public class FileManager {
     /**
      * Writes the given data to that file (Warning: the old data will lost)
      * @param data an array of bytes (binary data)
-     * @throws IOException
      * @return this object
      */
     public FileManager write(byte[] data) throws IOException {
@@ -93,8 +91,7 @@ public class FileManager {
     /**
      * Writes the given data to that file if it exist
      * @param data an array of bytes (binary data)
-     * @param append does that data append at the end of the file?
-     * @throws IOException
+     * @param append does that data append at the end of the file
      * @return this object
      */
     public FileManager writeIfExist(byte[] data, boolean append) throws IOException {
@@ -110,7 +107,6 @@ public class FileManager {
     /**
      * Writes the given data to that file if it exist (Warning: the old data will lost)
      * @param data an array of bytes (binary data)
-     * @throws IOException
      * @return this object
      */
     public FileManager writeIfExist(byte[] data) throws IOException {
@@ -124,7 +120,6 @@ public class FileManager {
     /**
      * Reads that file
      * @return the data of the file as an array of bytes (binary data)
-     * @throws IOException
      */
     public byte[] read() throws IOException {
         byte[] data = new byte[(int) this.file.length()];
@@ -137,7 +132,6 @@ public class FileManager {
     /**
      * Reads that file
      * @return the data of the file as a string
-     * @throws IOException
      */
     public String readAsString() throws IOException {
         return new String(read());

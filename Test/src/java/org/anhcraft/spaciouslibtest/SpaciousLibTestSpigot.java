@@ -423,7 +423,7 @@ public class SpaciousLibTestSpigot extends JavaPlugin implements Listener {
                             if(sender instanceof Player) {
                                 Player player = (Player) sender;
                                 try {
-                                    new FileManager(f).writeIfExist(NBTManager.fromEntity(player).toJSON().getBytes(StandardCharsets.UTF_8));
+                                    new FileManager(f).writeIfExist(NBTManager.fromItem(player.getInventory().getItemInMainHand()).toJSON().getBytes(StandardCharsets.UTF_8));
                                 } catch(IOException e) {
                                     e.printStackTrace();
                                 }

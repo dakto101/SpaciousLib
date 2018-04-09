@@ -259,23 +259,31 @@ public class SubCommandBuilder extends CommandString{
             throw new Exception("This subcommand isn't valid, please normalize first");
         }
         SubCommandBuilder sc = this;
+        // [vi] nếu không có tham số động
         if(a.length == 0){
             rootRunnable.run(cmd, sc, s, a, "");
-        } else {
+        }
+        // [vi] nếu có thì sẽ check chúng
+        else {
             LinkedHashMap<CommandArgument, String> values = new LinkedHashMap<>();
             int i = 0;
+            // [vi] lặp từng tham số động
             for(String value : a) {
+                // [vi] nếu tham số động đã nhập không được chỉ định thì bỏ qua
                 if(getArguments().size() <= i) {
                     break;
                 }
+                // [vi] từng tham số động của lệnh đã nhập sẽ tương ứng vs loại của tham số chỉ định
                 values.put(getArguments().get(i), value);
                 i++;
             }
+            // [vi] nếu tham số động đã nhập tí hơn tham số chỉ định thì sẽ tính là "không đủ tham số"
             if(values.size() < getArguments(false).size()) {
                 s.sendMessage(sc.doesNotEnoughtArgsErrorMessage);
             } else {
                 boolean hasError = false;
                 argTypeValidator:
+                // [vi] lặp từng tham số động
                 for(CommandArgument arg : values.keySet()) {
                     String value = values.get(arg);
                     switch(getArgumentType(arg)) {
@@ -339,9 +347,12 @@ public class SubCommandBuilder extends CommandString{
                     }
                 }
                 if(!hasError) {
-                    if((values.size() - 1) >= 0 && (values.size() - 1) < values.size()) {
+                    // [vi] tham số động đã nhập phải có nhiều hơn 0
+                    if(values.size() > 0) {
+                        // [vi] lấy ra tham số động cuối cùng
                         CommandArgument arg = new ArrayList<>(values.keySet())
                                 .get(values.size() - 1);
+                        // [vi] chạy runnable của tham số cuối cùng kèm giá trị đã nhập
                         arg.getRunnable().run(cmd, sc, s, a, values.get(arg));
                     } else {
                         s.sendMessage(sc.canNotFindCmdErrorMessage);

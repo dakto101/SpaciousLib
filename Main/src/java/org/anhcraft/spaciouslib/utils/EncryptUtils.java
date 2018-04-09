@@ -22,8 +22,6 @@ public class EncryptUtils {
      * @param type the type of hashing algorithm
      * @param string the string
      * @return the hash
-     * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
      */
     public static String create(Type type, String string) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest digest = MessageDigest.getInstance(type.toString().replace("_", "-"));

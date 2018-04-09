@@ -52,7 +52,6 @@ public class CommandArgument {
      * @param name the name of this argument
      * @param runnable a runnable
      * @param optional if yes, players can skip this argument
-     * @throws Exception
      */
     public CommandArgument(String name, CommandRunnable runnable, boolean optional) throws Exception {
         name = name.trim();

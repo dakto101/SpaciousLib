@@ -7,7 +7,6 @@ import javax.script.ScriptException;
  * A utility class about math
  */
 public class MathUtils {
-
     /**
      * Evaluates or executes the given JavaScript code.<br>
      * Useful for calculating math expression (e.g: "5/2+3*8-(12+4)").

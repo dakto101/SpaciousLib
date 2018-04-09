@@ -21,7 +21,6 @@ public class DatabaseManager {
     /**
      * Unregisters a specific database connection
      * @param id connection id
-     * @throws SQLException
      */
     public static void unregister(String id) throws SQLException {
         if(!data.containsKey(id)){

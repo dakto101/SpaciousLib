@@ -17,7 +17,6 @@ public abstract class Database {
 
     /**
      * Disconnects from current database
-     * @throws SQLException
      */
     public void disconnect() throws SQLException {
         if(state != null){
@@ -33,7 +32,6 @@ public abstract class Database {
     /**
      * Executes the given SQL statement (for statement that doesn't contain result such as INSERT, UPDATE, DELETE, DROP)
      * @param sql an SQL statement
-     * @throws SQLException
      */
     public int update(String sql) throws SQLException {
         if(state == null){
@@ -46,7 +44,6 @@ public abstract class Database {
      * Executes the given SQL statement (for statement that contains result such as SELECT)
      * @param sql an SQL statement
      * @return the result after executes that statement
-     * @throws SQLException
      */
     public ResultSet query(String sql) throws SQLException {
         if(state == null){

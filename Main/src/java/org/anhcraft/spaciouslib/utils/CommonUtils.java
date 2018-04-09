@@ -29,8 +29,6 @@ public class CommonUtils {
      * Encodes a string into base64 encoded string
      * @param str the string
      * @return base64 encoded string
-     * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
      */
     public static String toBase64(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         byte[] bytes = str.getBytes("UTF-8");
@@ -41,8 +39,6 @@ public class CommonUtils {
      * Decodes the given base64 encoded string into "real" string
      * @param str the base64 encoded string
      * @return the string
-     * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
      */
     public static String fromBase64(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         return new String(Base64.getDecoder().decode(str), StandardCharsets.UTF_8);

@@ -31,7 +31,6 @@ public class ClientSocketManager extends SocketHandler {
      * Sends a new data to the server.
      * @param data the data in string
      * @return this object
-     * @throws IOException
      */
     public ClientSocketManager send(String data) throws IOException {
         out.write(data + "\n");
@@ -41,7 +40,6 @@ public class ClientSocketManager extends SocketHandler {
 
     /**
      * Closes current thread and socket connection.
-     * @throws IOException
      */
     public void close() throws IOException {
         this.isStopped = true;

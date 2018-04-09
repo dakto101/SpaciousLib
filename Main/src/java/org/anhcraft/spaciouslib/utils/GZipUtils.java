@@ -14,25 +14,40 @@ import java.util.zip.GZIPOutputStream;
  * Source: <a href="https://stackoverflow.com/a/34305182">https://stackoverflow.com/a/34305182</a>
  */
 public class GZipUtils {
-    public static byte[] compress(byte[] b) throws IOException {
+    /**
+     * Compresses the given byte array
+     * @param data the byte array
+     * @return the compressed byte array
+     */
+    public static byte[] compress(byte[] data) throws IOException {
         ByteArrayOutputStream obj = new ByteArrayOutputStream();
         GZIPOutputStream gzip = new GZIPOutputStream(obj);
-        gzip.write(b);
+        gzip.write(data);
         gzip.flush();
         gzip.close();
         return obj.toByteArray();
     }
 
-    public static byte[] decompress(final byte[] compressed) throws IOException {
-        if (isCompressed(compressed)) {
-            GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(compressed));
+    /**
+     * Decompresses the given compressed byte array
+     * @param compressedData the compressed byte array
+     * @return the byte array
+     */
+    public static byte[] decompress(final byte[] compressedData) throws IOException {
+        if (isCompressed(compressedData)) {
+            GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(compressedData));
             return IOUtils.toByteArray(new InputStreamReader(gis, "UTF-8"));
         }
         return new byte[512];
     }
 
-    private static boolean isCompressed(final byte[] compressed) {
-        return (compressed[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (compressed[1] == (byte) (GZIPInputStream
+    /**
+     * Checks does the given byte array was compressed
+     * @param compressedData the byte array
+     * @return true if yes
+     */
+    public static boolean isCompressed(final byte[] compressedData) {
+        return (compressedData[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (compressedData[1] == (byte) (GZIPInputStream
                 .GZIP_MAGIC >> 8));
     }
 }
