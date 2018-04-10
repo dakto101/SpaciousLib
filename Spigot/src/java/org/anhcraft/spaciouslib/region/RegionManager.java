@@ -15,7 +15,6 @@ public class RegionManager {
     /**
      * Creates a new RegionManager instance
      * @param cr CuboidRegion object
-     * @throws Exception
      */
     public RegionManager(CuboidRegion cr) throws Exception {
         if(cr.getPosition1().getWorld() != cr.getPosition2().getWorld()){

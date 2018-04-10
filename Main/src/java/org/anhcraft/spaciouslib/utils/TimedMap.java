@@ -17,7 +17,8 @@ public class TimedMap<K, V> {
     private LinkedHashMap<K, Long> b = new LinkedHashMap<>();
 
     private void clean(){
-        for(K key : keySet()){
+        // don't use the "keySet" method to prevent the StackOverflow error
+        for(K key : a.keySet()){
             if(isExpired(key)){
                 remove(key);
             }
@@ -31,7 +32,8 @@ public class TimedMap<K, V> {
      * @return true if it expired
      */
     public boolean isExpired(K key){
-        return System.currentTimeMillis() > b.get(key);
+        // don't use the "containsKey" method to prevent the StackOverflow error
+        return !(a.containsKey(key) && b.containsKey(key)) || System.currentTimeMillis() > b.get(key);
     }
 
     /**
@@ -85,13 +87,11 @@ public class TimedMap<K, V> {
      * @param key the key
      * @param value the value of the key
      * @param seconds the expired time (in seconds)
-     * @return
      */
-    public V put(K key, V value, long seconds) {
+    public void put(K key, V value, long seconds) {
         clean();
         a.put(key, value);
         b.put(key, System.currentTimeMillis() + (seconds * 1000L));
-        return value;
     }
 
     /**

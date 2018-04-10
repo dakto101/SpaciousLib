@@ -1,14 +1,12 @@
 package org.anhcraft.spaciouslib;
 
 import org.anhcraft.spaciouslib.bungee.BungeeManager;
-import org.anhcraft.spaciouslib.database.DatabaseManager;
 import org.anhcraft.spaciouslib.hologram.HologramManager;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
 import org.anhcraft.spaciouslib.listeners.*;
 import org.anhcraft.spaciouslib.mojang.SkinManager;
 import org.anhcraft.spaciouslib.npc.NPCManager;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderManager;
-import org.anhcraft.spaciouslib.socket.SocketManager;
 import org.anhcraft.spaciouslib.tasks.ArmorEquipEventTask;
 import org.anhcraft.spaciouslib.tasks.CachedSkinTask;
 import org.anhcraft.spaciouslib.utils.Chat;
@@ -57,8 +55,6 @@ public final class SpaciousLib extends JavaPlugin {
     @Override
     public void onDisable() {
         chat.sendSender("&aUnregistering the managers...");
-        DatabaseManager.unregisterAll();
-        SocketManager.unregisterAll();
         NPCManager.unregisterAll();
         HologramManager.unregisterAll();
     }

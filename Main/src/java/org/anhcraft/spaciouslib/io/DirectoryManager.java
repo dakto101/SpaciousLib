@@ -3,14 +3,14 @@ package org.anhcraft.spaciouslib.io;
 import java.io.File;
 
 /**
- * A class helps you to manage the given directory
+ * A class helps you to manage a specified directory
  */
 public class DirectoryManager {
     private File directory;
 
     /**
      * Creates a new DirectoryManager instance
-     * @param directory the File object
+     * @param directory represents the directory as a File object
      */
     public DirectoryManager(File directory){
         this.directory = directory;
@@ -25,7 +25,7 @@ public class DirectoryManager {
     }
 
     /**
-     * Creates that directory and parent directories (if necessary) if it doesn't exist
+     * Creates the specified directory and its parent directories if them doesn't exist
      * @return this object
      */
     public DirectoryManager mkdirs(){
@@ -36,7 +36,7 @@ public class DirectoryManager {
     }
 
     /**
-     * Deletes that directory if it exists
+     * Deletes the specified directory if it exists
      * @return this object
      */
     public DirectoryManager delete(){

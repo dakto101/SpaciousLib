@@ -62,5 +62,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="craftbukkit-1.10.2-R0.1-SNAPSHOT-latest (1)" level="project" />
+    <orderEntry type="library" name="h2-1.4.197" level="project" />
   </component>
 </module>

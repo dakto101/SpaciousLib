@@ -1,6 +1,7 @@
 package org.anhcraft.spaciouslib.socket;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -42,6 +43,10 @@ public class ServerSocketClientHandler extends SocketHandler {
             e.printStackTrace();
         }
         this.isStopped = false;
+    }
+
+    public InetAddress getInetAddress(){
+        return this.client.getInetAddress();
     }
 
     @Override

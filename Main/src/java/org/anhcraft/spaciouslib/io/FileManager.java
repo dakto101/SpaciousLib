@@ -6,14 +6,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * A class helps you to manage the given file
+ * A class helps you to manage the specified file
  */
 public class FileManager {
     private File file;
 
     /**
      * Creates a new FileManager instance
-     * @param file the File object
+     * @param file represents the file as a File object
      */
     public FileManager(File file){
         this.file = file;
@@ -28,7 +28,7 @@ public class FileManager {
     }
 
     /**
-     * Creates that file if it doesn't exist
+     * Creates the specified file if it doesn't exist
      * @return this object
      */
     public FileManager create(){
@@ -43,7 +43,7 @@ public class FileManager {
     }
 
     /**
-     * Deletes that file if it exists
+     * Deletes the specified file if it exists
      * @return this object
      */
     public FileManager delete(){
@@ -54,7 +54,7 @@ public class FileManager {
     }
 
     /**
-     * Initializes that file if it doesn't exist (creates and writes the given data)
+     * Initializes the specified file if it doesn't exist (creates and writes the given data)
      * @param data an array of bytes (binary data)
      * @return this object
      */
@@ -66,7 +66,7 @@ public class FileManager {
     }
 
     /**
-     * Writes the given data to that file
+     * Writes the given data to the specified file
      * @param data an array of bytes (binary data)
      * @param append does that data append at the end of the file
      * @return this object
@@ -80,7 +80,7 @@ public class FileManager {
     }
 
     /**
-     * Writes the given data to that file (Warning: the old data will lost)
+     * Writes the given data to the specified file (Warning: the old data will lost)
      * @param data an array of bytes (binary data)
      * @return this object
      */
@@ -89,7 +89,7 @@ public class FileManager {
     }
 
     /**
-     * Writes the given data to that file if it exist
+     * Writes the given data to the specified file if it exist
      * @param data an array of bytes (binary data)
      * @param append does that data append at the end of the file
      * @return this object
@@ -105,7 +105,7 @@ public class FileManager {
     }
 
     /**
-     * Writes the given data to that file if it exist (Warning: the old data will lost)
+     * Writes the given data to the specified file if it exist (Warning: the old data will lost)
      * @param data an array of bytes (binary data)
      * @return this object
      */
@@ -118,8 +118,8 @@ public class FileManager {
     }
 
     /**
-     * Reads that file
-     * @return the data of the file as an array of bytes (binary data)
+     * Reads the specified file
+     * @return the content as an array of bytes (binary data)
      */
     public byte[] read() throws IOException {
         byte[] data = new byte[(int) this.file.length()];
@@ -130,8 +130,8 @@ public class FileManager {
     }
 
     /**
-     * Reads that file
-     * @return the data of the file as a string
+     * Reads the specified file
+     * @return the content as a string
      */
     public String readAsString() throws IOException {
         return new String(read());

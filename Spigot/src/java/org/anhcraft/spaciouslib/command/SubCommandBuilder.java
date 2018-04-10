@@ -32,7 +32,6 @@ public class SubCommandBuilder extends CommandString{
      * @param name the name of this sub command
      * @param description the description of this sub command
      * @param rootRunnable a runnable which triggers if a player run this sub command
-     * @throws Exception
      */
     public SubCommandBuilder(String name, String description, CommandRunnable rootRunnable) throws Exception {
         this.name = name.trim().toLowerCase();
@@ -140,7 +139,6 @@ public class SubCommandBuilder extends CommandString{
      * @param type the type of this argument
      * @param optional true if you want the player can skip this argument
      * @return this object
-     * @throws Exception
      */
     public SubCommandBuilder addArgument(String name, CommandRunnable argRunnable, CommandArgument.Type type, boolean optional) throws Exception {
         addArgument(new CommandArgument(name, argRunnable, optional), type);

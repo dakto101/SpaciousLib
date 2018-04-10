@@ -9,14 +9,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Represents a database implementation.
+ * Represents the database implementation.
  */
 public abstract class Database {
     protected Connection conn;
     protected Statement state;
 
     /**
-     * Disconnects from current database
+     * Disconnects from the current database connection
      */
     public void disconnect() throws SQLException {
         if(state != null){
@@ -53,7 +53,7 @@ public abstract class Database {
     }
 
     /**
-     * Gets the database connection
+     * Gets the current database connection
      * @return connection object
      */
     public Connection getConnection(){
@@ -61,7 +61,7 @@ public abstract class Database {
     }
 
     /**
-     * Gets the statement of current database connection
+     * Gets the statement of the current database connection
      * @return statement object
      */
     public Statement getStatement(){
