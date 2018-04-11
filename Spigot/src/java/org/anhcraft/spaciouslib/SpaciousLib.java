@@ -1,12 +1,11 @@
 package org.anhcraft.spaciouslib;
 
-import org.anhcraft.spaciouslib.bungee.BungeeManager;
-import org.anhcraft.spaciouslib.hologram.HologramManager;
+import org.anhcraft.spaciouslib.bungee.BungeeAPI;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
 import org.anhcraft.spaciouslib.listeners.*;
-import org.anhcraft.spaciouslib.mojang.SkinManager;
+import org.anhcraft.spaciouslib.mojang.SkinAPI;
 import org.anhcraft.spaciouslib.npc.NPCManager;
-import org.anhcraft.spaciouslib.placeholder.PlaceholderManager;
+import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.anhcraft.spaciouslib.tasks.ArmorEquipEventTask;
 import org.anhcraft.spaciouslib.tasks.CachedSkinTask;
 import org.anhcraft.spaciouslib.utils.Chat;
@@ -37,10 +36,10 @@ public final class SpaciousLib extends JavaPlugin {
         new ArmorEquipEventTask().runTaskTimer(this, 0, 20);
         new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 200);
 
-        chat.sendSender("&eInitializing the managers...");
-        new BungeeManager();
-        new PlaceholderManager();
-        new SkinManager();
+        chat.sendSender("&eInitializing the managers and the APIs...");
+        new PlaceholderAPI();
+        new SkinAPI();
+        new BungeeAPI();
 
         chat.sendSender("&eRegistering the event listeners...");
         getServer().getPluginManager().registerEvents(new PlayerJumpEventListener(), this);
@@ -54,8 +53,7 @@ public final class SpaciousLib extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        chat.sendSender("&aUnregistering the managers...");
+        chat.sendSender("&aUnregistering the managers and the APIs...");
         NPCManager.unregisterAll();
-        HologramManager.unregisterAll();
     }
 }

@@ -40,10 +40,6 @@ public class ArmorEquipEvent extends Event {
         return this.oldArmor;
     }
 
-    public void setNewArmor(ItemStack newArmor){
-        this.newArmor = newArmor;
-    }
-
     @Override
     public HandlerList getHandlers() {
         return handlers;

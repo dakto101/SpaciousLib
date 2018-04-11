@@ -15,20 +15,27 @@ import java.util.List;
  * A class helps you to manage recipes
  */
 public class RecipeManager {
+    private Recipe recipe;
 
     /**
-     * Registers the given recipe
-     * @param recipe the Recipe object
+     * Creates new RecipeManager isntance
+     * @param recipe the recipe
      */
-    public static void register(Recipe recipe){
+    public RecipeManager(Recipe recipe){
+        this.recipe = recipe;
+    }
+
+    /**
+     * Registers the specified recipe
+     */
+    public void register(){
         Bukkit.getServer().addRecipe(recipe);
     }
 
     /**
-     * Unregisters the given recipe
-     * @param recipe the Recipe object
+     * Unregisters the specified recipe
      */
-    public static void unregister(Recipe recipe){
+    public void unregister(){
         try {
             Class craftingManagerClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".CraftingManager");
             Class recipeClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".IRecipe");
@@ -38,7 +45,7 @@ public class RecipeManager {
             List<Object> nmsRecipes = (List<Object>) nmsRecipesMethod.invoke(craftingManager);
             for(Object nr : nmsRecipes){
                 Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, nr);
-                if(compare(recipeBukkit, recipe)){
+                if(compare(recipeBukkit)){
                     continue;
                 }
                 newNmsRecipes.add(nr);
@@ -50,11 +57,10 @@ public class RecipeManager {
     }
 
     /**
-     * Checks is the given recipe registered
-     * @param recipe the Recipe object
+     * Checks is the specified recipe registered
      * @return true if yes
      */
-    public static boolean isRegistered(Recipe recipe){
+    public boolean isRegistered(){
         try {
             Class<?> craftingManagerClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".CraftingManager");
             Class<?> recipeClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".IRecipe");
@@ -62,7 +68,7 @@ public class RecipeManager {
             List<Object> nmsRecipes = (List<Object>) ReflectionUtils.getMethod("getRecipes", craftingManagerClass, craftingManager);
             for(Object nr : nmsRecipes){
                 Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, nr);
-                if(compare(recipeBukkit, recipe)){
+                if(compare(recipeBukkit)){
                     return true;
                 }
             }
@@ -73,15 +79,14 @@ public class RecipeManager {
     }
 
     /**
-     * Compares two recipes
-     * @param recipeA the first recipe
-     * @param recipeB the second recipe
+     * Compares the specified recipe with another recipe
+     * @param otherRecipe another recipe
      * @return true if these recipes are same
      */
-    public static boolean compare(Recipe recipeA, Recipe recipeB){
-        if(recipeA instanceof ShapedRecipe && recipeB instanceof ShapedRecipe) {
-            ShapedRecipe a = (ShapedRecipe) recipeA;
-            ShapedRecipe b = (ShapedRecipe) recipeB;
+    public boolean compare(Recipe otherRecipe){
+        if(recipe instanceof ShapedRecipe && otherRecipe instanceof ShapedRecipe) {
+            ShapedRecipe a = (ShapedRecipe) recipe;
+            ShapedRecipe b = (ShapedRecipe) otherRecipe;
             if(InventoryUtils.compare(a.getResult(), b.getResult())){
                 List<ItemStack> ai = new ArrayList<>();
                 List<ItemStack> bi = new ArrayList<>();
@@ -98,16 +103,16 @@ public class RecipeManager {
                 return InventoryUtils.compare(ai, bi);
             }
         }
-        if(recipeA instanceof ShapelessRecipe && recipeB instanceof ShapelessRecipe){
-            ShapelessRecipe a = (ShapelessRecipe) recipeA;
-            ShapelessRecipe b = (ShapelessRecipe) recipeB;
+        if(recipe instanceof ShapelessRecipe && otherRecipe instanceof ShapelessRecipe){
+            ShapelessRecipe a = (ShapelessRecipe) recipe;
+            ShapelessRecipe b = (ShapelessRecipe) otherRecipe;
             if(InventoryUtils.compare(a.getResult(), b.getResult())){
                 return InventoryUtils.compare(a.getIngredientList(), b.getIngredientList());
             }
         }
-        if(recipeA instanceof FurnaceRecipe && recipeB instanceof FurnaceRecipe){
-            FurnaceRecipe a = (FurnaceRecipe) recipeA;
-            FurnaceRecipe b = (FurnaceRecipe) recipeB;
+        if(recipe instanceof FurnaceRecipe && otherRecipe instanceof FurnaceRecipe){
+            FurnaceRecipe a = (FurnaceRecipe) recipe;
+            FurnaceRecipe b = (FurnaceRecipe) otherRecipe;
             if(a.getExperience() == b.getExperience()
                     && InventoryUtils.compare(a.getInput(), b.getInput())
                     && InventoryUtils.compare(a.getResult(), b.getResult())){

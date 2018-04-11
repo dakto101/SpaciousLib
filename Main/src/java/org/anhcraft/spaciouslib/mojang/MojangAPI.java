@@ -46,7 +46,8 @@ public class MojangAPI {
 
     /**
      * Gets the skin data of the given player unique id.<br>
-     * Warning: The limit request is 1 request/minute
+     * Warning: The limit request is 1 request/minute<br>
+     * <b>Please use SkinAPI instead</b>
      * @param player the unique id of the player
      * @return a group of two string objects. The first is the skin value, and the second is the skin signature
      */

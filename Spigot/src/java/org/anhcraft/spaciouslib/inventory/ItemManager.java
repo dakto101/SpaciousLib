@@ -3,7 +3,7 @@ package org.anhcraft.spaciouslib.inventory;
 import org.anhcraft.spaciouslib.attribute.Attribute;
 import org.anhcraft.spaciouslib.attribute.AttributeModifier;
 import org.anhcraft.spaciouslib.nbt.NBTCompound;
-import org.anhcraft.spaciouslib.nbt.NBTManager;
+import org.anhcraft.spaciouslib.nbt.NBTLoader;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.Chat;
 import org.bukkit.Material;
@@ -316,9 +316,9 @@ public class ItemManager {
      */
     public ItemManager setUnbreakable(Boolean unbreakable) {
         if(unbreakable) {
-            item = NBTManager.fromItem(item).setBoolean("Unbreakable", true).toItem(item);
+            item = NBTLoader.fromItem(item).setBoolean("Unbreakable", true).toItem(item);
         } else {
-            item = NBTManager.fromItem(item).remove("Unbreakable").toItem(item);
+            item = NBTLoader.fromItem(item).remove("Unbreakable").toItem(item);
         }
         return this;
     }
@@ -329,7 +329,7 @@ public class ItemManager {
      * @return true if yes
      */
     public Boolean isUnbreakable() {
-        return NBTManager.fromItem(item).hasKey("Unbreakable");
+        return NBTLoader.fromItem(item).hasKey("Unbreakable");
     }
 
     /**
@@ -340,11 +340,11 @@ public class ItemManager {
      * @return this object
      */
     public ItemManager addAttributeModifier(Attribute.Type type, AttributeModifier modifier, EquipSlot slot) {
-        List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
+        List<NBTCompound> l = NBTLoader.fromItem(item).getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
-        NBTCompound c = NBTManager.newCompound()
+        NBTCompound c = NBTLoader.create()
                 .set("AttributeName", type.getID())
                 .set("Name", modifier.getName())
                 .set("Amount", modifier.getAmount())
@@ -353,7 +353,7 @@ public class ItemManager {
                 .set("UUIDMost", modifier.getUniqueID().getMostSignificantBits())
                 .set("Slot", slot.toString().toLowerCase());
         l.add(c);
-        item = NBTManager.fromItem(item).setList("AttributeModifiers", l).toItem(item);
+        item = NBTLoader.fromItem(item).setList("AttributeModifiers", l).toItem(item);
         return this;
     }
 
@@ -363,7 +363,7 @@ public class ItemManager {
      * @return this object
      */
     public ItemManager removeAttributeModifiers(String name) {
-        List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
+        List<NBTCompound> l = NBTLoader.fromItem(item).getList("AttributeModifiers");
         if(l == null){
             return this;
         }
@@ -373,7 +373,7 @@ public class ItemManager {
                 nl.add(m);
             }
         }
-        item = NBTManager.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
+        item = NBTLoader.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
         return this;
     }
 
@@ -383,7 +383,7 @@ public class ItemManager {
      * @return this object
      */
     public ItemManager removeAttributeModifiers(Attribute.Type type) {
-        List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
+        List<NBTCompound> l = NBTLoader.fromItem(item).getList("AttributeModifiers");
         if(l == null){
             return this;
         }
@@ -393,7 +393,7 @@ public class ItemManager {
                 nl.add(m);
             }
         }
-        item = NBTManager.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
+        item = NBTLoader.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
         return this;
     }
 
@@ -402,7 +402,7 @@ public class ItemManager {
      * @return this object
      */
     public ItemManager removeAttributeModifiers() {
-        item = NBTManager.fromItem(item).setList("AttributeModifiers", new ArrayList<NBTCompound>()).toItem(item);
+        item = NBTLoader.fromItem(item).setList("AttributeModifiers", new ArrayList<NBTCompound>()).toItem(item);
         return this;
     }
 
@@ -412,7 +412,7 @@ public class ItemManager {
      * @return this object
      */
     public ItemManager removeAttributeModifiers(EquipSlot slot) {
-        List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
+        List<NBTCompound> l = NBTLoader.fromItem(item).getList("AttributeModifiers");
         if(l == null){
             return this;
         }
@@ -422,7 +422,7 @@ public class ItemManager {
                 nl.add(m);
             }
         }
-        item = NBTManager.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
+        item = NBTLoader.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
         return this;
     }
 
@@ -434,7 +434,7 @@ public class ItemManager {
             Group<EquipSlot, Attribute.Type>> getAttributeModifiers(){
         LinkedHashMap<AttributeModifier,
                Group<EquipSlot, Attribute.Type>> modifiers = new LinkedHashMap<>();
-        List<NBTCompound> l = NBTManager.fromItem(item).getList("AttributeModifiers");
+        List<NBTCompound> l = NBTLoader.fromItem(item).getList("AttributeModifiers");
         if(l == null){
             return modifiers;
         }

@@ -19,12 +19,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A class helps you to manage all NPCs which are created by this library
  */
 public class NPCManager implements Listener {
-    protected static LinkedHashMap<String, NPCWrapper> data = new LinkedHashMap<>();
+    protected static LinkedHashMap<UUID, NPCWrapper> data = new LinkedHashMap<>();
 
     /**
      * Initializes NPCManager
@@ -79,7 +80,7 @@ public class NPCManager implements Listener {
 
     @EventHandler
     public void playerQuitHandler(PlayerQuitEvent ev){
-        for(String n : data.keySet()){
+        for(UUID n : data.keySet()){
             NPCWrapper npc = data.get(n);
             if(npc.getViewers().contains(ev.getPlayer())){
                 npc.removeViewer(ev.getPlayer());
@@ -89,25 +90,25 @@ public class NPCManager implements Listener {
 
     @EventHandler
     public void worldUnloadHandler(WorldUnloadEvent ev){
-        List<String> remove = new ArrayList<>();
-        for(String n : data.keySet()){
+        List<UUID> remove = new ArrayList<>();
+        for(UUID n : data.keySet()){
             NPCWrapper npc = data.get(n);
             if(npc.getNPC().getLocation().getWorld().getName().equals(ev.getWorld().getName())){
                 remove.add(n);
             }
         }
-        for(String i : remove){
+        for(UUID i : remove){
             unregister(i);
         }
     }
 
     /**
      * Registers a new NPC
-     * @param id the id of that NPC
+     * @param id the unique id of the NPC
      * @param npc the NPC Object
      * @return NPCWrapper object
      */
-    public static NPCWrapper register(String id, NPC npc){
+    public static NPCWrapper register(UUID id, NPC npc){
         NPCWrapper wrapper = null;
         try {
             Class<?> e = Class.forName("org.anhcraft.spaciouslib.npc.NPC_" +
@@ -123,9 +124,9 @@ public class NPCManager implements Listener {
 
     /**
      * Unregisters a specific NPC
-     * @param id the id of the NPC
+     * @param id the unique id of the NPC
      */
-    public static void unregister(String id){
+    public static void unregister(UUID id){
         if(data.containsKey(id)){
             NPCWrapper w = data.get(id);
             w.remove();
@@ -137,7 +138,7 @@ public class NPCManager implements Listener {
      * Unregisters all NPCs
      */
     public static void unregisterAll() {
-        for(String id : data.keySet()){
+        for(UUID id : data.keySet()){
             NPCWrapper w = data.get(id);
             w.remove();
             data.remove(id);

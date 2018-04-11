@@ -140,7 +140,7 @@ public class CommandBuilder extends CommandString {
                     return false;
                 }
             });
-            CommandManager.register(plugin, c);
+            new CommandManager(plugin, c).register();
             this.command = c;
         } else if(getCommand() instanceof PluginCommand){
             ((PluginCommand) getCommand()).setTabCompleter(new TabCompleter() {

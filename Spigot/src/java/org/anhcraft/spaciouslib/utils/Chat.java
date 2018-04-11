@@ -1,6 +1,6 @@
 package org.anhcraft.spaciouslib.utils;
 
-import org.anhcraft.spaciouslib.placeholder.PlaceholderManager;
+import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -81,7 +81,7 @@ public class Chat {
 
     private String replace(String s, Player player) {
         if(this.placeholder){
-            return color(PlaceholderManager.replace(s, player));
+            return color(PlaceholderAPI.replace(s, player));
         } else {
             return color(s);
         }

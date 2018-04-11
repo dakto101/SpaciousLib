@@ -1,7 +1,7 @@
 package org.anhcraft.spaciouslib.inventory;
 
 import org.anhcraft.spaciouslib.nbt.NBTCompound;
-import org.anhcraft.spaciouslib.nbt.NBTManager;
+import org.anhcraft.spaciouslib.nbt.NBTLoader;
 import org.anhcraft.spaciouslib.utils.Chat;
 import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.bukkit.Material;
@@ -29,6 +29,9 @@ public class BookManager extends ItemManager {
                 e.printStackTrace();
             }
         }
+        if(getName() != null){
+            setTitle(getName());
+        }
     }
 
     /**
@@ -38,6 +41,9 @@ public class BookManager extends ItemManager {
      */
     public BookManager(String name, int amount){
         super(name, Material.WRITTEN_BOOK, amount);
+        if(getName() != null){
+            setTitle(getName());
+        }
     }
 
     /**
@@ -46,7 +52,7 @@ public class BookManager extends ItemManager {
      * @return this object
      */
     public BookManager setBookGeneration(BookGeneration generation){
-        this.item = NBTManager.fromItem(this.item).setInt("generation",
+        this.item = NBTLoader.fromItem(this.item).setInt("generation",
                 generation.getID()).toItem(this.item);
         return this;
     }
@@ -56,7 +62,7 @@ public class BookManager extends ItemManager {
      * @return the copy tier
      */
     public BookGeneration getBookGeneration(){
-        return BookGeneration.getByID(NBTManager.fromItem(this.item).getInt("generation"));
+        return BookGeneration.getByID(NBTLoader.fromItem(this.item).getInt("generation"));
     }
 
     /**
@@ -66,7 +72,7 @@ public class BookManager extends ItemManager {
      */
     public BookManager setAuthor(String author){
         author = Chat.color(author);
-        this.item = NBTManager.fromItem(this.item).setString("author", author).toItem(this.item);
+        this.item = NBTLoader.fromItem(this.item).setString("author", author).toItem(this.item);
         return this;
     }
 
@@ -75,7 +81,7 @@ public class BookManager extends ItemManager {
      * @return the author
      */
     public String getAuthor(){
-        return NBTManager.fromItem(this.item).getString("author");
+        return NBTLoader.fromItem(this.item).getString("author");
     }
 
     /**
@@ -85,7 +91,7 @@ public class BookManager extends ItemManager {
      */
     public BookManager setTitle(String title){
         title = Chat.color(title);
-        this.item = NBTManager.fromItem(this.item).setString("title", title).toItem(this.item);
+        this.item = NBTLoader.fromItem(this.item).setString("title", title).toItem(this.item);
         return this;
     }
 
@@ -94,7 +100,7 @@ public class BookManager extends ItemManager {
      * @return the title
      */
     public String getTitle(){
-        return NBTManager.fromItem(this.item).getString("title");
+        return NBTLoader.fromItem(this.item).getString("title");
     }
 
     /**
@@ -103,7 +109,7 @@ public class BookManager extends ItemManager {
      * @return this object
      */
     public BookManager setResolve(boolean resolve){
-        this.item = NBTManager.fromItem(this.item).setByte("resolved", (byte) (resolve ? 1 : 0)).toItem(this.item);
+        this.item = NBTLoader.fromItem(this.item).setByte("resolved", (byte) (resolve ? 1 : 0)).toItem(this.item);
         return this;
     }
 
@@ -112,7 +118,7 @@ public class BookManager extends ItemManager {
      * @return true if this book have resolved
      */
     public boolean isResolved(){
-        return NBTManager.fromItem(this.item).getByte("resolved") == 1;
+        return NBTLoader.fromItem(this.item).getByte("resolved") == 1;
     }
 
     /**
@@ -129,7 +135,7 @@ public class BookManager extends ItemManager {
                 cont.add("{\"text\": \"" + Chat.color(content) + "\"}");
             }
         }
-        NBTCompound nbt = NBTManager.fromItem(this.item);
+        NBTCompound nbt = NBTLoader.fromItem(this.item);
         nbt.setList("pages", cont);
         this.item = nbt.toItem(this.item);
         return this;
@@ -140,7 +146,7 @@ public class BookManager extends ItemManager {
      * @return the pages
      */
     public List<String> getPages(){
-        NBTCompound nbt = NBTManager.fromItem(this.item);
+        NBTCompound nbt = NBTLoader.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
@@ -160,7 +166,7 @@ public class BookManager extends ItemManager {
      * @return the content of that page
      */
     public String getPage(int index){
-        NBTCompound nbt = NBTManager.fromItem(this.item);
+        NBTCompound nbt = NBTLoader.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
@@ -179,7 +185,7 @@ public class BookManager extends ItemManager {
         } else {
             content = "{\"text\": \"" + Chat.color(content) + "\"}";
         }
-        NBTCompound nbt = NBTManager.fromItem(this.item);
+        NBTCompound nbt = NBTLoader.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
@@ -202,7 +208,7 @@ public class BookManager extends ItemManager {
         } else {
             content = "{\"text\": \"" + Chat.color(content) + "\"}";
         }
-        NBTCompound nbt = NBTManager.fromItem(this.item);
+        NBTCompound nbt = NBTLoader.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
@@ -219,7 +225,7 @@ public class BookManager extends ItemManager {
      * @return this object
      */
     public BookManager removePage(int index){
-        NBTCompound nbt = NBTManager.fromItem(this.item);
+        NBTCompound nbt = NBTLoader.fromItem(this.item);
         List<String> pages = nbt.getList("pages");
         if(pages == null){
             pages = new ArrayList<>();
@@ -235,7 +241,7 @@ public class BookManager extends ItemManager {
      * @return this object
      */
     public BookManager removePages(){
-        NBTCompound nbt = NBTManager.fromItem(this.item);
+        NBTCompound nbt = NBTLoader.fromItem(this.item);
         nbt.setList("pages", new ArrayList<>());
         this.item = nbt.toItem(this.item);
         return this;

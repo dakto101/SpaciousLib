@@ -3,7 +3,7 @@ package org.anhcraft.spaciouslib.entity;
 import org.anhcraft.spaciouslib.attribute.Attribute;
 import org.anhcraft.spaciouslib.attribute.AttributeModifier;
 import org.anhcraft.spaciouslib.nbt.NBTCompound;
-import org.anhcraft.spaciouslib.nbt.NBTManager;
+import org.anhcraft.spaciouslib.nbt.NBTLoader;
 import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.UUID;
  * A class helps you to manage entities
  */
 public class EntityManager {
-    private Entity entity;
+    protected Entity entity;
 
     /**
      * Creates a new EntityManager instance
@@ -29,10 +29,10 @@ public class EntityManager {
      * @param attribute Attribute object
      */
     public void setAttribute(Attribute attribute){
-        NBTCompound c = NBTManager.fromEntity(this.entity);
+        NBTCompound c = NBTLoader.fromEntity(this.entity);
         List<NBTCompound> newAttrs = new ArrayList<>();
         List<NBTCompound> attrs = c.getList("Attributes");
-        NBTCompound attr = NBTManager.newCompound();
+        NBTCompound attr = NBTLoader.create();
         if(attrs != null){
             for(NBTCompound a : attrs){
                 if(!a.getString("Name").equals(attribute.getType().getID())){
@@ -44,7 +44,7 @@ public class EntityManager {
                 .setDouble("Base", attribute.getType().getBaseValue());
         List<NBTCompound> modifiers = new ArrayList<>();
         for(AttributeModifier modifier : attribute.getModifiers()){
-            modifiers.add(NBTManager.newCompound()
+            modifiers.add(NBTLoader.create()
                     .set("Name", modifier.getName())
             .set("Amount", modifier.getAmount())
             .set("Operation", modifier.getOperation().getID())
@@ -62,7 +62,7 @@ public class EntityManager {
      */
     public List<Attribute> getAttributes(){
         List<Attribute> attrs = new ArrayList<>();
-        List<NBTCompound> nbtattrs = NBTManager.fromEntity(this.entity).getList("Attributes");
+        List<NBTCompound> nbtattrs = NBTLoader.fromEntity(this.entity).getList("Attributes");
         if(nbtattrs == null){
             return attrs;
         }

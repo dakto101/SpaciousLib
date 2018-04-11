@@ -1,10 +1,12 @@
 package org.anhcraft.spaciouslib.events;
 
-import org.anhcraft.spaciouslib.listeners.BowArrowHitEventListener;
+import org.anhcraft.spaciouslib.utils.Group;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * An event triggers when an arrow (which was shoot by a living entity with bow) hit something
@@ -12,10 +14,10 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 public class BowArrowHitEvent extends Event {
     public static final HandlerList handlers = new HandlerList();
     private Arrow arrow;
-    private BowArrowHitEventListener.BowShootSession session;
+    private Group<LivingEntity, ItemStack> session;
     private ProjectileHitEvent event;
 
-    public BowArrowHitEvent(Arrow arrow, BowArrowHitEventListener.BowShootSession session, ProjectileHitEvent event){
+    public BowArrowHitEvent(Arrow arrow, Group<LivingEntity, ItemStack> session, ProjectileHitEvent event){
         this.arrow = arrow;
         this.session = session;
         this.event = event;
@@ -29,8 +31,12 @@ public class BowArrowHitEvent extends Event {
         return this.event;
     }
 
-    public BowArrowHitEventListener.BowShootSession getSession(){
-        return this.session;
+    public LivingEntity getShooter(){
+        return this.session.getA();
+    }
+
+    public ItemStack getBow(){
+        return this.session.getB();
     }
 
     @Override

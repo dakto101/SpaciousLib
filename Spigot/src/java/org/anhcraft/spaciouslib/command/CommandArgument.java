@@ -6,39 +6,39 @@ package org.anhcraft.spaciouslib.command;
 public class CommandArgument {
     public enum Type{
         /**
-         * A player can type anything they want
+         * The players can type anything they want
          */
         CUSTOM,
         /**
-         * A player only can type a valid URL
+         * The players can only type a valid URL
          */
         URL,
         /**
-         * A player only can type a valid email
+         * The players can only type a valid email
          */
         EMAIL,
         /**
-         * A player only can type a name of an online player
+         * The players can only type a name of an online player
          */
         ONLINE_PLAYER,
         /**
-         * A player only can type an integer number
+         * The players can only type an integer number
          */
         INTEGER_NUMBER,
         /**
-         * A player only can type a real number (and also an integer number)
+         * The players can only type a real number (and also an integer number)
          */
         REAL_NUMBER,
         /**
-         * A player only can type a boolean (true, false)
+         * The players can only type a boolean (true, false)
          */
         BOOLEAN,
         /**
-         * A player only can type a loaded world
+         * AThe players can only type a loaded world
          */
         WORLD,
         /**
-         * A player only can type a valid UUID
+         * The players can only type a valid UUID
          */
         UUID
     }

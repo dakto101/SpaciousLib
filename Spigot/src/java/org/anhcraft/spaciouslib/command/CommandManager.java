@@ -15,21 +15,32 @@ import java.util.Map;
  * A class helps you to manage plugin command
  */
 public class CommandManager {
+    private JavaPlugin plugin;
+    private PluginCommand command;
+
+    /**
+     * Creates a new CommandManager instance
+     * @param command the command
+     * @param plugin the plugin which owned that command
+     */
+    public CommandManager(JavaPlugin plugin, PluginCommand command){
+        this.plugin = plugin;
+        this.command = command;
+    }
+
     /**
      * Registers a command of a Bukkit plugin
-     * @param plugin the plugin which owned that command
-     * @param command the command
      */
-    public static void register(JavaPlugin plugin, PluginCommand command){
+    public void register(){
         try {
             Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");
             Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
             SimpleCommandMap commandMap = (SimpleCommandMap) ReflectionUtils.getField("commandMap", craftServerClass, craftServer);
-            commandMap.register(plugin.getDescription().getName(), command);
+            commandMap.register(this.plugin.getDescription().getName(), this.command);
             ReflectionUtils.setField("commandMap", craftServerClass, craftServer, commandMap);
             SimplePluginManager simplePluginManager = (SimplePluginManager) ReflectionUtils.getField("pluginManager", craftServerClass, craftServer);
             SimpleCommandMap commandPluginManagerMap = (SimpleCommandMap) ReflectionUtils.getField("commandMap", simplePluginManager.getClass(), simplePluginManager);
-            commandPluginManagerMap.register(plugin.getDescription().getName(), command);
+            commandPluginManagerMap.register(this.plugin.getDescription().getName(), this.command);
             ReflectionUtils.setField("commandMap", simplePluginManager.getClass(), simplePluginManager, commandPluginManagerMap);
             ReflectionUtils.setField("pluginManager", craftServerClass, craftServer, simplePluginManager);
         } catch(ClassNotFoundException e) {
@@ -39,21 +50,19 @@ public class CommandManager {
 
     /**
      * Unregisters a specific plugin command
-     * @param plugin the plugin which owned that command
-     * @param command the command
      */
-    public static void unregister(JavaPlugin plugin, PluginCommand command){
+    public void unregister(){
         try {
             Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");
 
             Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
             SimpleCommandMap commandMap = (SimpleCommandMap) ReflectionUtils.getField("commandMap", craftServerClass, craftServer);
             Map<String, Command> knownCommands = (Map<String, Command>) ReflectionUtils.getField("knownCommands", commandMap.getClass(), commandMap);
-            knownCommands.remove(plugin.getName()+":"+command.getName());
-            for (String alias : command.getAliases()){
-                alias = plugin.getName()+":"+alias;
+            knownCommands.remove(this.plugin.getName()+":"+this.command.getName());
+            for (String alias : this.command.getAliases()){
+                alias = this.plugin.getName()+":"+alias;
                 if(knownCommands.containsKey(alias) &&
-                        knownCommands.get(alias).toString().contains(command.getName())){
+                        knownCommands.get(alias).toString().contains(this.command.getName())){
                     knownCommands.remove(alias);
                 }
             }
@@ -64,11 +73,11 @@ public class CommandManager {
             SimpleCommandMap commandPluginManagerMap = (SimpleCommandMap) ReflectionUtils.getField("commandMap", simplePluginManager.getClass(), simplePluginManager);
 
             Map<String, Command> knownCommandsPluginManager = (Map<String, Command>) ReflectionUtils.getField("knownCommands", commandPluginManagerMap.getClass(), commandPluginManagerMap);
-            knownCommandsPluginManager.remove(plugin.getName()+":"+command.getName());
-            for (String alias : command.getAliases()){
-                alias = plugin.getName()+":"+alias;
+            knownCommandsPluginManager.remove(this.plugin.getName()+":"+this.command.getName());
+            for (String alias : this.command.getAliases()){
+                alias = this.plugin.getName()+":"+alias;
                 if(knownCommandsPluginManager.containsKey(alias) &&
-                        knownCommandsPluginManager.get(alias).toString().contains(command.getName())){
+                        knownCommandsPluginManager.get(alias).toString().contains(this.command.getName())){
                     knownCommandsPluginManager.remove(alias);
                 }
             }
