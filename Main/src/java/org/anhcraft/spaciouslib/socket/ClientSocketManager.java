@@ -5,12 +5,19 @@ import java.net.Socket;
 import java.util.Scanner;
 
 /**
- * A class helps you to manage current socket client.
+ * A class helps you to manage the connections between a socket client and a server socket.<br>
+ * This class is for the client side.
  */
 public class ClientSocketManager extends SocketHandler {
     private Socket server;
     private ClientSocketRequestHandler requestHandler;
 
+    /**
+     * Creates a new client socket and starts a new thread for handling the requests.
+     * @param address the IP address or hostname of a socket server
+     * @param port the TCP/IP port which is listening by a socket server
+     * @param requestHandler a handler for this socket connection
+     */
     public ClientSocketManager(String address, int port, ClientSocketRequestHandler requestHandler){
         this.requestHandler = requestHandler;
         try{
@@ -25,21 +32,23 @@ public class ClientSocketManager extends SocketHandler {
             e.printStackTrace();
         }
         this.isStopped = false;
+        // starts the thread
+        this.start();
     }
 
     /**
-     * Sends a new data to the server.
-     * @param data the data in string
+     * Sends the given content to the server
+     * @param content the content as string
      * @return this object
      */
-    public ClientSocketManager send(String data) throws IOException {
-        out.write(data + "\n");
+    public ClientSocketManager send(String content) throws IOException {
+        out.write(content);
         out.flush();
         return this;
     }
 
     /**
-     * Closes current thread and socket connection.
+     * Closes this client socket.
      */
     public void close() throws IOException {
         this.isStopped = true;

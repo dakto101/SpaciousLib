@@ -9,14 +9,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Represents the database implementation.
+ * Represents a database implementation.
  */
 public abstract class Database {
     protected Connection conn;
     protected Statement state;
 
     /**
-     * Disconnects from the current database connection
+     * Disconnects from this database
      */
     public void disconnect() throws SQLException {
         if(state != null){
@@ -30,7 +30,8 @@ public abstract class Database {
     }
 
     /**
-     * Executes the given SQL statement (for statement that doesn't contain result such as INSERT, UPDATE, DELETE, DROP)
+     * Executes the given SQL statement.<br>
+     * Only for statement that doesn't contain result such as INSERT, UPDATE, DELETE, DROP
      * @param sql an SQL statement
      */
     public int update(String sql) throws SQLException {
@@ -41,7 +42,8 @@ public abstract class Database {
     }
 
     /**
-     * Executes the given SQL statement (for statement that contains result such as SELECT)
+     * Executes the given SQL statement.<br>
+     * Only for statement that contains result such as SELECT
      * @param sql an SQL statement
      * @return the result after executes that statement
      */
@@ -53,16 +55,16 @@ public abstract class Database {
     }
 
     /**
-     * Gets the current database connection
-     * @return connection object
+     * Gets the connection
+     * @return the connection object
      */
     public Connection getConnection(){
         return conn;
     }
 
     /**
-     * Gets the statement of the current database connection
-     * @return statement object
+     * Gets the statement
+     * @return the statement object
      */
     public Statement getStatement(){
         return state;

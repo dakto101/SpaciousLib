@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class SQLiteDatabase extends Database{
     /**
-     * Creates a new connection for a SQLite database
-     * @param db the database file
+     * Creates a new connection to a SQLite database
+     * @param db a database file
      */
     public void connect(File db) throws SQLException, ClassNotFoundException {
         if(conn == null && state == null){

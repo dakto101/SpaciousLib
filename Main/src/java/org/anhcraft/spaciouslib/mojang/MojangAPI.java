@@ -13,13 +13,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
- * A class contains useful Mojang APIs
+ * A class contains useful methods to using the Mojang API
  */
 public class MojangAPI {
     /**
-     * Gets the current unique id of the given player username
-     * @param user the username of the player
-     * @return the unique id of that player
+     * Gets the unique id of the given player
+     * @param user the name of the player
+     * @return the unique id
      */
     public static Group<String, UUID> getUUID(String user) throws Exception {
         String url = "https://api.mojang.com/users/profiles/minecraft/"+user;
@@ -30,10 +30,10 @@ public class MojangAPI {
     }
 
     /**
-     * Gets the unique id of the given player username at a specified time.<br>
+     * Gets the unique id of the given player at a specific time.<br>
      * The time must be the UNIX timestamp (milliseconds/1000)
-     * @param user the username of the player
-     * @return the unique id of that player at that time
+     * @param user the name of the player
+     * @return the unique id
      */
     public static Group<String, UUID> getUUID(String user, long timestamp) throws Exception {
         String url = "https://api.mojang.com/users/profiles/minecraft/"+user
@@ -45,7 +45,7 @@ public class MojangAPI {
     }
 
     /**
-     * Gets the skin data of the given player unique id.<br>
+     * Gets the skin data of a player.<br>
      * Warning: The limit request is 1 request/minute<br>
      * <b>Please use SkinAPI instead</b>
      * @param player the unique id of the player

@@ -70,35 +70,57 @@ public class Attribute {
     private Type type;
     private List<AttributeModifier> modifiers;
 
+    /**
+     * Create a new Attribute instance
+     * @param type the type of an attribute
+     */
     public Attribute(Type type){
         this.type = type;
         this.modifiers = new ArrayList<>();
     }
 
+    /**
+     * Create a new Attribute instance
+     * @param type the type of an attribute
+     * @param modifiers list of modifiers of an attribute
+     */
     public Attribute(Type type, List<AttributeModifier> modifiers){
         this.type = type;
         this.modifiers = modifiers;
     }
 
+    /**
+     * Adds the given modifier to this attribute
+     * @param modifier the attribute modifier
+     * @return this object
+     */
     public Attribute addModifier(AttributeModifier modifier){
         this.modifiers.add(modifier);
         return this;
     }
 
+    /**
+     * Removes the given modifier out of this attribute
+     * @param modifier the attribute modifier
+     * @return this object
+     */
     public Attribute removeModifier(AttributeModifier modifier){
         this.modifiers.remove(modifier);
         return this;
     }
 
+    /**
+     * Gets the list of all modifiers
+     * @return list of modifiers
+     */
     public List<AttributeModifier> getModifiers(){
         return this.modifiers;
     }
 
-    public Attribute setModifiers(List<AttributeModifier> modifiers){
-        this.modifiers = modifiers;
-        return this;
-    }
-
+    /**
+     * Gets the type of this attribute
+     * @return the type of attribute
+     */
     public Type getType(){
         return this.type;
     }

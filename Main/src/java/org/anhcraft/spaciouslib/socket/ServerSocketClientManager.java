@@ -1,20 +1,23 @@
 package org.anhcraft.spaciouslib.socket;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
 /**
- * A class helps you to manage current connection of a server socket and a socket client.
+ * A class helps you to manage the connections between a server socket and a socket client.<br>
+ * This class is for server side and only for a specific client
  */
-public class ServerSocketClientHandler extends SocketHandler {
+public class ServerSocketClientManager extends SocketHandler {
     private Socket client;
     private ServerSocketManager manager;
     private ServerSocketRequestHandler requestHandler;
 
     /**
-     * Gets the manager of this server socket.
+     * Gets the manager of this server socket
      * @return ServerSocketManager object
      */
     public ServerSocketManager getManager(){
@@ -22,17 +25,17 @@ public class ServerSocketClientHandler extends SocketHandler {
     }
 
     /**
-     * Sends a new data to the client.
-     * @param data the data in string
+     * Sends the given content to this client
+     * @param content the content as string
      * @return this object
      */
-    public ServerSocketClientHandler send(String data) throws IOException {
-        out.write(data + "\n");
+    public ServerSocketClientManager send(String content) throws IOException {
+        out.write(content);
         out.flush();
         return this;
     }
 
-    public ServerSocketClientHandler(ServerSocketManager manager, Socket client, ServerSocketRequestHandler requestHandler) {
+    protected ServerSocketClientManager(ServerSocketManager manager, Socket client, ServerSocketRequestHandler requestHandler) {
         this.requestHandler = requestHandler;
         this.manager = manager;
         this.client = client;
@@ -43,8 +46,13 @@ public class ServerSocketClientHandler extends SocketHandler {
             e.printStackTrace();
         }
         this.isStopped = false;
+        this.start();
     }
 
+    /**
+     * Gets the address of this client
+     * @return the address
+     */
     public InetAddress getInetAddress(){
         return this.client.getInetAddress();
     }
@@ -61,7 +69,7 @@ public class ServerSocketClientHandler extends SocketHandler {
     }
 
     /**
-     * loses current thread and socket connection.
+     * Closes this socket connection.
      */
     public void close() throws IOException {
         this.isStopped = true;

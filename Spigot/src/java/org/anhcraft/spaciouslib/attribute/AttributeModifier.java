@@ -53,6 +53,12 @@ public class AttributeModifier {
     private Operation operation;
     private UUID uuid;
 
+    /**
+     * Creates a new AttributeModifier instance
+     * @param name the name of the modifier
+     * @param amount the amount value of the modifier
+     * @param operation the operation of the modifier
+     */
     public AttributeModifier(String name, double amount, Operation operation){
         this.name = name;
         this.amount = amount;
@@ -60,6 +66,13 @@ public class AttributeModifier {
         this.uuid = UUID.randomUUID();
     }
 
+    /**
+     * Creates a new AttributeModifier instance
+     * @param uuid the unique id of the modifier
+     * @param name the name of the modifier
+     * @param amount the amount value of the modifier
+     * @param operation the operation of the modifier
+     */
     public AttributeModifier(UUID uuid, String name, double amount, Operation operation){
         this.name = name;
         this.amount = amount;

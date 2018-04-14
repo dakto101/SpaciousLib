@@ -7,14 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class helps you to manage current server socket.
+ * A class helps you to manage the connections between a server socket and multiple socket clients.<br>
+ * This class is for server side
  */
 public class ServerSocketManager extends Thread {
     private ServerSocket socket;
     private ServerSocketRequestHandler requestHandler;
-    protected List<ServerSocketClientHandler> clients;
+    protected List<ServerSocketClientManager> clients;
     private boolean isStopped;
 
+    /**
+     * Creates a new server socket and starts a new thread for handling the requests.
+     * @param port the TCP/IP port which is listening by this socket server
+     * @param requestHandler a handler for the socket connections
+     */
     public ServerSocketManager(int port, ServerSocketRequestHandler requestHandler){
         this.requestHandler = requestHandler;
         clients = new ArrayList<>();
@@ -23,27 +29,28 @@ public class ServerSocketManager extends Thread {
         } catch(Exception e){
             e.printStackTrace();
         }
+        this.start();
     }
 
     /**
-     * Sends a new data to all clients.
-     * @param data the data in string
+     * Sends the given content to all clients.
+     * @param content the content as string
      * @return this object
      */
-    public ServerSocketManager sendAll(String data) throws IOException {
-        for(ServerSocketClientHandler c : clients){
-            c.send(data);
+    public ServerSocketManager sendAll(String content) throws IOException {
+        for(ServerSocketClientManager c : clients){
+            c.send(content);
         }
         return this;
     }
 
     /**
-     * Closes the current thread and all socket connections.
+     * Closes this server socket and all current socket connections.
      */
     public void close() throws IOException {
         this.isStopped = true;
         this.interrupt();
-        for(ServerSocketClientHandler c : clients){
+        for(ServerSocketClientManager c : clients){
             c.close();
         }
         socket.close();
@@ -52,9 +59,9 @@ public class ServerSocketManager extends Thread {
 
     /**
      * Gets all clients which were connected to this server.
-     * @return list of ServerSocketClientHandler object
+     * @return list of socket connection manager between this server and a specific client
      */
-    public List<ServerSocketClientHandler> getClients(){
+    public List<ServerSocketClientManager> getClients(){
         return this.clients;
     }
 
@@ -67,9 +74,8 @@ public class ServerSocketManager extends Thread {
                 }
                 Socket client = socket.accept();
                 if(client != null) {
-                    ServerSocketClientHandler c = new ServerSocketClientHandler(this, client, requestHandler);
+                    ServerSocketClientManager c = new ServerSocketClientManager(this, client, requestHandler);
                     clients.add(c);
-                    c.start();
                 }
             }
         } catch(Exception ignored){ }

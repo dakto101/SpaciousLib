@@ -9,24 +9,24 @@ import java.util.*;
 public class CommonUtils {
     /**
      * Parses the given string as an integer number safely.
-     * @param num the number in string
+     * @param number a number in string
      * @return the number
      */
-    public static int toIntegerNumber(String num){
-        return Integer.parseInt(num.replaceAll("[^\\d\\-]", ""));
+    public static int toIntegerNumber(String number){
+        return Integer.parseInt(number.replaceAll("[^\\d\\-]", ""));
     }
 
     /**
      * Parses the given string as a real number safely.
-     * @param num the number in string
+     * @param number a number in string
      * @return the number
      */
-    public static double toRealNumber(String num){
-        return Double.parseDouble(num.replaceAll("[^\\d\\-\\.]", ""));
+    public static double toRealNumber(String number){
+        return Double.parseDouble(number.replaceAll("[^\\d\\-\\.]", ""));
     }
 
     /**
-     * Encodes a string into base64 encoded string
+     * Encodes the given string into a base64 encoded string
      * @param str the string
      * @return base64 encoded string
      */
@@ -36,7 +36,7 @@ public class CommonUtils {
     }
 
     /**
-     * Decodes the given base64 encoded string into "real" string
+     * Decodes the given base64 encoded string into a string
      * @param str the base64 encoded string
      * @return the string
      */
