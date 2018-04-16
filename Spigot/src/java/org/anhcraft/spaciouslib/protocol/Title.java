@@ -33,10 +33,10 @@ public class Title {
         } else {
             text = "{\"text\": \"" + Chat.color(text) + "\"}";
         }
-        GameVersion v = GameVersion.getVersion();
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GameVersion.v1_8_R1) ? "" : "IChatBaseComponent$") + "ChatSerializer");
-            Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v.toString() + ".IChatBaseComponent");
+            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "IChatBaseComponent$") + "ChatSerializer");
+            Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent");
             Object chatBaseComponent = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
                     new Group<>(
                             new Class<?>[]{String.class},
@@ -44,7 +44,7 @@ public class Title {
                     ));
 
             Class<?> packetPlayOutTitleClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutTitle");
-            Class<?> enumTitleActionClass = Class.forName("net.minecraft.server." + v.toString() + "."+(v.equals(GameVersion.v1_8_R1) ? "" : "PacketPlayOutTitle$")+"EnumTitleAction");
+            Class<?> enumTitleActionClass = Class.forName("net.minecraft.server." + v + "."+(v.equals(GameVersion.v1_8_R1.toString()) ? "" : "PacketPlayOutTitle$")+"EnumTitleAction");
             Object enumTitle = ReflectionUtils.getEnum(type.toString(), enumTitleActionClass);
             return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutTitleClass, new Group<>(
                     new Class<?>[]{enumTitleActionClass, chatBaseComponentClass,

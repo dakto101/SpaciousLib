@@ -43,24 +43,28 @@ public class Group<A, B> {
      * Sets the given value for the object A.<br>
      * It must have the same data type with the old value
      * @param a the new value for object A
+     * @return this object
      */
-    public void setA(A a){
+    public Group<A, B> setA(A a){
         this.a = a;
+        return this;
     }
 
     /**
      * Sets the given value for the object B.<br>
      * It must have the same data type with the old value
      * @param b the new value for object B
+     * @return this object
      */
-    public void setB(B b){
+    public Group<A, B> setB(B b){
         this.b = b;
+        return this;
     }
 
     @Override
     public boolean equals(Object o){
         if(o != null && o.getClass() == this.getClass()){
-            Group g = (Group) o;
+            Group<A, B> g = (Group) o;
             return new EqualsBuilder()
                     .append(g.a, this.a)
                     .append(g.b, this.b)

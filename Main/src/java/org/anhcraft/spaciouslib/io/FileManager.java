@@ -69,6 +69,19 @@ public class FileManager {
     }
 
     /**
+     * Initializes this file, creates and writes if it doesn't exist.
+     * @param content an array of bytes (binary content)
+     * @return this object
+     */
+    public FileManager initFile(byte[] content)
+            throws IOException{
+        if (!this.file.exists()) {
+            return create().write(content);
+        }
+        return this;
+    }
+
+    /**
      * Writes the given content to this file
      * @param content an array of bytes (binary content)
      * @param append if true the content will be appended at the end of the file

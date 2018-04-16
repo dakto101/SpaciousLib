@@ -13,8 +13,8 @@ public class ReflectionUtils {
         return clazz.cast(castObj);
     }
 
-    public static Object getEnum(String field, Class<?> clazz){
-        return getStaticField(field, clazz);
+    public static Object getEnum(String name, Class<?> clazz){
+        return getStaticField(name, clazz);
     }
 
     public static Object getField(String field, Class<?> clazz, Object obj){

@@ -16,11 +16,11 @@ public class Animation {
      * @return PacketSender object
      */
     public static PacketSender create(Entity entity, Type type) {
-        GameVersion v = GameVersion.getVersion();
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> craftEntityClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftEntity");
-            Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v.toString() + ".Entity");
-            Class<?> packetPlayOutAnimationClass = Class.forName("net.minecraft.server." + v.toString() + ".PacketPlayOutAnimation");
+            Class<?> craftEntityClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftEntity");
+            Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
+            Class<?> packetPlayOutAnimationClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutAnimation");
             Object craftEntity = ReflectionUtils.cast(craftEntityClass, entity);
             Object nmsEntity = ReflectionUtils.getMethod("getHandle", craftEntityClass, craftEntity);
             return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutAnimationClass, new Group<>(

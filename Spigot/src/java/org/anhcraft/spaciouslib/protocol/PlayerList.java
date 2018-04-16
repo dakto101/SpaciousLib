@@ -24,9 +24,9 @@ public class PlayerList {
         } else {
             footer = "{\"text\": \"" + Chat.color(footer) + "\"}";
         }
-        GameVersion v = GameVersion.getVersion();
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GameVersion.v1_8_R1) ? "" : "IChatBaseComponent$") + "ChatSerializer");
+            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "IChatBaseComponent$") + "ChatSerializer");
             Class<?> packetPlayOutPlayerListHeaderFooterClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutPlayerListHeaderFooter");
             Object chatBaseComponentHeader = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
                     new Group<>(

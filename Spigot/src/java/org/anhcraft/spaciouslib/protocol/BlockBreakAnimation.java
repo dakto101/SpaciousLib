@@ -17,10 +17,10 @@ public class BlockBreakAnimation {
      * @return PacketSender object
      */
     public static PacketSender create(int id, Block block, int stage) {
-        GameVersion v = GameVersion.getVersion();
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> blockPositionClass = Class.forName("net.minecraft.server." + v.toString() + ".BlockPosition");
-            Class<?> packetPlayOutBlockBreakAnimationClass = Class.forName("net.minecraft.server." + v.toString() + ".PacketPlayOutBlockBreakAnimation");
+            Class<?> blockPositionClass = Class.forName("net.minecraft.server." + v + ".BlockPosition");
+            Class<?> packetPlayOutBlockBreakAnimationClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutBlockBreakAnimation");
             Object blockPosition = ReflectionUtils.getConstructor(blockPositionClass, new Group<>(
                     new Class<?>[]{int.class, int.class, int.class},
                     new Object[]{block.getLocation().getBlockX(), block.getLocation().getBlockY(), block.getLocation().getBlockZ()}

@@ -6,9 +6,9 @@ import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 
 public class EntityDestroy {
     public static PacketSender create(int entityID){
-        GameVersion v = GameVersion.getVersion();
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> packetPlayOutEntityDestroyClass = Class.forName("net.minecraft.server." + v.toString() + ".PacketPlayOutEntityDestroy");
+            Class<?> packetPlayOutEntityDestroyClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutEntityDestroy");
             return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutEntityDestroyClass, new Group<>(
                     new Class<?>[]{int[].class},
                     new Object[]{new int[]{entityID}}

@@ -24,6 +24,13 @@ public class BungeeAPI implements PluginMessageListener {
     public static final String CHANNEL = "BungeeCord";
     private static List<BungeeResponse> queue = new ArrayList<>();
 
+    public BungeeAPI(){
+        queue = new ArrayList<>();
+
+        Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(SpaciousLib.instance, "BungeeCord");
+        Bukkit.getServer().getMessenger().registerIncomingPluginChannel(SpaciousLib.instance, "BungeeCord", this);
+    }
+
     /**
      * Sends a connect request for the given player<br>
      * If success, that player will be connected to the given server automatically

@@ -15,10 +15,11 @@ public class Camera {
      * @return PacketSender object
      */
     public static PacketSender create(Entity entity) {
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> packetClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutCamera");
-            Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".Entity");
-            Class<?> craftEntityClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".entity.CraftEntity");
+            Class<?> packetClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutCamera");
+            Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
+            Class<?> craftEntityClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftEntity");
             Object craftEntity = ReflectionUtils.cast(craftEntityClass, entity);
             Object nmsEntity = ReflectionUtils.getMethod("getHandle", craftEntityClass, craftEntity);
             return new PacketSender(ReflectionUtils.getConstructor(packetClass, new Group<>(

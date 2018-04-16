@@ -36,9 +36,10 @@ public class RecipeManager {
      * Unregisters the specified recipe
      */
     public void unregister(){
+        String v = GameVersion.getVersion().toString();
         try {
-            Class craftingManagerClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".CraftingManager");
-            Class recipeClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".IRecipe");
+            Class craftingManagerClass = Class.forName("net.minecraft.server."+v+".CraftingManager");
+            Class recipeClass = Class.forName("net.minecraft.server."+v+".IRecipe");
             Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", craftingManagerClass);
             Method nmsRecipesMethod = craftingManagerClass.getDeclaredMethod("getRecipes");
             List<Object> newNmsRecipes = new ArrayList<>();
@@ -61,9 +62,10 @@ public class RecipeManager {
      * @return true if yes
      */
     public boolean isRegistered(){
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> craftingManagerClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".CraftingManager");
-            Class<?> recipeClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".IRecipe");
+            Class<?> craftingManagerClass = Class.forName("net.minecraft.server."+v+".CraftingManager");
+            Class<?> recipeClass = Class.forName("net.minecraft.server."+v+".IRecipe");
             Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", craftingManagerClass);
             List<Object> nmsRecipes = (List<Object>) ReflectionUtils.getMethod("getRecipes", craftingManagerClass, craftingManager);
             for(Object nr : nmsRecipes){

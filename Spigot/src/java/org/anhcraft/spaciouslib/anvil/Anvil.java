@@ -1,20 +1,16 @@
 package org.anhcraft.spaciouslib.anvil;
 
+import org.anhcraft.spaciouslib.listeners.AnvilListener;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.LinkedHashMap;
 
 /**
  * Represents an anvil implementation.
  */
 public class Anvil {
-    public static LinkedHashMap<Player, Group<Inventory, Handler>> data = new LinkedHashMap<>();
-
     public enum Slot {
         /**
          * The item on the left side, represents for the first input of an anvil
@@ -79,7 +75,7 @@ public class Anvil {
      */
     public Anvil open() {
         this.wrapper.open();
-        data.put(this.player, new Group<>(this.wrapper.inv, this.handler));
+        AnvilListener.data.put(this.player, new Group<>(this.wrapper.inv, this.handler));
         return this;
     }
 

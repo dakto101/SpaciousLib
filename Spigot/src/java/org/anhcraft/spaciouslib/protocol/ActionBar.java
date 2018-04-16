@@ -31,10 +31,10 @@ public class ActionBar {
         } else {
             text = "{\"text\": \"" + Chat.color(text) + "\"}";
         }
-        GameVersion v = GameVersion.getVersion();
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v.toString() + "." + (v.equals(GameVersion.v1_8_R1) ? "" : "IChatBaseComponent$") + "ChatSerializer");
-            Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v.toString() + ".IChatBaseComponent");
+            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "IChatBaseComponent$") + "ChatSerializer");
+            Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent");
             Object chatBaseComponent = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
                     new Group<>(
                             new Class<?>[]{String.class},
@@ -42,9 +42,9 @@ public class ActionBar {
                     ));
 
             // 1.11 - 1.12
-            if(v.equals(GameVersion.v1_11_R1) || v.equals(GameVersion.v1_12_R1)){
-                Class<?> packetPlayOutTitleClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutTitle");
-                Class<?> enumTitleActionClass = Class.forName("net.minecraft.server." + v.toString() + ".PacketPlayOutTitle$EnumTitleAction");
+            if(v.equals(GameVersion.v1_11_R1.toString()) || v.equals(GameVersion.v1_12_R1.toString())){
+                Class<?> packetPlayOutTitleClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutTitle");
+                Class<?> enumTitleActionClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutTitle$EnumTitleAction");
                 Object enumActionBar = ReflectionUtils.getEnum("ACTIONBAR", enumTitleActionClass);
                 return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutTitleClass, new Group<>(
                         new Class<?>[]{enumTitleActionClass, chatBaseComponentClass,
@@ -54,7 +54,7 @@ public class ActionBar {
             }
             // 1.8 R1 - 1.10
             else{
-                Class<?> packetPlayOutChatClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutChat");
+                Class<?> packetPlayOutChatClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutChat");
                 return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutChatClass, new Group<>(
                         new Class<?>[]{chatBaseComponentClass, byte.class},
                         new Object[]{chatBaseComponent, (byte) 2}

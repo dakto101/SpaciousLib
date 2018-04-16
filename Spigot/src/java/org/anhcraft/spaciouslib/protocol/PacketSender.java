@@ -47,12 +47,12 @@ public class PacketSender {
      * @return this object
      */
     public PacketSender sendPlayer(Player player){
-        GameVersion v = GameVersion.getVersion();
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftPlayer");
-            Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v.toString() + ".EntityPlayer");
-            Class<?> packetClass = Class.forName("net.minecraft.server." + v.toString() + ".Packet");
-            Class<?> playerConnClass = Class.forName("net.minecraft.server." + v.toString() + ".PlayerConnection");
+            Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer");
+            Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v + ".EntityPlayer");
+            Class<?> packetClass = Class.forName("net.minecraft.server." + v + ".Packet");
+            Class<?> playerConnClass = Class.forName("net.minecraft.server." + v + ".PlayerConnection");
             Object craftPlayer = ReflectionUtils.cast(craftPlayerClass, player);
             Object nmsEntityPlayer = ReflectionUtils.getMethod("getHandle", craftPlayerClass, craftPlayer);
             Object playerConn = ReflectionUtils.getField("playerConnection", nmsEntityPlayerClass, nmsEntityPlayer);

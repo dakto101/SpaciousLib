@@ -34,13 +34,13 @@ public class PlayerManager extends EntityManager {
 
     /**
      * Gets the ping number of the specified player
-     * @return
+     * @return the player ping
      */
     public int getPing(){
-        GameVersion v = GameVersion.getVersion();
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftPlayer");
-            Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v.toString() + ".EntityPlayer");
+            Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer");
+            Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v + ".EntityPlayer");
             Object craftPlayer = ReflectionUtils.cast(craftPlayerClass, getPlayer());
             Object nmsEntity = ReflectionUtils.getMethod("getHandle", craftPlayerClass, craftPlayer);
             return (int) ReflectionUtils.getField("ping", nmsEntityPlayerClass, nmsEntity);
@@ -58,7 +58,7 @@ public class PlayerManager extends EntityManager {
         List<Player> players = new ArrayList<>(Bukkit.getServer().getOnlinePlayers());
         players.remove(getPlayer());
         new GameProfileManager(getPlayer()).setSkin(skin).apply(getPlayer());
-        GameVersion v = GameVersion.getVersion();
+        String v = GameVersion.getVersion().toString();
         PlayerInfo.create(PlayerInfo.Type.REMOVE_PLAYER, getPlayer()).sendAll();
         EntityDestroy.create(getPlayer().getEntityId()).sendPlayers(players);
         PlayerInfo.create(PlayerInfo.Type.ADD_PLAYER, getPlayer()).sendAll();
@@ -66,12 +66,12 @@ public class PlayerManager extends EntityManager {
         // requests the player client to reload the player skin
         // https://www.spigotmc.org/threads/reload-skin-client-help.196072/#post-2043595
         try {
-            Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".CraftServer");
-            Class<?> nmsPlayerListClass = Class.forName("net.minecraft.server." + v.toString() + ".PlayerList");
-            Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftPlayer");
-            Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v.toString() + ".EntityPlayer");
-            Class<?> craftWorldClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".CraftWorld");
-            Class<?> nmsWorldServerClass = Class.forName("net.minecraft.server." + v.toString() + ".WorldServer");
+            Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + v + ".CraftServer");
+            Class<?> nmsPlayerListClass = Class.forName("net.minecraft.server." + v + ".PlayerList");
+            Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer");
+            Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v + ".EntityPlayer");
+            Class<?> craftWorldClass = Class.forName("org.bukkit.craftbukkit." + v + ".CraftWorld");
+            Class<?> nmsWorldServerClass = Class.forName("net.minecraft.server." + v + ".WorldServer");
             Object craftWorld = ReflectionUtils.cast(craftWorldClass, getPlayer().getWorld());
             Object worldServer = ReflectionUtils.getMethod("getHandle", craftWorldClass, craftWorld);
             int dimension = (int) ReflectionUtils.getField("dimension", nmsWorldServerClass, worldServer);

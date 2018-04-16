@@ -104,10 +104,11 @@ public class Particle {
     }
 
     public static PacketSender create(Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed, Material material, int data){
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> enumParticleClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".EnumParticle");
+            Class<?> enumParticleClass = Class.forName("net.minecraft.server."+v+".EnumParticle");
             Object enumParticle = ReflectionUtils.getEnum(type.toString(), enumParticleClass);
-            Class<?> packetPlayOutWorldParticlesClass = Class.forName("net.minecraft.server."+ GameVersion.getVersion().toString()+".PacketPlayOutWorldParticles");
+            Class<?> packetPlayOutWorldParticlesClass = Class.forName("net.minecraft.server."+v+".PacketPlayOutWorldParticles");
             int[] i = new int[]{};
             if(type.equals(Type.ITEM_CRACK)){
                 i = new int[]{material.getId(), data};

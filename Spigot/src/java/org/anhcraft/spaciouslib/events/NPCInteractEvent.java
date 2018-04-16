@@ -1,11 +1,14 @@
 package org.anhcraft.spaciouslib.events;
 
+import org.anhcraft.spaciouslib.entity.NPC;
 import org.anhcraft.spaciouslib.inventory.EquipSlot;
-import org.anhcraft.spaciouslib.npc.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * An event triggers when a player interact (left or right click) with an NPC which is created by this library. From 1.9 versions, this event will trigger twice, the first time for the main hand and the second time is for the off hand.
+ */
 public class NPCInteractEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private boolean leftClick;

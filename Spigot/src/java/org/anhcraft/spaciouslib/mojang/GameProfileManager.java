@@ -49,9 +49,10 @@ public class GameProfileManager {
      * @param entity the human entity
      */
     public GameProfileManager(HumanEntity entity){
+        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> craftHumanEntityClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".entity.CraftHumanEntity");
-            Class<?> nmsEntityHumanClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".EntityHuman");
+            Class<?> craftHumanEntityClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftHumanEntity");
+            Class<?> nmsEntityHumanClass = Class.forName("net.minecraft.server." + v + ".EntityHuman");
             Object craftHumanEntity = ReflectionUtils.cast(craftHumanEntityClass, entity);
             Object entityHuman = ReflectionUtils.getMethod("getHandle", craftHumanEntityClass, craftHumanEntity);
             GameProfile gp = (GameProfile) ReflectionUtils.getMethod("getProfile", nmsEntityHumanClass, entityHuman);
@@ -147,6 +148,7 @@ public class GameProfileManager {
      * @return this object
      */
     public GameProfileManager apply(HumanEntity entity){
+        String v = GameVersion.getVersion().toString();
         LinkedHashMap<GameVersion, String> vars = new LinkedHashMap<>();
         vars.put(GameVersion.v1_8_R1, "bF");
         vars.put(GameVersion.v1_8_R2, "bH");
@@ -157,8 +159,8 @@ public class GameProfileManager {
         vars.put(GameVersion.v1_11_R1, "bS");
         vars.put(GameVersion.v1_12_R1, "g");
         try {
-            Class<?> craftHumanEntityClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".entity.CraftHumanEntity");
-            Class<?> nmsEntityHumanClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".EntityHuman");
+            Class<?> craftHumanEntityClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftHumanEntity");
+            Class<?> nmsEntityHumanClass = Class.forName("net.minecraft.server." + v + ".EntityHuman");
             Object craftHumanEntity = ReflectionUtils.cast(craftHumanEntityClass, entity);
             Object entityHuman = ReflectionUtils.getMethod("getHandle", craftHumanEntityClass, craftHumanEntity);
             ReflectionUtils.setField(vars.get(GameVersion.getVersion()), nmsEntityHumanClass, entityHuman, this.gp);

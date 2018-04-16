@@ -1,6 +1,7 @@
 package org.anhcraft.spaciouslib.command;
 
 import org.anhcraft.spaciouslib.utils.Chat;
+import org.anhcraft.spaciouslib.utils.CommandUtils;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.command.*;
@@ -140,7 +141,7 @@ public class CommandBuilder extends CommandString {
                     return false;
                 }
             });
-            new CommandManager(plugin, c).register();
+            CommandUtils.register(plugin, c);
             this.command = c;
         } else if(getCommand() instanceof PluginCommand){
             ((PluginCommand) getCommand()).setTabCompleter(new TabCompleter() {

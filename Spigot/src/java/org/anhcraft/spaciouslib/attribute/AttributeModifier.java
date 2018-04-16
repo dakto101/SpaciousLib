@@ -80,18 +80,34 @@ public class AttributeModifier {
         this.uuid = uuid;
     }
 
+    /**
+     * Gets the name of this modifier
+     * @return a name
+     */
     public String getName(){
         return this.name;
     }
 
+    /**
+     * Gets the amount value of this modifier
+     * @return amount
+     */
     public double getAmount(){
         return this.amount;
     }
 
+    /**
+     * Gets the operation type of this modifier
+     * @return an operation type
+     */
     public Operation getOperation() {
         return this.operation;
     }
 
+    /**
+     * Gets the unique id of this modifier
+     * @return an unique id
+     */
     public UUID getUniqueID() {
         return this.uuid;
     }

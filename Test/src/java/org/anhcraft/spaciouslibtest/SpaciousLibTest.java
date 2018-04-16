@@ -1,8 +1,7 @@
 package org.anhcraft.spaciouslibtest;
 
-import org.anhcraft.spaciouslib.anvil.AnvilBuilder;
-import org.anhcraft.spaciouslib.anvil.AnvilHandler;
-import org.anhcraft.spaciouslib.anvil.AnvilSlot;
+import org.anhcraft.spaciouslib.SpaciousLib;
+import org.anhcraft.spaciouslib.anvil.Anvil;
 import org.anhcraft.spaciouslib.attribute.Attribute;
 import org.anhcraft.spaciouslib.attribute.AttributeModifier;
 import org.anhcraft.spaciouslib.bungee.BungeeAPI;
@@ -13,9 +12,11 @@ import org.anhcraft.spaciouslib.command.CommandBuilder;
 import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SubCommandBuilder;
 import org.anhcraft.spaciouslib.database.SQLiteDatabase;
+import org.anhcraft.spaciouslib.entity.BossBar;
+import org.anhcraft.spaciouslib.entity.Hologram;
+import org.anhcraft.spaciouslib.entity.NPC;
 import org.anhcraft.spaciouslib.entity.PlayerManager;
 import org.anhcraft.spaciouslib.events.*;
-import org.anhcraft.spaciouslib.hologram.Hologram;
 import org.anhcraft.spaciouslib.inventory.BookManager;
 import org.anhcraft.spaciouslib.inventory.EquipSlot;
 import org.anhcraft.spaciouslib.inventory.ItemManager;
@@ -24,9 +25,6 @@ import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.mojang.GameProfileManager;
 import org.anhcraft.spaciouslib.mojang.MojangAPI;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
-import org.anhcraft.spaciouslib.npc.NPC;
-import org.anhcraft.spaciouslib.npc.NPCManager;
-import org.anhcraft.spaciouslib.npc.NPCWrapper;
 import org.anhcraft.spaciouslib.placeholder.FixedPlaceholder;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.anhcraft.spaciouslib.socket.*;
@@ -48,13 +46,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 public class SpaciousLibTest extends JavaPlugin implements Listener {
     private static final File DB_FILE = new File("test.db");
 
     @Override
     public void onEnable() {
+        if(!SpaciousLib.config.getBoolean("dev_mode")){
+            return;
+        }
+
         try {
             // creates the database file
             new FileManager(DB_FILE).create();
@@ -75,9 +76,9 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
             // initializes the client socket
             ClientSocketManager client = new ClientSocketManager("localhost", 25568, new ClientSocketRequestHandler() {
                 @Override
-                public void response(ClientSocketManager manager, String data) {
-                    // prints the message of the current server socket
-                    System.out.println("Server >> " + data);
+                public void response(ClientSocketManager manager, String content) {
+                    // prints the sent message
+                    System.out.println("Server >> " + content);
                 }
             });
             // sends messages to the socket server
@@ -102,12 +103,12 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
                 @Override
                 public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                     if(sender instanceof Player){
-                        new AnvilBuilder((Player) sender, new AnvilHandler() {
+                        new Anvil((Player) sender, new Anvil.Handler() {
                             @Override
-                            public void result(Player player, String input, ItemStack item, AnvilSlot slot) {
+                            public void result(Player player, String input, ItemStack item, Anvil.Slot slot) {
                                 player.sendMessage("You've typed " + input);
                             }
-                        }).setItem(AnvilSlot.INPUT_LEFT, new ItemStack(Material.DIAMOND, 1)).open();
+                        }).setItem(Anvil.Slot.INPUT_LEFT, new ItemStack(Material.DIAMOND, 1)).open();
                     }
                 }
             }))
@@ -219,10 +220,23 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
                 public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                     if(sender instanceof Player) {
                         try {
-                            NPCWrapper wrapper = NPCManager.register(UUID.randomUUID(), new NPC(new GameProfileManager("test").setSkin(SkinAPI.getSkin(MojangAPI.getUUID("anhcraft").getB()).getSkin()).getGameProfile(), ((Player) sender).getLocation(), NPC.Addition.NEARBY_RENDER, NPC.Addition.INTERACT_HANDLER).setNearbyRadius(20));
+                            new NPC(new GameProfileManager("test")
+                                            .setSkin(SkinAPI.getSkin(
+                                                    MojangAPI.getUUID("anhcraft").getB()).getSkin())
+                                            .getGameProfile(),
+                                    ((Player) sender).getLocation()).addViewer((Player) sender).spawn();
                         } catch(Exception e) {
                             e.printStackTrace();
                         }
+                    }
+                }
+            }))
+
+            .addSubCommand(new SubCommandBuilder("bossbar", null, new CommandRunnable() {
+                @Override
+                public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                    if(sender instanceof Player) {
+                        new BossBar("test", BossBar.Color.GREEN, BossBar.Style.NOTCHED_6, 1, BossBar.Flag.CREATE_FOG, BossBar.Flag.DARKEN_SKY).addViewer((Player) sender);
                     }
                 }
             }))
@@ -315,11 +329,11 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
         // initializes the socket server
         ServerSocketManager server = new ServerSocketManager(25568, new ServerSocketRequestHandler() {
             @Override
-            public void request(ServerSocketClientHandler client, String data) {
+            public void request(ServerSocketClientManager client, String content) {
                 // handles the command from the client socket
-                if(data.equalsIgnoreCase("stop_server")){
-                    // don't try to use the above variable "server"
-                    // there's a method to help you get the current ServerSocketManager object
+                if(content.equalsIgnoreCase("stop_server")){
+                    // don't try to use the variable "server" above
+                    // there's a method to help you get the main manager
                     try {
                         client.getManager().close();
                     } catch(IOException e) {
@@ -327,8 +341,8 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
                     }
                     return;
                 }
-                // prints the current message of the client socket
-                System.out.println("Client#"+client.getInetAddress().getHostAddress()+" >> " + data);
+                // prints the sent message
+                System.out.println("Client#"+client.getInetAddress().getHostAddress()+" >> " + content);
             }
         });
         // start the socket thread
