@@ -12,10 +12,10 @@ import org.anhcraft.spaciouslib.command.CommandBuilder;
 import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SubCommandBuilder;
 import org.anhcraft.spaciouslib.database.SQLiteDatabase;
-import org.anhcraft.spaciouslib.entity.BossBar;
 import org.anhcraft.spaciouslib.entity.Hologram;
 import org.anhcraft.spaciouslib.entity.NPC;
 import org.anhcraft.spaciouslib.entity.PlayerManager;
+import org.anhcraft.spaciouslib.entity.bossbar.BossBar;
 import org.anhcraft.spaciouslib.events.*;
 import org.anhcraft.spaciouslib.inventory.BookManager;
 import org.anhcraft.spaciouslib.inventory.EquipSlot;
@@ -27,13 +27,14 @@ import org.anhcraft.spaciouslib.mojang.MojangAPI;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
 import org.anhcraft.spaciouslib.placeholder.FixedPlaceholder;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
-import org.anhcraft.spaciouslib.socket.*;
+import org.anhcraft.spaciouslib.socket.ClientSocketHandler;
+import org.anhcraft.spaciouslib.socket.ClientSocketManager;
+import org.anhcraft.spaciouslib.utils.CooldownUtils;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.anhcraft.spaciouslib.utils.RandomUtils;
-import org.anhcraft.spaciouslib.utils.TimedMap;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -42,6 +43,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,10 +52,18 @@ import java.util.List;
 
 public class SpaciousLibTest extends JavaPlugin implements Listener {
     private static final File DB_FILE = new File("test.db");
+    private static ClientSocketManager client;
 
     @Override
     public void onEnable() {
         if(!SpaciousLib.config.getBoolean("dev_mode")){
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED+"SpaciousLibTest only works in the dev mode.");
+            try {
+                Thread.sleep(1500);
+            } catch(InterruptedException e) {
+                e.printStackTrace();
+            }
+            Bukkit.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
@@ -74,19 +85,16 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
             //======================================================================================
 
             // initializes the client socket
-            ClientSocketManager client = new ClientSocketManager("localhost", 25568, new ClientSocketRequestHandler() {
+            client = new ClientSocketManager("localhost", 25568, new ClientSocketHandler() {
                 @Override
-                public void response(ClientSocketManager manager, String content) {
+                public void response(ClientSocketManager manager, byte[] data){
+                    String message = ""/*client.getInput()*/;
                     // prints the sent message
-                    System.out.println("Server >> " + content);
+                    System.out.println("Server >> " + message);
                 }
             });
             // sends messages to the socket server
             client.send("Hi server!");
-            // you can define your own command
-            client.send("stop_server");
-            // closes the connection
-            client.close();
 
             //======================================================================================
 
@@ -94,7 +102,9 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
             new CommandBuilder("slt", new CommandRunnable() {
                 @Override
                 public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
-
+                    for(SubCommandBuilder s : cmd.getSubCommands()){
+                        sender.sendMessage(cmd.getCommandAsString(s, true));
+                    }
                 }
             })
 
@@ -137,7 +147,7 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
                 }
             }))
 
-            .addSubCommand(new SubCommandBuilder("bungee", null, new CommandRunnable() {
+            .addSubCommand(new SubCommandBuilder("uuid", null, new CommandRunnable() {
                 @Override
                 public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                     try {
@@ -154,7 +164,8 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
                 @Override
                 public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                     if(sender instanceof Player) {
-                        new Hologram(((Player) sender).getLocation()).addViewer((Player) sender).addLine("test 1").addLine("test 2").addLine("test 3").spawn();
+                        Player player = (Player) sender;
+                        new Hologram(((Player) sender).getLocation()).addViewer(player.getUniqueId()).addLine("test 1").addLine("test 2").addLine("test 3").spawn();
                     }
                 }
             }))
@@ -175,6 +186,22 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
                     new RecipeManager(recipe).register();
                 }
             }))
+
+            .addSubCommand(new SubCommandBuilder("socket", null, new CommandRunnable() {
+                @Override
+                public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                    sender.sendMessage(cmd.getCommandAsString(subcmd, true));
+                }
+            }).addArgument("message", new CommandRunnable() {
+                @Override
+                public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                    try {
+                        client.send(value);
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, CommandArgument.Type.CUSTOM, false))
 
             .addSubCommand(new SubCommandBuilder("skin", null, new CommandRunnable() {
                 @Override
@@ -220,11 +247,12 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
                 public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                     if(sender instanceof Player) {
                         try {
+                            Player player = (Player) sender;
                             new NPC(new GameProfileManager("test")
                                             .setSkin(SkinAPI.getSkin(
                                                     MojangAPI.getUUID("anhcraft").getB()).getSkin())
                                             .getGameProfile(),
-                                    ((Player) sender).getLocation()).addViewer((Player) sender).spawn();
+                                    ((Player) sender).getLocation()).addViewer(player.getUniqueId()).spawn();
                         } catch(Exception e) {
                             e.printStackTrace();
                         }
@@ -236,7 +264,8 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
                 @Override
                 public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                     if(sender instanceof Player) {
-                        new BossBar("test", BossBar.Color.GREEN, BossBar.Style.NOTCHED_6, 1, BossBar.Flag.CREATE_FOG, BossBar.Flag.DARKEN_SKY).addViewer((Player) sender);
+                        Player player = (Player) sender;
+                        new BossBar("test", BossBar.Color.GREEN, BossBar.Style.NOTCHED_6, 1, BossBar.Flag.CREATE_FOG, BossBar.Flag.DARKEN_SKY).addViewer(player.getUniqueId());
                     }
                 }
             }))
@@ -254,13 +283,13 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
     public void equip(ArmorEquipEvent event){
         if(!InventoryUtils.isNull(event.getNewArmor())){
             if(event.getNewArmor().getType().equals(Material.DIAMOND_HELMET)) {
-                event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_CHEST_OPEN, 5f, 4f);
+                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 9999999, 1));
             }
             return;
         }
         if(!InventoryUtils.isNull(event.getOldArmor())) {
             if(event.getOldArmor().getType().equals(Material.DIAMOND_HELMET)) {
-                event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_CHEST_CLOSE, 5f, 4f);
+                event.getPlayer().removePotionEffect(PotionEffectType.LEVITATION);
             }
         }
     }
@@ -295,57 +324,28 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void jmup(PlayerJumpEvent event){
-        event.getPlayer().setVelocity(event.getPlayer().getVelocity().setY(event.isOnSpot() ? 5 : 3));
+    public void jump(PlayerJumpEvent event){
+        if(event.isOnSpot()){
+            // the name of the cooldown...
+            String cooldown = "spaciouslibtest-jump-" + event.getPlayer().getName();
+
+            // if the cooldown isn't timed out yet, it means that the player've jumped twice
+            if(!CooldownUtils.isTimeout(cooldown, 1)){
+                event.getPlayer().setVelocity(event.getPlayer().getVelocity().setY(2));
+            }
+            // if not, resets the cooldown
+            else {
+                CooldownUtils.mark(cooldown);
+            }
+        }
     }
 
-    public static void main(String[] args){
-        // initializes the map
-        TimedMap<String, Integer> map = new TimedMap<>();
-        // puts some data to that map
-        map.put("A", 0, 3);
-        map.put("B", 1, 5);
-
-        System.out.println("A: " + map.isExpired("A")); // returns false
+    @Override
+    public void onDisable() {
         try {
-            Thread.sleep(4000); // 4 seconds
-        } catch(InterruptedException e) {
+            client.close();
+        } catch(IOException e) {
             e.printStackTrace();
         }
-        // after 4 seconds...
-        System.out.println("A: " + map.isExpired("A")); // returns true
-        System.out.println("B: " + map.isExpired("B")); // returns false
-        try {
-            Thread.sleep(6000); // 6 seconds
-        } catch(InterruptedException e) {
-            e.printStackTrace();
-        }
-        // after 10 seconds...
-        System.out.println("A: " + map.isExpired("A")); // returns true
-        System.out.println("B: " + map.isExpired("B")); // returns true
-
-        //======================================================================================
-
-        // initializes the socket server
-        ServerSocketManager server = new ServerSocketManager(25568, new ServerSocketRequestHandler() {
-            @Override
-            public void request(ServerSocketClientManager client, String content) {
-                // handles the command from the client socket
-                if(content.equalsIgnoreCase("stop_server")){
-                    // don't try to use the variable "server" above
-                    // there's a method to help you get the main manager
-                    try {
-                        client.getManager().close();
-                    } catch(IOException e) {
-                        e.printStackTrace();
-                    }
-                    return;
-                }
-                // prints the sent message
-                System.out.println("Client#"+client.getInetAddress().getHostAddress()+" >> " + content);
-            }
-        });
-        // start the socket thread
-        server.start();
     }
 }

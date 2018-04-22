@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 
 /**
  * An event triggers when a packet was sent from the server or received by the server.<br>
+ * This event is not ran in the main thread, so there are some problems if you access Bukkit APIs.
  * Warning: when it was <b>sent from the server</b>, if you use this event to <b>send new packets</b> or access some <b>Bukkit APIs</b>, you may have the stack overflow error.
  */
 public class PacketHandleEvent extends Event implements Cancellable {

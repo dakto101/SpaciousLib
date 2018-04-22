@@ -53,8 +53,8 @@ public class Anvil {
 
     /**
      * Creates a new Anvil instance
-     * @param player a player who you want to show the anvil for
-     * @param handler an anvil handler
+     * @param player a player
+     * @param handler an handler for this anvil
      */
     public Anvil(Player player, Handler handler){
         try {
@@ -75,7 +75,7 @@ public class Anvil {
      */
     public Anvil open() {
         this.wrapper.open();
-        AnvilListener.data.put(this.player, new Group<>(this.wrapper.inv, this.handler));
+        AnvilListener.data.put(this.player.getUniqueId(), new Group<>(this.wrapper.inv, this.handler));
         return this;
     }
 

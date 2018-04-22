@@ -34,5 +34,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="Main" />
     <orderEntry type="library" name="h2-1.4.197" level="project" />
+    <orderEntry type="library" name="user-agent-detector" level="project" />
   </component>
 </module>

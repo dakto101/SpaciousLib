@@ -16,7 +16,7 @@ public class DirectoryManager {
      */
     public DirectoryManager(File directory){
         this.directory = directory;
-        if(!this.directory.isDirectory()){
+        if(this.directory.exists() && !this.directory.isDirectory()){
             try {
                 throw new Exception("The file object doesn't represents for a directory");
             } catch(Exception e) {
@@ -31,7 +31,7 @@ public class DirectoryManager {
      */
     public DirectoryManager(String path){
         this.directory = new File(path);
-        if(!this.directory.isDirectory()){
+        if(this.directory.exists() && !this.directory.isDirectory()){
             try {
                 throw new Exception("The file object doesn't represents for a directory");
             } catch(Exception e) {

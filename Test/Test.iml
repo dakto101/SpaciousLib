@@ -14,6 +14,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/website" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -29,5 +30,7 @@
     <orderEntry type="library" name="spigot" level="project" />
     <orderEntry type="module" module-name="Spigot" />
     <orderEntry type="module" module-name="Main" />
+    <orderEntry type="library" name="h2-1.4.197" level="project" />
+    <orderEntry type="library" name="user-agent-detector" level="project" />
   </component>
 </module>

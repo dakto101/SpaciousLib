@@ -62,7 +62,10 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PacketListener(), this);
         getServer().getPluginManager().registerEvents(new PlaceholderListener(), this);
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerCleaner(), this);
         getServer().getPluginManager().registerEvents(new NPCInteractEventListener(), this);
+
+        PlayerCleaner.add(AnvilListener.data);
     }
 
     @Override

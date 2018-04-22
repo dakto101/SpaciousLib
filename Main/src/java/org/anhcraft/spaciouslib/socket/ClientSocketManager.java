@@ -1,8 +1,9 @@
 package org.anhcraft.spaciouslib.socket;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class helps you to manage the connections between a socket client and a server socket.<br>
@@ -10,41 +11,32 @@ import java.util.Scanner;
  */
 public class ClientSocketManager extends SocketHandler {
     private Socket server;
-    private ClientSocketRequestHandler requestHandler;
+    private ClientSocketHandler requestHandler;
+    private List<byte[]> data;
 
     /**
      * Creates a new client socket and starts a new thread for handling the requests.
      * @param address the IP address or hostname of a socket server
      * @param port the TCP/IP port which is listening by a socket server
-     * @param requestHandler a handler for this socket connection
+     * @param requestHandler a handler for this client socket
      */
-    public ClientSocketManager(String address, int port, ClientSocketRequestHandler requestHandler){
+    public ClientSocketManager(String address, int port, ClientSocketHandler requestHandler){
         this.requestHandler = requestHandler;
         try{
             server = new Socket(address, port);
         } catch(Exception e){
             e.printStackTrace();
         }
+        this.data = new ArrayList<>();
         try {
-            this.in = new InputStreamReader(server.getInputStream());
-            this.out = new OutputStreamWriter(server.getOutputStream());
+            this.in = server.getInputStream();
+            this.out = server.getOutputStream();
         } catch(IOException e) {
             e.printStackTrace();
         }
         this.isStopped = false;
         // starts the thread
         this.start();
-    }
-
-    /**
-     * Sends the given content to the server
-     * @param content the content as string
-     * @return this object
-     */
-    public ClientSocketManager send(String content) throws IOException {
-        out.write(content);
-        out.flush();
-        return this;
     }
 
     /**
@@ -58,14 +50,28 @@ public class ClientSocketManager extends SocketHandler {
         server.close();
     }
 
+    /**
+     * Gets a list of data.<br>
+     * Each data is of each time the server sent
+     * @return list of data
+     */
+    public List<byte[]> getData(){
+        return this.data;
+    }
+
     @Override
     public void run() {
-        Scanner scan = new Scanner(this.in);
-        while(scan.hasNext()){
-            if(this.isStopped || this.server.isClosed()){
-                break;
+        try {
+            while(!this.isStopped){
+                if(0 < this.in.available()) {
+                    byte[] data = new byte[1024];
+                    this.in.read(data);
+                    this.requestHandler.response(this, data);
+                    this.data.add(data);
+                }
             }
-            requestHandler.response(this, scan.nextLine());
+        } catch(IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -47,8 +47,8 @@ public class SubCommandBuilder extends CommandString{
                 "&cYou must type a valid email address! (e.g: email@website.com)");
         setArgErrorMessage(CommandArgument.Type.ONLINE_PLAYER,
                 "&cThat player isn't online!");
-        setArgErrorMessage(CommandArgument.Type.INTEGER_NUMBER,
-                "&cYou must type a valid integer number! (e.g: 1, 5, 10, -3, etc)");
+        setArgErrorMessage(CommandArgument.Type.INTEGER,
+                "&cYou must type a valid integer! (e.g: 1, 5, 10, -3, etc)");
         setArgErrorMessage(CommandArgument.Type.REAL_NUMBER,
                 "&cYou must type a valid real number! (e.g: 0.1, 5, -3.2, 49.0, etc)");
         setArgErrorMessage(CommandArgument.Type.BOOLEAN,
@@ -321,9 +321,9 @@ public class SubCommandBuilder extends CommandString{
                                 break argTypeValidator;
                             }
                             break;
-                        case INTEGER_NUMBER:
-                            if(!RegEx.INTEGER_NUMBER.matches(value)) {
-                                s.sendMessage(sc.argErrorMessages.get(CommandArgument.Type.INTEGER_NUMBER));
+                        case INTEGER:
+                            if(!RegEx.INTEGER.matches(value)) {
+                                s.sendMessage(sc.argErrorMessages.get(CommandArgument.Type.INTEGER));
                                 hasError = true;
                                 break argTypeValidator;
                             }

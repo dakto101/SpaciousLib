@@ -18,7 +18,7 @@ public class FileManager {
      */
     public FileManager(File file){
         this.file = file;
-        if(!this.file.isFile()){
+        if(this.file.exists() && !this.file.isFile()){
             try {
                 throw new Exception("The file object doesn't represents for a file");
             } catch(Exception e) {
@@ -33,7 +33,7 @@ public class FileManager {
      */
     public FileManager(String path){
         this.file = new File(path);
-        if(!this.file.isFile()){
+        if(this.file.exists() && !this.file.isFile()){
             try {
                 throw new Exception("The file object doesn't represents for a file");
             } catch(Exception e) {
@@ -150,13 +150,6 @@ public class FileManager {
      * @param output an another file
      */
     public void copy(File output) throws IOException {
-        if(output.exists() && !output.isFile()){
-            try {
-                throw new Exception("The output file object doesn't represents for a file");
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
         new FileManager(output).create().write(read());
     }
 }

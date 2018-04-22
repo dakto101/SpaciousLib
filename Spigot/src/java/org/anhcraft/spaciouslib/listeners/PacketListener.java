@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.events.PacketHandleEvent;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
@@ -14,7 +13,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class PacketListener implements Listener {
     private final static String PACKET_HANDLER = "SpaciousLib";
@@ -69,12 +67,7 @@ public class PacketListener implements Listener {
                     public void write(ChannelHandlerContext c, Object o, ChannelPromise p) throws Exception {
                         PacketHandleEvent ev = new PacketHandleEvent(player, o, PacketHandleEvent.Type.CLIENT_BOUND);
                         // switches to the main thread
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                Bukkit.getServer().getPluginManager().callEvent(ev);
-                            }
-                        }.runTaskLater(SpaciousLib.instance, 1);
+                        Bukkit.getServer().getPluginManager().callEvent(ev);
                         if(!ev.isCancelled()) {
                             super.write(c, ev.getPacket(), p);
                         }
@@ -84,12 +77,7 @@ public class PacketListener implements Listener {
                     public void channelRead(ChannelHandlerContext c, Object o) throws Exception {
                         PacketHandleEvent ev = new PacketHandleEvent(player, o, PacketHandleEvent.Type.SERVER_BOUND);
                         // switches to the main thread
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                Bukkit.getServer().getPluginManager().callEvent(ev);
-                            }
-                        }.runTaskLater(SpaciousLib.instance, 1);
+                        Bukkit.getServer().getPluginManager().callEvent(ev);
                         if(!ev.isCancelled()) {
                             super.channelRead(c, ev.getPacket());
                         }

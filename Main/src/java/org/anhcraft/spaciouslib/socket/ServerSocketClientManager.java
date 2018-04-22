@@ -1,11 +1,10 @@
 package org.anhcraft.spaciouslib.socket;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class helps you to manage the connections between a server socket and a socket client.<br>
@@ -14,7 +13,8 @@ import java.util.Scanner;
 public class ServerSocketClientManager extends SocketHandler {
     private Socket client;
     private ServerSocketManager manager;
-    private ServerSocketRequestHandler requestHandler;
+    private ServerSocketHandler requestHandler;
+    private List<byte[]> data;
 
     /**
      * Gets the manager of this server socket
@@ -24,24 +24,14 @@ public class ServerSocketClientManager extends SocketHandler {
         return this.manager;
     }
 
-    /**
-     * Sends the given content to this client
-     * @param content the content as string
-     * @return this object
-     */
-    public ServerSocketClientManager send(String content) throws IOException {
-        out.write(content);
-        out.flush();
-        return this;
-    }
-
-    protected ServerSocketClientManager(ServerSocketManager manager, Socket client, ServerSocketRequestHandler requestHandler) {
+    protected ServerSocketClientManager(ServerSocketManager manager, Socket client, ServerSocketHandler requestHandler) {
         this.requestHandler = requestHandler;
         this.manager = manager;
         this.client = client;
+        this.data = new ArrayList<>();
         try {
-            this.in = new InputStreamReader(client.getInputStream());
-            this.out = new OutputStreamWriter(client.getOutputStream());
+            this.in = client.getInputStream();
+            this.out = client.getOutputStream();
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -59,13 +49,27 @@ public class ServerSocketClientManager extends SocketHandler {
 
     @Override
     public void run() {
-        Scanner scan = new Scanner(this.in);
-        while(scan.hasNext()){
-            if(this.isStopped || this.client.isClosed()){
-                break;
+        try {
+            while(!this.isStopped){
+                if(0 < this.in.available()) {
+                    byte[] data = new byte[1024];
+                    this.in.read(data);
+                    this.requestHandler.request(this, data);
+                    this.data.add(data);
+                }
             }
-            requestHandler.request(this, scan.nextLine());
+        } catch(IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    /**
+     * Gets a list of data.<br>
+     * Each data is of each time the client sent
+     * @return list of data
+     */
+    public List<byte[]> getData(){
+        return this.data;
     }
 
     /**

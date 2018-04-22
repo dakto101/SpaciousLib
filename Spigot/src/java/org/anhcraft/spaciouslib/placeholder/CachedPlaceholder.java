@@ -1,9 +1,11 @@
 package org.anhcraft.spaciouslib.placeholder;
 
+import org.anhcraft.spaciouslib.listeners.PlayerCleaner;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.LinkedHashMap;
+import java.util.UUID;
 
 /**
  * A cached placeholder will store the value of the placeholder for each online player.<br>
@@ -11,7 +13,11 @@ import java.util.LinkedHashMap;
  * By default, the cached placeholder will renew every 10 seconds.
  */
 public abstract class CachedPlaceholder extends Placeholder {
-    protected LinkedHashMap<String, String> cache = new LinkedHashMap<>();
+    protected LinkedHashMap<UUID, String> cache = new LinkedHashMap<>();
+
+    protected void init(){
+        PlayerCleaner.add(this.cache);
+    }
 
     protected void updateCache(){
         this.cache = new LinkedHashMap<>();
@@ -21,10 +27,10 @@ public abstract class CachedPlaceholder extends Placeholder {
     }
 
     protected void updateCache(Player player){
-        this.cache.put(player.getName(), getValue(player));
+        this.cache.put(player.getUniqueId(), getValue(player));
     }
 
     protected String getCache(Player player){
-        return cache.get(player.getName());
+        return cache.get(player.getUniqueId());
     }
 }

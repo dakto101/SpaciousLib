@@ -14,18 +14,19 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedHashMap;
+import java.util.UUID;
 
 public class AnvilListener implements Listener {
-    public static LinkedHashMap<Player, Group<Inventory, Handler>> data = new LinkedHashMap<>();
+    public static LinkedHashMap<UUID, Group<Inventory, Handler>> data = new LinkedHashMap<>();
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
         if ((event.getWhoClicked() instanceof Player)) {
             Player player = (Player) event.getWhoClicked();
             Inventory inv = CompatibilityInventoryClickEvent.getInventory(event);
-            if (inv != null && data.containsKey(player)){
+            if (inv != null && data.containsKey(player.getUniqueId())){
                 ItemStack item = event.getCurrentItem();
-                Group<Inventory, Anvil.Handler> anvil = data.get(player);
+                Group<Inventory, Anvil.Handler> anvil = data.get(player.getUniqueId());
                 ItemStack output = event.getInventory().getItem(Anvil.Slot.OUTPUT.getID());
                 if(anvil.getA().equals(inv)) {
                     event.setCancelled(true);
@@ -57,13 +58,13 @@ public class AnvilListener implements Listener {
         if ((event.getPlayer() instanceof Player)) {
             Player player = (Player) event.getPlayer();
             Inventory inv = event.getInventory();
-            if (inv != null && data.containsKey(player)){
-                Group<Inventory, Anvil.Handler> anvil = data.get(player);
+            if (inv != null && data.containsKey(player.getUniqueId())){
+                Group<Inventory, Anvil.Handler> anvil = data.get(player.getUniqueId());
                 if(anvil.getA().equals(inv)) {
                     inv.setItem(Anvil.Slot.INPUT_LEFT.getID(), null);
                     inv.setItem(Anvil.Slot.INPUT_RIGHT.getID(), null);
                     inv.setItem(Anvil.Slot.OUTPUT.getID(), null);
-                    data.remove(player);
+                    data.remove(player.getUniqueId());
                 }
             }
         }

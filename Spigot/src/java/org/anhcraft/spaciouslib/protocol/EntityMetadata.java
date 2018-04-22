@@ -45,4 +45,19 @@ public class EntityMetadata {
         }
         return null;
     }
+
+    public static PacketSender create(int id, Object dataWatcher){
+        String v = GameVersion.getVersion().toString();
+        try {
+            Class<?> packetPlayOutEntityMetadataClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutEntityMetadata");
+            Class<?> dataWatcherClass = Class.forName("net.minecraft.server." + v + ".DataWatcher");
+            return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutEntityMetadataClass, new Group<>(
+                    new Class<?>[]{int.class, dataWatcherClass, boolean.class},
+                    new Object[]{id, dataWatcher, true}
+            )));
+        } catch(ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -12,16 +12,16 @@ import java.util.List;
  */
 public class ServerSocketManager extends Thread {
     private ServerSocket socket;
-    private ServerSocketRequestHandler requestHandler;
+    private ServerSocketHandler requestHandler;
     protected List<ServerSocketClientManager> clients;
     private boolean isStopped;
 
     /**
      * Creates a new server socket and starts a new thread for handling the requests.
      * @param port the TCP/IP port which is listening by this socket server
-     * @param requestHandler a handler for the socket connections
+     * @param requestHandler a handler for the server socket
      */
-    public ServerSocketManager(int port, ServerSocketRequestHandler requestHandler){
+    public ServerSocketManager(int port, ServerSocketHandler requestHandler){
         this.requestHandler = requestHandler;
         clients = new ArrayList<>();
         try{
@@ -33,24 +33,13 @@ public class ServerSocketManager extends Thread {
     }
 
     /**
-     * Sends the given content to all clients.
-     * @param content the content as string
-     * @return this object
-     */
-    public ServerSocketManager sendAll(String content) throws IOException {
-        for(ServerSocketClientManager c : clients){
-            c.send(content);
-        }
-        return this;
-    }
-
-    /**
      * Closes this server socket and all current socket connections.
      */
     public void close() throws IOException {
         this.isStopped = true;
         this.interrupt();
-        for(ServerSocketClientManager c : clients){
+        List<ServerSocketClientManager> a = new ArrayList<>(clients); // clones
+        for(ServerSocketClientManager c : a){
             c.close();
         }
         socket.close();
@@ -75,6 +64,7 @@ public class ServerSocketManager extends Thread {
                 Socket client = socket.accept();
                 if(client != null) {
                     ServerSocketClientManager c = new ServerSocketClientManager(this, client, requestHandler);
+                    requestHandler.connect(c);
                     clients.add(c);
                 }
             }

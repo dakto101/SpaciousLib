@@ -3,7 +3,9 @@ package org.anhcraft.spaciouslib.entity;
 import com.mojang.authlib.GameProfile;
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.listeners.NPCInteractEventListener;
+import org.anhcraft.spaciouslib.listeners.PlayerCleaner;
 import org.anhcraft.spaciouslib.protocol.EntityDestroy;
+import org.anhcraft.spaciouslib.protocol.EntityTeleport;
 import org.anhcraft.spaciouslib.protocol.NamedEntitySpawn;
 import org.anhcraft.spaciouslib.protocol.PlayerInfo;
 import org.anhcraft.spaciouslib.utils.GameVersion;
@@ -18,14 +20,20 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class NPC {
     private Object nmsEntityPlayer;
     private int entity = -1;
     private GameProfile gameProfile;
     private Location location;
-    private List<Player> viewers = new ArrayList<>();
+    private List<UUID> viewers = new ArrayList<>();
     private boolean tablist = false;
+
+    private void init() {
+        NPCInteractEventListener.data.add(this);
+        PlayerCleaner.add(this.viewers);
+    }
 
     /**
      * Creates a new NPC instance
@@ -35,7 +43,7 @@ public class NPC {
     public NPC(GameProfile gameProfile, Location location){
         this.gameProfile = gameProfile;
         this.location = location;
-        NPCInteractEventListener.data.add(this);
+        init();
     }
 
     /**
@@ -48,7 +56,7 @@ public class NPC {
         this.gameProfile = gameProfile;
         this.location = location;
         this.tablist = tablist;
-        NPCInteractEventListener.data.add(this);
+        init();
     }
 
     /**
@@ -78,29 +86,29 @@ public class NPC {
 
     /**
      * Adds the given viewer
-     * @param player the viewer
+     * @param player the unique id of a player
      * @return this object
      */
-    public NPC addViewer(Player player){
+    public NPC addViewer(UUID player){
         this.viewers.add(player);
         return this;
     }
 
     /**
      * Removes the given viewer
-     * @param player the viewer
+     * @param player the unique id of the player
      * @return this object
      */
-    public NPC removeViewer(Player player){
+    public NPC removeViewer(UUID player){
         this.viewers.remove(player);
         return this;
     }
 
     /**
      * Gets all viewers
-     * @return list of viewers
+     * @return a list contains unique ids of viewers
      */
-    public List<Player> getViewers(){
+    public List<UUID> getViewers(){
         return this.viewers;
     }
 
@@ -114,11 +122,47 @@ public class NPC {
 
     /**
      * Sets the viewers who you want to show this NPC to
-     * @param viewers the list of viewers
+     * @param viewers a list contains unique ids of viewers
      * @return this object
      */
-    public NPC setViewers(List<Player> viewers) {
+    public NPC setViewers(List<UUID> viewers) {
         this.viewers = viewers;
+        return this;
+    }
+
+    /**
+     * Teleports this NPC to a new location
+     * @return this object
+     */
+    public NPC teleport(Location location){
+        this.location = location;
+        String v = GameVersion.getVersion().toString();
+        try {
+            Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
+            ReflectionUtils.getMethod("setLocation", nmsEntityClass, this.nmsEntityPlayer, new Group<>(
+                    new Class<?>[]{
+                            double.class,
+                            double.class,
+                            double.class,
+                            float.class,
+                            float.class,
+                    }, new Object[]{
+                    location.getX(),
+                    location.getY(),
+                    location.getZ(),
+                    location.getYaw(),
+                    location.getPitch(),
+            }
+            ));
+            List<Player> receivers = new ArrayList<>();
+            for(UUID uuid : getViewers()){
+                receivers.add(Bukkit.getServer().getPlayer(uuid));
+            }
+            EntityTeleport.create(this.nmsEntityPlayer).sendPlayers(receivers);
+        } catch(ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
         return this;
     }
 
@@ -132,8 +176,9 @@ public class NPC {
             remove();
         }
         try {
-            Class<?> craftWorldClass = Class.forName("org.bukkit.craftbukkit." + v + ".CraftWorld");
+            Class<?> craftWorldServerClass = Class.forName("org.bukkit.craftbukkit." + v + ".CraftWorld");
             Class<?> nmsWorldClass = Class.forName("net.minecraft.server." + v + ".World");
+            Class<?> nmsWorldServerClass = Class.forName("net.minecraft.server." + v + ".WorldServer");
             Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
             Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v + ".EntityPlayer");
             Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + v + ".CraftServer");
@@ -141,20 +186,18 @@ public class NPC {
             Class<?> nmsPlayerInteractManagerClass = Class.forName("net.minecraft.server." + v + ".PlayerInteractManager");
             Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
             Object nmsServer = ReflectionUtils.getField("console", craftServerClass, craftServer);
-            Object craftWorld = ReflectionUtils.cast(craftWorldClass, location.getWorld());
-            Object nmsWorld = ReflectionUtils.getMethod("getHandle", craftWorldClass, craftWorld);
+            Object craftWorldServer = ReflectionUtils.cast(craftWorldServerClass, location.getWorld());
+            Object nmsWorldServer = ReflectionUtils.getMethod("getHandle", craftWorldServerClass, craftWorldServer);
             Object playerInteractManager = ReflectionUtils.getConstructor(nmsPlayerInteractManagerClass, new Group<>(
                     new Class<?>[]{
                             nmsWorldClass
-                    }, new Object[]{
-                    nmsWorld
-            }
+                    }, new Object[]{nmsWorldServer}
             ));
             this.nmsEntityPlayer = ReflectionUtils.getConstructor(nmsEntityPlayerClass, new Group<>(
                     new Class<?>[]{
-                            nmsServerClass, nmsWorldClass, GameProfile.class, nmsPlayerInteractManagerClass
+                            nmsServerClass, nmsWorldServerClass, GameProfile.class, nmsPlayerInteractManagerClass
                     }, new Object[]{
-                    nmsServer, nmsWorld, this.gameProfile, playerInteractManager
+                    nmsServer, nmsWorldServer, this.gameProfile, playerInteractManager
             }
             ));
             ReflectionUtils.getMethod("setLocation", nmsEntityClass, nmsEntityPlayer, new Group<>(
@@ -172,15 +215,19 @@ public class NPC {
                     location.getPitch(),
             }
             ));
+            List<Player> receivers = new ArrayList<>();
+            for(UUID uuid : getViewers()){
+                receivers.add(Bukkit.getServer().getPlayer(uuid));
+            }
 
             this.entity = (int) ReflectionUtils.getMethod("getId", nmsEntityClass, this.nmsEntityPlayer);
-            PlayerInfo.create(PlayerInfo.Type.ADD_PLAYER, this.nmsEntityPlayer).sendPlayers(getViewers());
-            NamedEntitySpawn.create(this.nmsEntityPlayer).sendPlayers(getViewers());
+            PlayerInfo.create(PlayerInfo.Type.ADD_PLAYER, this.nmsEntityPlayer).sendPlayers(receivers);
+            NamedEntitySpawn.create(this.nmsEntityPlayer).sendPlayers(receivers);
             if(!this.tablist) {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        PlayerInfo.create(PlayerInfo.Type.REMOVE_PLAYER, nmsEntityPlayer).sendPlayers(getViewers());
+                        PlayerInfo.create(PlayerInfo.Type.REMOVE_PLAYER, nmsEntityPlayer).sendPlayers(receivers);
                     }
                 }.runTaskLaterAsynchronously(SpaciousLib.instance, 10);
             }
@@ -195,8 +242,13 @@ public class NPC {
      * @return this object
      */
     public NPC remove(){
-        PlayerInfo.create(PlayerInfo.Type.REMOVE_PLAYER, this.nmsEntityPlayer).sendPlayers(getViewers());
-        EntityDestroy.create(this.entity).sendPlayers(getViewers());
+        List<Player> receivers = new ArrayList<>();
+        for(UUID uuid : getViewers()){
+            receivers.add(Bukkit.getServer().getPlayer(uuid));
+        }
+
+        PlayerInfo.create(PlayerInfo.Type.REMOVE_PLAYER, this.nmsEntityPlayer).sendPlayers(receivers);
+        EntityDestroy.create(this.entity).sendPlayers(receivers);
         this.entity = -1;
         return this;
     }

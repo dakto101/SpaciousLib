@@ -22,9 +22,9 @@ public class CommandArgument {
          */
         ONLINE_PLAYER,
         /**
-         * The players can only type an integer number
+         * The players can only type an integer
          */
-        INTEGER_NUMBER,
+        INTEGER,
         /**
          * The players can only type a real number (and also an integer number)
          */

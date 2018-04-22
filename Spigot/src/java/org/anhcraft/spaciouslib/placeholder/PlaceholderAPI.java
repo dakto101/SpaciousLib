@@ -25,8 +25,7 @@ public class PlaceholderAPI {
             @Override
             public void run() {
                 for(Placeholder p : data.values()) {
-                    if(p instanceof CachedPlaceholder
-                            && !(p instanceof FixedPlaceholder)) {
+                    if(p instanceof CachedPlaceholder && !(p instanceof FixedPlaceholder)){
                         ((CachedPlaceholder) p).updateCache();
                     }
                 }
@@ -290,6 +289,10 @@ public class PlaceholderAPI {
                 e.printStackTrace();
             }
         }
+        if(placeholder instanceof CachedPlaceholder){
+            ((CachedPlaceholder) placeholder).init();
+            ((CachedPlaceholder) placeholder).updateCache();
+        }
         data.put(placeholder.getPlaceholder(), placeholder);
     }
 
@@ -309,6 +312,12 @@ public class PlaceholderAPI {
         data.remove(placeholder);
     }
 
+    /**
+     * Replaces all placeholders in the given text
+     * @param text a text
+     * @param player a player
+     * @return the replaced text
+     */
     public static String replace(String text, Player player){
         for(Placeholder p : data.values()){
             if(p instanceof CachedPlaceholder){
@@ -320,6 +329,10 @@ public class PlaceholderAPI {
         return text;
     }
 
+    /**
+     * Updates all placeholder caches of a player
+     * @param player the player
+     */
     public static void updateCache(Player player) {
         for(Placeholder p : data.values()) {
             if(p instanceof CachedPlaceholder) {
@@ -328,6 +341,10 @@ public class PlaceholderAPI {
         }
     }
 
+    /**
+     * Gets all placeholders
+     * @return list of placeholders
+     */
     public static List<Placeholder> getPlaceholders() {
         return new ArrayList<>(data.values());
     }
