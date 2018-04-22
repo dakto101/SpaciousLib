@@ -255,33 +255,32 @@ public class SubCommandBuilder extends CommandString{
     void execute(CommandBuilder cmd, CommandSender s, String[] a) throws Exception {
         if(!isValid()){
             throw new Exception("This subcommand isn't valid, please normalize first");
-        }
-        SubCommandBuilder sc = this;
-        // [vi] nếu không có tham số động
+        }        SubCommandBuilder sc = this;
+        // [vi] neu khong co tham so dong
         if(a.length == 0){
             rootRunnable.run(cmd, sc, s, a, "");
         }
-        // [vi] nếu có thì sẽ check chúng
+        // [vi] neu co thi se check chung
         else {
             LinkedHashMap<CommandArgument, String> values = new LinkedHashMap<>();
             int i = 0;
-            // [vi] lặp từng tham số động
+            // [vi] lap tung tham so dong
             for(String value : a) {
-                // [vi] nếu tham số động đã nhập không được chỉ định thì bỏ qua
+                // [vi] neu tham so dong da nhap khong duoc chi dinh thi bo qua
                 if(getArguments().size() <= i) {
                     break;
                 }
-                // [vi] từng tham số động của lệnh đã nhập sẽ tương ứng vs loại của tham số chỉ định
+                // [vi] tung tham so dong cua lenh da nhap se tuong ung vs loai cua tham so chi dinh
                 values.put(getArguments().get(i), value);
                 i++;
             }
-            // [vi] nếu tham số động đã nhập tí hơn tham số chỉ định thì sẽ tính là "không đủ tham số"
+            // [vi] neu tham so dong da nhap ti hon tham so chi dinh thi se tinh la "khong du tham so"
             if(values.size() < getArguments(false).size()) {
                 s.sendMessage(sc.doesNotEnoughtArgsErrorMessage);
             } else {
                 boolean hasError = false;
                 argTypeValidator:
-                // [vi] lặp từng tham số động
+                // [vi] lap tung tham so dong
                 for(CommandArgument arg : values.keySet()) {
                     String value = values.get(arg);
                     switch(getArgumentType(arg)) {
@@ -345,12 +344,12 @@ public class SubCommandBuilder extends CommandString{
                     }
                 }
                 if(!hasError) {
-                    // [vi] tham số động đã nhập phải có nhiều hơn 0
+                    // [vi] tham so dong da nhap phai co nhieu hon 0
                     if(values.size() > 0) {
-                        // [vi] lấy ra tham số động cuối cùng
+                        // [vi] lay ra tham so dong cuoi cung
                         CommandArgument arg = new ArrayList<>(values.keySet())
                                 .get(values.size() - 1);
-                        // [vi] chạy runnable của tham số cuối cùng kèm giá trị đã nhập
+                        // [vi] chay runnable cua tham so cuoi cung kem gia tri da nhap
                         arg.getRunnable().run(cmd, sc, s, a, values.get(arg));
                     } else {
                         s.sendMessage(sc.canNotFindCmdErrorMessage);

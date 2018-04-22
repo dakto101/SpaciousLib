@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="SpaciousLib" />
+        <module name="Spigot" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Glowstone" target="1.8" />
+      <module name="Main" target="1.8" />
+      <module name="SpaciousLib" target="1.8" />
+      <module name="SpaciousLibDebug" target="1.8" />
+      <module name="Spigot" target="1.8" />
+      <module name="Test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

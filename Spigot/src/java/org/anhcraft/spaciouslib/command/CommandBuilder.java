@@ -163,62 +163,62 @@ public class CommandBuilder extends CommandString {
     }
 
     private List<String> tabcomplete(String[] a) {
-        // [vi] CƠ CHẾ HOẠT ĐỘNG
-        // [vi] tab complete là hình thức đưa ra một danh sách các argument còn thiếu và chèn trực tiếp vào lệnh mà người chơi đã nhập bằng cách ấn TAB
-        // [vi] nó đồng nghĩa với việc ta không thể đưa tất cả các lệnh, mà chỉ có thể đưa các tham số còn thiếu dưới dạng một lệnh
-        // [vi] vd /test a b c d là lệnh chỉ định
-        // [vi] người chơi nhập /test a vậy còn thiếu b c d
-        // [vi] tuy nhiên có những trường hợp còn có các tham số động
+        // [vi] CO CHE HOAT DONG
+        // [vi] tab complete la hinh thuc dua ra mot danh sach cac argument con thieu va chen truc tiep vao lenh ma nguoi choi da nhap bang cach an TAB
+        // [vi] no dong nghia voi viec ta khong the dua tat ca cac lenh, ma chi co the dua cac tham so con thieu duoi dang mot lenh
+        // [vi] vd /test a b c d la lenh chi dinh
+        // [vi] nguoi choi nhap /test a vay con thieu b c d
+        // [vi] tuy nhien co nhung truong hop con co cac tham so dong
         // [vi] vd /test a b c e
-        // [vi] và /test a b c f đều được
-        // [vi] thì ta chỉ kiểm tra phần /test a b c
+        // [vi] va /test a b c f deu duoc
+        // [vi] thi ta chi kiem tra phan /test a b c
 
-        // [vi] một tree map sẽ xếp lệnh có độ dài từ cao -> thấp (vì đã lật lại)
+        // [vi] mot tree map se xep lenh co do dai tu cao -> thap (vi da lat lai)
         TreeMap<Integer, String> s = new TreeMap<>(Collections.reverseOrder());
 
-        // [vi] đây là lệnh mà người chơi đã nhập, không có root command
+        // [vi] day la lenh ma nguoi choi da nhap, khong co root command
         StringBuilder cmdb = new StringBuilder();
         for(String t : a){
-            // [vi] bỏ các tham số không có giá trị
+            // [vi] bo cac tham so khong co gia tri
             if(t.replace(" ", "").length() == 0){
                 continue;
             }
             cmdb.append(" ").append(t);
         }
-        // [vi] chỉnh lại lệnh mới với đúng format là: giữa các tham số có khoảng cách
+        // [vi] chinh lai lenh moi voi dung format la: giua cac tham so co khoang cach
         String cmd = cmdb.toString().replaceFirst(" ", "").trim().toLowerCase();
 
         for(SubCommandBuilder sc : getSubCommands()){
-            // [vi] kiểm tra xem lệnh đó có bắt đầu bởi một lệnh chỉ định (sub command) nào không
+            // [vi] kiem tra xem lenh do co bat dau boi mot lenh chi dinh (sub command) nao khong
             if(sc.getName().startsWith(cmd)) {
-                // [vi] tách tên sub command
+                // [vi] tach ten sub command
                 String[] m = sc.getName().split(" ");
-                // [vi] tách lệnh đã nhập
+                // [vi] tach lenh da nhap
                 String[] j = cmd.split(" ");
-                // [vi] d9a6 là danh sách các phần còn thiếu
+                // [vi] d9a6 la danh sach cac phan con thieu
                 String[] n = m;
-                // [vi] kiểm tra lệnh đã nhập phải dài hơn 0, hai biến m và n phải có kích cỡ lớn hơn 0
-                // [vi] phần cuối cùng của sub command phải bắt đầu bằng phần cuối cùng của lệnh cuối cùng đã nhập
-                // [vi] lệnh chỉ định phải có nhiều phần hơn hoặc bằng phần lệnh chỉ định lệnh đã nhập
-                // [vi] vd: /test a b c là lệnh đã nhập còn /test a b c là lệnh đã đặt
-                // [vi] vd: /test a b test là lệnh đã nhập còn /test a b t là lệnh đã đặt
+                // [vi] kiem tra lenh da nhap phai dai hon 0, hai bien m va n phai co kich co lon hon 0
+                // [vi] phan cuoi cung cua sub command phai bat dau bang phan cuoi cung cua lenh cuoi cung da nhap
+                // [vi] lenh chi dinh phai co nhieu phan hon hoac bang phan lenh chi dinh lenh da nhap
+                // [vi] vd: /test a b c la lenh da nhap con /test a b c la lenh da dat
+                // [vi] vd: /test a b test la lenh da nhap con /test a b t la lenh da dat
                 if(0 < cmd.length() && 0 < j.length && 0 < m.length
                         && j.length <= m.length && m[m.length - 1].startsWith(j[j.length - 1])){
-                    // [vi] nếu cả hai biến m và n bằng nhau, nghĩa là trong lệnh đã nhập không hề có tham số nào khác
+                    // [vi] neu ca hai bien m va n bang nhau, nghia la trong lenh da nhap khong he co tham so nao khac
                     if(j.length == m.length){
                         n = new String[]{m[m.length - 1]};
                     }
-                    // [vi] còn không là chỉ lấy phần mà lệnh đã nhập còn thiếu (vì đang tab complete)
+                    // [vi] con khong la chi lay phan ma lenh da nhap con thieu (vi dang tab complete)
                     else {
                         n = Arrays.copyOfRange(m, j.length, m.length);
                     }
                 }
-                // [vi] chuyển các phần còn thiếu từ biến n sang một lệnh có format hoàn chỉnh
+                // [vi] chuyen cac phan con thieu tu bien n sang mot lenh co format hoan chinh
                 StringBuilder x = new StringBuilder();
                 for(String t : n){
                     x.append(" ").append(t);
                 }
-                // [vi] đặt vào tree map
+                // [vi] dat vao tree map
                 String v = x.toString().trim();
                 s.put(v.length(), v);
             }
@@ -230,14 +230,13 @@ public class CommandBuilder extends CommandString {
         StringBuilder cmdb = new StringBuilder();
         for(String t : a) {
             cmdb.append(" ").append(t);
-        }
-        // [vi] chuyển tham số thành lệnh
+        }        // [vi] chuyen tham so thanh lenh
         String cmd = cmdb.toString().replaceFirst(" ", "").trim().toLowerCase();
 
         SubCommandBuilder found = null;
         boolean xt = false;
         for(SubCommandBuilder sc : this.subcmds){
-            // [vi] nếu lệnh đã nhập không có tham số => đang nhập root command
+            // [vi] neu lenh da nhap khong co tham so => dang nhap root command
             // [vi] vd /test
             if(cmd.length() == 0 && sc.getName().length() == 0){
                 xt = true;
@@ -248,10 +247,10 @@ public class CommandBuilder extends CommandString {
                 }
                 break;
             }
-            // [vi] nếu có tham số thì tên sub command phải có độ dài lớn hơn 0
+            // [vi] neu co tham so thi ten sub command phai co do dai lon hon 0
             else if(0 < sc.getName().length() && validateSubCommandBuilder(sc.getName(), cmd)){
-                // [vi] nếu sub command chưa tìm thấy thì cho phép thêm thẳng, còn không phải thông qua kiểm tra
-                // [vi] tên sub command đã tìm phải ngắn hơn tên sub command hiện tại
+                // [vi] neu sub command chua tim thay thi cho phep them thang, con khong phai thong qua kiem tra
+                // [vi] ten sub command da tim phai ngan hon ten sub command hien tai
                 if(found == null || found.getName().length() < sc.getName().length()){
                     found = sc;
                 }
@@ -259,14 +258,14 @@ public class CommandBuilder extends CommandString {
         }
         if(found != null) {
             int x = found.getName().split(" ").length;
-            // [vi] tách sub command để còn lại phần tham số động cho plugin xử lý
+            // [vi] tach sub command de con lai phan tham so dong cho plugin xu ly
             try {
                 found.execute(this, s, Arrays.copyOfRange(a, x, a.length));
             } catch(Exception e) {
                 e.printStackTrace();
             }
         } else {
-            // [vi] nếu không thấy thì gợi ý lệnh
+            // [vi] neu khong thay thi goi y lenh
             if(!xt) {
                 s.sendMessage(Chat.color(rootCmd.canNotFindCmdErrorMessage));
                 for(SubCommandBuilder sc : getSubCommands()){
@@ -281,22 +280,22 @@ public class CommandBuilder extends CommandString {
     }
 
     private boolean validateSubCommandBuilder(String name, String cmd) {
-        // [vi] CƠ CHẾ HOẠT ĐỘNG
-        // [vi] cho lệnh chỉ định /test a b
-        // [vi] lệnh đã nhập /test a b e
-        // [vi] như vậy chỉ cần a & b ở hai lệnh trùng nhau là được,, còn e sẽ được tính như là một tham số động
+        // [vi] CO CHE HOAT DONG
+        // [vi] cho lenh chi dinh /test a b
+        // [vi] lenh da nhap /test a b e
+        // [vi] nhu vay chi can a & b o hai lenh trung nhau la duoc,, con e se duoc tinh nhu la mot tham so dong
 
         String[] a = name.split(" ");
         String[] b = cmd.split(" ");
         int i = 0;
-        // [vi] lặp từng phần tên của sub command
+        // [vi] lap tung phan ten cua sub command
         for(String c : a){
-            // [vi] nếu lệnh đã nhập không có phần sub command này thì trả về sai
+            // [vi] neu lenh da nhap khong co phan sub command nay thi tra ve sai
             if(b.length <= i){
                 return false;
             }
-            // [vi] tên phần của sub command hiện tại phải trùng với phần hiện tại trong lệnh đã nhập
-            // [vi] (không cần trùng in hoa - thường)
+            // [vi] ten phan cua sub command hien tai phai trung voi phan hien tai trong lenh da nhap
+            // [vi] (khong can trung in hoa - thuong)
             if(!c.equalsIgnoreCase(b[i])){
                 return false;
             }

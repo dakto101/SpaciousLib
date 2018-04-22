@@ -239,9 +239,8 @@ public class NPC {
 
     /**
      * Removes this NPC
-     * @return this object
      */
-    public NPC remove(){
+    public void remove(){
         List<Player> receivers = new ArrayList<>();
         for(UUID uuid : getViewers()){
             receivers.add(Bukkit.getServer().getPlayer(uuid));
@@ -250,7 +249,8 @@ public class NPC {
         PlayerInfo.create(PlayerInfo.Type.REMOVE_PLAYER, this.nmsEntityPlayer).sendPlayers(receivers);
         EntityDestroy.create(this.entity).sendPlayers(receivers);
         this.entity = -1;
-        return this;
+        NPCInteractEventListener.data.remove(this);
+        PlayerCleaner.remove(this.viewers);
     }
 
     @Override

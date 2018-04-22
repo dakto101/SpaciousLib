@@ -1,6 +1,5 @@
 package org.anhcraft.spaciouslib.placeholder;
 
-import org.anhcraft.spaciouslib.listeners.PlayerCleaner;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -15,10 +14,6 @@ import java.util.UUID;
 public abstract class CachedPlaceholder extends Placeholder {
     protected LinkedHashMap<UUID, String> cache = new LinkedHashMap<>();
 
-    protected void init(){
-        PlayerCleaner.add(this.cache);
-    }
-
     protected void updateCache(){
         this.cache = new LinkedHashMap<>();
         for(Player player : Bukkit.getServer().getOnlinePlayers()){
@@ -32,5 +27,9 @@ public abstract class CachedPlaceholder extends Placeholder {
 
     protected String getCache(Player player){
         return cache.get(player.getUniqueId());
+    }
+
+    public void removeCache(Player player){
+        cache.remove(player.getUniqueId());
     }
 }

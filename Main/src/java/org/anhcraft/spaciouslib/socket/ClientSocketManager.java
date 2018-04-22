@@ -1,5 +1,8 @@
 package org.anhcraft.spaciouslib.socket;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -73,5 +76,22 @@ public class ClientSocketManager extends SocketHandler {
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            ClientSocketManager h = (ClientSocketManager) o;
+            return new EqualsBuilder()
+                    .append(h.server.getInetAddress(), this.server.getInetAddress())
+                    .build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(27, 13)
+                .append(this.server.getInetAddress()).toHashCode();
     }
 }

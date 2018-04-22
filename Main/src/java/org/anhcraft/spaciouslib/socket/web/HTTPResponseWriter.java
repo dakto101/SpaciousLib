@@ -1,6 +1,8 @@
 package org.anhcraft.spaciouslib.socket.web;
 
 import org.anhcraft.spaciouslib.utils.GZipUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,6 +31,10 @@ public class HTTPResponseWriter {
         setField("date", new Date().toString());
     }
 
+    /**
+     * Enables or disables the GZip compression
+     * @param enable true if you want to enable
+     */
     public void setGZip(boolean enable){
         if(enable){
             setField("content-encoding", "gzip");
@@ -38,18 +44,34 @@ public class HTTPResponseWriter {
         this.gzip = enable;
     }
 
+    /**
+     * Removes the given field out of this HTTP response
+     * @param field a field
+     */
     private void removeField(String field) {
         fields.remove(field);
     }
 
+    /**
+     * Sets the HTTP version
+     * @param version the version
+     */
     public void setHTTPVersion(String version){
         this.HTTPVersion = version;
     }
 
+    /**
+     * Sets the status code (e.g: 200, 403, 404, 500, etc)
+     * @param code a status code
+     */
     public void setStatusCode(int code){
         this.statusCode = code;
     }
 
+    /**
+     * Adds the given data to the body of this HTTP response
+     * @param data an array of bytes
+     */
     public void addData(byte[] data){
         if(gzip){
             try {
@@ -63,14 +85,27 @@ public class HTTPResponseWriter {
         setField("content-length", Integer.toString(contentLength));
     }
 
+    /**
+     * Adds the given data to the body of this HTTP response
+     * @param data a string
+     */
     public void addData(String data){
         addData(data.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * Sets a HTTP header field
+     * @param field a field
+     * @param value the value of that field
+     */
     public void setField(String field, String value){
         this.fields.put(field, value);
     }
 
+    /**
+     * Writes this reponse to byte array
+     * @return an array of bytes
+     */
     public byte[] write() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         StringBuilder header = new StringBuilder(HTTPVersion + " " + statusCode + "\r\n");
@@ -83,5 +118,22 @@ public class HTTPResponseWriter {
             out.write(data);
         }
         return out.toByteArray();
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            HTTPResponseWriter h = (HTTPResponseWriter) o;
+            return new EqualsBuilder()
+                    .append(h.fields, this.fields)
+                    .build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(30, 17)
+                .append(this.fields).toHashCode();
     }
 }

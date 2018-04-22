@@ -1,0 +1,25 @@
+<component name="libraryTable">
+  <library name="craftbukkit-1.10.2-R0.1-SNAPSHOT-latest (1)">
+    <CLASSES>
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.10.2-R0.1-SNAPSHOT-latest (1).jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.11.2-R0.1-SNAPSHOT.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.8-R0.1-SNAPSHOT-latest.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.8.3-R0.1-SNAPSHOT-latest.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.8.8-R0.1-SNAPSHOT-latest.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.9-R0.1-SNAPSHOT-latest.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.9.4-R0.1-SNAPSHOT-latest.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.12-pre2-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.10.2-R0.1-SNAPSHOT-latest (1).jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.11.2-R0.1-SNAPSHOT.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.8-R0.1-SNAPSHOT-latest.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.8.3-R0.1-SNAPSHOT-latest.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.8.8-R0.1-SNAPSHOT-latest.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.9-R0.1-SNAPSHOT-latest.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.9.4-R0.1-SNAPSHOT-latest.jar!/" />
+      <root url="jar://E:/craftbukkit nms/craftbukkit-1.12-pre2-SNAPSHOT.jar!/" />
+    </SOURCES>
+  </library>
+</component>

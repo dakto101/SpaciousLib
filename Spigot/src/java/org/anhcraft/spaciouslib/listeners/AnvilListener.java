@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,6 +19,11 @@ import java.util.UUID;
 
 public class AnvilListener implements Listener {
     public static LinkedHashMap<UUID, Group<Inventory, Handler>> data = new LinkedHashMap<>();
+
+    @EventHandler
+    public void quit(PlayerQuitEvent event){
+        data.remove(event.getPlayer().getUniqueId());
+    }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){

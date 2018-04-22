@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -58,11 +59,29 @@ public class BossBar {
     private List<UUID> viewers = new ArrayList<>();
 
     // 1.8
+    private BukkitTask task;
     private LinkedHashMap<UUID, String> locationTracker = new LinkedHashMap<>();
     private LinkedHashMap<UUID, Group<Object, Integer>> entities = new LinkedHashMap<>();
 
     // 1.9 and above
     private LinkedHashMap<UUID, Object> bossBattles = new LinkedHashMap<>();
+
+    /**
+     * Removes this boss bar
+     */
+    public void remove(){
+        if(task != null){
+            task.cancel();
+        }
+        locationTracker = new LinkedHashMap<>();
+        entities = new LinkedHashMap<>();
+        bossBattles = new LinkedHashMap<>();
+        viewers = new ArrayList<>();
+        PlayerCleaner.remove(this.bossBattles);
+        PlayerCleaner.remove(this.entities);
+        PlayerCleaner.remove(this.locationTracker);
+        PlayerCleaner.remove(this.viewers);
+    }
 
     private void init() {
         PlayerCleaner.add(this.bossBattles);
@@ -73,7 +92,7 @@ public class BossBar {
             return;
         }
         //// ONLY FOR 1.8 ////
-        new BukkitRunnable() {
+        task = new BukkitRunnable() {
             @Override
             public void run() {
                 try {

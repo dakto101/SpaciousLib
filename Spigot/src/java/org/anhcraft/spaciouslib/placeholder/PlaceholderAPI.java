@@ -290,7 +290,6 @@ public class PlaceholderAPI {
             }
         }
         if(placeholder instanceof CachedPlaceholder){
-            ((CachedPlaceholder) placeholder).init();
             ((CachedPlaceholder) placeholder).updateCache();
         }
         data.put(placeholder.getPlaceholder(), placeholder);

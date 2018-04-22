@@ -3,6 +3,8 @@ package org.anhcraft.spaciouslib.socket.web;
 import net.pieroxy.ua.detection.UserAgentDetectionResult;
 import net.pieroxy.ua.detection.UserAgentDetector;
 import org.anhcraft.spaciouslib.utils.CommonUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,7 +103,9 @@ public class HTTPRequestReader{
                                 String[] queries = ur[1].split("&");
                                 for(String query : queries) {
                                     String[] qr = query.split("=");
-                                    this.queries.put(qr[0], qr[1]);
+                                    if(2 <= qr.length) {
+                                        this.queries.put(qr[0], qr[1]);
+                                    }
                                 }
                             }
                         }
@@ -164,5 +168,22 @@ public class HTTPRequestReader{
 
     public HashMap<String, String> getFields(){
         return this.fields;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            HTTPRequestReader h = (HTTPRequestReader) o;
+            return new EqualsBuilder()
+                    .append(h.fields, this.fields)
+                    .build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(31, 19)
+                .append(this.fields).toHashCode();
     }
 }

@@ -8,6 +8,7 @@ import org.anhcraft.spaciouslib.socket.ServerSocketManager;
 import org.anhcraft.spaciouslib.socket.web.HTTPRequestReader;
 import org.anhcraft.spaciouslib.socket.web.HTTPResponseWriter;
 import org.anhcraft.spaciouslib.socket.web.WebServerManager;
+import org.anhcraft.spaciouslib.utils.TimedMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,12 +38,6 @@ public class SpaciousLibTestProgram {
 
                     // prints something to the console....
                     System.out.println(client.getInetAddress().getHostAddress()+" has requested: "+requestedFile.getAbsolutePath()+" [Using " + browser.getFamily().getLabel() + " v"+browser.getFullVersion()+"]");
-                    System.out.println("Header >> ");
-                    for(String field : in.getFields().keySet()){
-                        System.out.println("- "+field+": " + in.getFields().get(field));
-                    }
-                    System.out.println("Body >> ");
-                    System.out.println(in.getContent());
 
                     HTTPResponseWriter output = new HTTPResponseWriter();
                     output.setGZip(true); // enables GZip compression
@@ -95,7 +90,7 @@ public class SpaciousLibTestProgram {
         });
 
         //////////////////////////////////////////////////////////////////////
-/*
+
         // initializes the map
         TimedMap<String, Integer> map = new TimedMap<>();
         // puts some data to that map
@@ -119,7 +114,7 @@ public class SpaciousLibTestProgram {
         // after 10 seconds...
         System.out.println("A: " + map.isExpired("A")); // returns true
         System.out.println("B: " + map.isExpired("B")); // returns true
-*/
+
         //======================================================================================
 
         // initializes the socket server

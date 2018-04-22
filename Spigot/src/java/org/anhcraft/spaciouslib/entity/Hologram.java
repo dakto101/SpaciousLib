@@ -298,9 +298,8 @@ public class Hologram {
 
     /**
      * Removes this hologram
-     * @return this object
      */
-    public Hologram remove(){
+    public void remove(){
         List<Player> receivers = new ArrayList<>();
         for(UUID uuid : getViewers()){
             receivers.add(Bukkit.getServer().getPlayer(uuid));
@@ -309,7 +308,7 @@ public class Hologram {
             EntityDestroy.create(hw).sendPlayers(receivers);
         }
         this.entities = new LinkedHashMap<>();
-        return this;
+        PlayerCleaner.remove(this.viewers);
     }
 
     @Override
