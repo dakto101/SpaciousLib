@@ -9,7 +9,9 @@ import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.anhcraft.spaciouslib.tasks.ArmorEquipEventTask;
 import org.anhcraft.spaciouslib.tasks.CachedSkinTask;
 import org.anhcraft.spaciouslib.utils.Chat;
+import org.anhcraft.spaciouslib.utils.VaultUtils;
 import org.apache.commons.io.IOUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -63,9 +65,13 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlaceholderListener(), this);
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerCleaner(), this);
+        getServer().getPluginManager().registerEvents(new ServerListener(), this);
         getServer().getPluginManager().registerEvents(new NPCInteractEventListener(), this);
 
         PlayerCleaner.add(AnvilListener.data);
+        if(Bukkit.getServer().getPluginManager().isPluginEnabled("Vault") && VaultUtils.init()){
+            chat.sendSender("&aHooked to Vault plugin...");
+        }
     }
 
     @Override

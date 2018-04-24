@@ -35,5 +35,6 @@
     <orderEntry type="module" module-name="Main" />
     <orderEntry type="library" name="h2-1.4.197" level="project" />
     <orderEntry type="library" name="user-agent-detector" level="project" />
+    <orderEntry type="library" name="VaultAPI-1.6" level="project" />
   </component>
 </module>

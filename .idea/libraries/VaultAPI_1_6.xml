@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="VaultAPI-1.6">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/milkbowl/vault/VaultAPI/1.6/VaultAPI-1.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

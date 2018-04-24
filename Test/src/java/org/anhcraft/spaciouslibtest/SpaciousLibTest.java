@@ -280,6 +280,16 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
     }
 
     @EventHandler
+    public void reload(ServerReloadEvent event){
+        Bukkit.getServer().broadcastMessage(ChatColor.YELLOW+"Server is reloading...");
+    }
+
+    @EventHandler
+    public void stop(ServerStopEvent event){
+        Bukkit.getServer().broadcastMessage(ChatColor.RED+"Server is stopping...");
+    }
+
+    @EventHandler
     public void equip(ArmorEquipEvent event){
         if(!InventoryUtils.isNull(event.getNewArmor())){
             if(event.getNewArmor().getType().equals(Material.DIAMOND_HELMET)) {
@@ -333,10 +343,7 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
             if(!CooldownUtils.isTimeout(cooldown, 1)){
                 event.getPlayer().setVelocity(event.getPlayer().getVelocity().setY(2));
             }
-            // if not, resets the cooldown
-            else {
-                CooldownUtils.mark(cooldown);
-            }
+            CooldownUtils.mark(cooldown);
         }
     }
 

@@ -61,7 +61,7 @@ public class NPC {
 
     /**
      * Gets the location of this NPC
-     * @return the lcoation
+     * @return the location
      */
     public Location getLocation() {
         return this.location;

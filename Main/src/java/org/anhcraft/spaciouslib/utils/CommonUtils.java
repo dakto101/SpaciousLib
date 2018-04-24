@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CommonUtils {
     /**
@@ -133,5 +134,20 @@ public class CommonUtils {
         return UUID.fromString(uuid.replaceAll(
                 "(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})",
                 "$1-$2-$3-$4-$5"));
+    }
+
+    /**
+     * Shuffles the order of all elements in an array
+     * @param array an array
+     */
+    public static <T> T[] shuffle(T[] array) {
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = array.length - 1; i > 0; i--){
+            int index = rnd.nextInt(i + 1);
+            T temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+        return array;
     }
 }

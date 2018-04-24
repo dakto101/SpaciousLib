@@ -66,7 +66,6 @@ public class PacketListener implements Listener {
                     @Override
                     public void write(ChannelHandlerContext c, Object o, ChannelPromise p) throws Exception {
                         PacketHandleEvent ev = new PacketHandleEvent(player, o, PacketHandleEvent.Type.CLIENT_BOUND);
-                        // switches to the main thread
                         Bukkit.getServer().getPluginManager().callEvent(ev);
                         if(!ev.isCancelled()) {
                             super.write(c, ev.getPacket(), p);
@@ -76,7 +75,6 @@ public class PacketListener implements Listener {
                     @Override
                     public void channelRead(ChannelHandlerContext c, Object o) throws Exception {
                         PacketHandleEvent ev = new PacketHandleEvent(player, o, PacketHandleEvent.Type.SERVER_BOUND);
-                        // switches to the main thread
                         Bukkit.getServer().getPluginManager().callEvent(ev);
                         if(!ev.isCancelled()) {
                             super.channelRead(c, ev.getPacket());

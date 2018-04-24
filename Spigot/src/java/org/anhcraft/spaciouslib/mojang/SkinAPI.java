@@ -22,7 +22,7 @@ public class SkinAPI {
     private static LinkedHashMap<UUID, CachedSkin> cachedSkins;
 
     /**
-     * Initializes SkinManager
+     * Initializes SkinAPI
      */
     public SkinAPI() {
         try {
