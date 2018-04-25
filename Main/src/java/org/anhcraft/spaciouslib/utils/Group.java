@@ -64,7 +64,7 @@ public class Group<A, B> {
     @Override
     public boolean equals(Object o){
         if(o != null && o.getClass() == this.getClass()){
-            Group<A, B> g = (Group) o;
+            Group<?, ?> g = (Group<?, ?>) o;
             return new EqualsBuilder()
                     .append(g.a, this.a)
                     .append(g.b, this.b)

@@ -40,7 +40,27 @@ public class CommandArgument {
         /**
          * The players can only type a valid UUID
          */
-        UUID
+        UUID,
+        /**
+         * The players can only type a positive real number
+         */
+        POSITIVE_REAL_NUMBER,
+        /**
+         * The players can only type a negative real number
+         */
+        NEGATIVE_REAL_NUMBER,
+        /**
+         * The players can only type a positive integer
+         */
+        POSITIVE_INTEGER,
+        /**
+         * The players can only type a negative integer
+         */
+        NEGATIVE_INTEGER,
+        /**
+         * The players can only type a valid IP v4
+         */
+        IP_V4
     }
 
     private String name;

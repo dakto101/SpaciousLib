@@ -8,9 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
- * A TimedMap is a map using LinkedHashMap to store data, the key and its value will be removed after the given duration time.
- * @param <K> the key
- * @param <V> the value
+ * A TimedMap is a map which removes any expired key automatically.
  */
 public class TimedMap<K, V> {
     private LinkedHashMap<K, V> a = new LinkedHashMap<>();
@@ -26,9 +24,9 @@ public class TimedMap<K, V> {
     }
 
     /**
-     * Checks does the given key expire<br>
+     * Checks did the given key expire<br>
      * By default, all keys and values which were expired will be removed automatically, so you don't need to use this method.
-     * @param key the key
+     * @param key a key
      * @return true if it expired
      */
     public boolean isExpired(K key){
@@ -55,7 +53,7 @@ public class TimedMap<K, V> {
 
     /**
      * Checks does this map contain the given key
-     * @param key the key
+     * @param key a key
      * @return true if yes
      */
     public boolean containsKey(K key) {
@@ -65,7 +63,7 @@ public class TimedMap<K, V> {
 
     /**
      * Checks does this map contain the given value
-     * @param value the value
+     * @param value a value
      * @return true if yes
      */
     public boolean containsValue(V value) {
@@ -75,7 +73,7 @@ public class TimedMap<K, V> {
 
     /**
      * Gets the value of the given key in this map
-     * @param key the key
+     * @param key a key
      * @return its value
      */
     public V get(K key) {
@@ -84,9 +82,9 @@ public class TimedMap<K, V> {
 
     /**
      * Sets the given key and its value with the expired time
-     * @param key the key
+     * @param key a key
      * @param value the value of the key
-     * @param seconds the expired time (in seconds)
+     * @param seconds an expired time (in seconds)
      */
     public void put(K key, V value, long seconds) {
         clean();
@@ -96,7 +94,7 @@ public class TimedMap<K, V> {
 
     /**
      * Removes the given key
-     * @param key the key
+     * @param key a key
      */
     public void remove(K key) {
         a.remove(key);
@@ -113,7 +111,7 @@ public class TimedMap<K, V> {
 
     /**
      * Gets all keys in this map as a key set
-     * @return KeySet object
+     * @return a set of key
      */
     public Set<K> keySet() {
         clean();
@@ -122,11 +120,20 @@ public class TimedMap<K, V> {
 
     /**
      * Gets all values in this map as a collection
-     * @return Collection object
+     * @return a collection of values
      */
     public Collection<V> values() {
         clean();
         return a.values();
+    }
+
+    /**
+     * Puts all keys and values of the given map to this map
+     * @param map a timed map
+     */
+    public void putAll(TimedMap<K, V> map){
+        this.a.putAll(map.a);
+        this.b.putAll(map.b);
     }
 
     @Override

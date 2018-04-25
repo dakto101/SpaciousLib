@@ -4,6 +4,8 @@ import org.anhcraft.spaciouslib.utils.Chat;
 import org.anhcraft.spaciouslib.utils.CommandUtils;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bukkit.command.*;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -62,7 +64,7 @@ public class CommandBuilder extends CommandString {
         }
         this.rootCmd = rootCmd;
         if(0 < this.rootCmd.getName().length()){
-            throw new Exception("Subcommand must have a black name!");
+            throw new Exception("Subcommand must have a blank name!");
         }
         addSubCommand(this.rootCmd);
     }
@@ -112,7 +114,7 @@ public class CommandBuilder extends CommandString {
      * @return the command in string format
      */
     public String getCommandAsString(SubCommandBuilder subCommand, boolean color){
-        return Chat.color((color ? gcs(Type.BEGIN_COMMAND) : "") + this.name + " " + subCommand.getCommandString(color));
+        return Chat.color((color ? gcs(Type.BEGIN_COMMAND) : "") + this.name + (0 < subCommand.getName().length() ? " " : "") + subCommand.getCommandString(color));
     }
 
     /**
@@ -173,6 +175,11 @@ public class CommandBuilder extends CommandString {
         // [vi] va /test a b c f deu duoc
         // [vi] thi ta chi kiem tra phan /test a b c
 
+        // if only contains the root command
+        if(getSubCommands().size() == 1){
+            return new ArrayList<>();
+        }
+
         // [vi] mot tree map se xep lenh co do dai tu cao -> thap (vi da lat lai)
         TreeMap<Integer, String> s = new TreeMap<>(Collections.reverseOrder());
 
@@ -227,6 +234,16 @@ public class CommandBuilder extends CommandString {
     }
 
     private void execute(CommandSender s, String[] a) {
+        // if only contains the root command
+        if(getSubCommands().size() == 1){
+            try {
+                getSubCommands().get(0).execute(this, s, a);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         StringBuilder cmdb = new StringBuilder();
         for(String t : a) {
             cmdb.append(" ").append(t);
@@ -270,7 +287,7 @@ public class CommandBuilder extends CommandString {
                 s.sendMessage(Chat.color(rootCmd.canNotFindCmdErrorMessage));
                 for(SubCommandBuilder sc : getSubCommands()){
                     if(sc.getName().startsWith(cmd)){
-                        s.sendMessage(Chat.color(rootCmd.suggestMessage));
+                        s.sendMessage(Chat.color(rootCmd.suggestionMessage));
                         s.sendMessage(getCommandAsString(sc, true));
                         break;
                     }
@@ -321,5 +338,28 @@ public class CommandBuilder extends CommandString {
      */
     public CommandBuilder clone(String name) throws Exception {
         return new CommandBuilder(name, rootCmd).setSubCommands(subcmds);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            CommandBuilder c = (CommandBuilder) o;
+            return new EqualsBuilder()
+                    .append(c.command, this.command)
+                    .append(c.name, this.name)
+                    .append(c.rootCmd, this.rootCmd)
+                    .append(c.subcmds, this.subcmds)
+                    .build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(18, 33)
+                .append(this.command)
+                .append(this.name)
+                .append(this.rootCmd)
+                .append(this.subcmds).toHashCode();
     }
 }

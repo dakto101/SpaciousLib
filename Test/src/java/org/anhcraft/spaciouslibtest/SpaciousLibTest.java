@@ -29,9 +29,9 @@ import org.anhcraft.spaciouslib.placeholder.FixedPlaceholder;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.anhcraft.spaciouslib.socket.ClientSocketHandler;
 import org.anhcraft.spaciouslib.socket.ClientSocketManager;
-import org.anhcraft.spaciouslib.utils.CooldownUtils;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.anhcraft.spaciouslib.utils.RandomUtils;
+import org.anhcraft.spaciouslib.utils.TimedSet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -49,6 +49,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 public class SpaciousLibTest extends JavaPlugin implements Listener {
     private static final File DB_FILE = new File("test.db");
@@ -88,9 +89,8 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
             client = new ClientSocketManager("localhost", 25568, new ClientSocketHandler() {
                 @Override
                 public void response(ClientSocketManager manager, byte[] data){
-                    String message = ""/*client.getInput()*/;
                     // prints the sent message
-                    System.out.println("Server >> " + message);
+                    System.out.println("Server >> " + new String(data));
                 }
             });
             // sends messages to the socket server
@@ -333,17 +333,15 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
         }
     }
 
+    public static TimedSet<UUID> jumpers = new TimedSet<>();
+
     @EventHandler
     public void jump(PlayerJumpEvent event){
         if(event.isOnSpot()){
-            // the name of the cooldown...
-            String cooldown = "spaciouslibtest-jump-" + event.getPlayer().getName();
-
-            // if the cooldown isn't timed out yet, it means that the player've jumped twice
-            if(!CooldownUtils.isTimeout(cooldown, 1)){
+            if(jumpers.contains(event.getPlayer().getUniqueId())){
                 event.getPlayer().setVelocity(event.getPlayer().getVelocity().setY(2));
             }
-            CooldownUtils.mark(cooldown);
+            jumpers.add(event.getPlayer().getUniqueId(), 1);
         }
     }
 

@@ -2,6 +2,8 @@ package org.anhcraft.spaciouslib.command;
 
 import org.anhcraft.spaciouslib.utils.RegEx;
 import org.anhcraft.spaciouslib.utils.Chat;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -10,8 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * A sub command is one or many static arguments of a command (which created by CommandBuilder)<br>
- * A sub command (static argument) can have unlimited (dynamic) arguments<br>
+ * A sub-command is one or many static arguments of a command (which created by CommandBuilder)<br>
+ * A sub-command (static argument) can have unlimited (dynamic) arguments<br>
  * With a dynamic argument, players can type anything they want but it needs to depend on the type of that argument<br>
  * A argument can be optional or required.<br>
  * E.g: players can only type integer number if the type of that argument which they was typed in is INTEGER_NUMBER
@@ -22,9 +24,9 @@ public class SubCommandBuilder extends CommandString{
     private CommandRunnable rootRunnable;
     private LinkedHashMap<CommandArgument.Type, String> argErrorMessages = new LinkedHashMap<>();
     private LinkedHashMap<CommandArgument, CommandArgument.Type> args = new LinkedHashMap<>();
-    private String doesNotEnoughtArgsErrorMessage;
+    private String doesNotEnoughArgsErrorMessage;
     protected String canNotFindCmdErrorMessage;
-    protected String suggestMessage;
+    protected String suggestionMessage;
     private boolean hideTypeCommandString = false;
 
     /**
@@ -57,9 +59,19 @@ public class SubCommandBuilder extends CommandString{
                 "&cCouldn't find that world!");
         setArgErrorMessage(CommandArgument.Type.UUID,
                 "&cYou must type a valid UUID!");
-        setDoesNotEnoughtArgsErrorMessage("&cNot enough arguments!");
+        setArgErrorMessage(CommandArgument.Type.NEGATIVE_INTEGER,
+                "&cYou must type a negative integer!");
+        setArgErrorMessage(CommandArgument.Type.NEGATIVE_REAL_NUMBER,
+                "&cYou must type a negative real number!");
+        setArgErrorMessage(CommandArgument.Type.POSITIVE_INTEGER,
+                "&cYou must type a positive integer!");
+        setArgErrorMessage(CommandArgument.Type.POSITIVE_REAL_NUMBER,
+                "&cYou must type a positive real number!");
+        setArgErrorMessage(CommandArgument.Type.IP_V4,
+                "&cYou must type a valid valid IP v4!");
+        setDoesNotEnoughArgsErrorMessage("&cNot enough arguments!");
         setCanNotFindCmdMessage("&cCan't find that command. Please recheck the syntax.");
-        setSuggestMessage("&6Maybe this is the command which you want: &f");
+        setSuggestionMessage("&6Maybe this is the command which you want: &f");
     }
 
     /**
@@ -161,8 +173,8 @@ public class SubCommandBuilder extends CommandString{
      * @param message the message
      * @return this object
      */
-    public SubCommandBuilder setDoesNotEnoughtArgsErrorMessage(String message){
-        this.doesNotEnoughtArgsErrorMessage = Chat.color(message);
+    public SubCommandBuilder setDoesNotEnoughArgsErrorMessage(String message){
+        this.doesNotEnoughArgsErrorMessage = Chat.color(message);
         return this;
     }
 
@@ -252,9 +264,42 @@ public class SubCommandBuilder extends CommandString{
         return true;
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            SubCommandBuilder c = (SubCommandBuilder) o;
+            return new EqualsBuilder()
+                    .append(c.description, this.description)
+                    .append(c.name, this.name)
+                    .append(c.rootRunnable, this.rootRunnable)
+                    .append(c.argErrorMessages, this.argErrorMessages)
+                    .append(c.args, this.args)
+                    .append(c.doesNotEnoughArgsErrorMessage, this.doesNotEnoughArgsErrorMessage)
+                    .append(c.canNotFindCmdErrorMessage, this.canNotFindCmdErrorMessage)
+                    .append(c.suggestionMessage, this.suggestionMessage)
+                    .append(c.hideTypeCommandString, this.hideTypeCommandString)
+                    .build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(16, 47)
+                .append(this.description)
+                .append(this.name)
+                .append(this.rootRunnable)
+                .append(this.argErrorMessages)
+                .append(this.args)
+                .append(this.doesNotEnoughArgsErrorMessage)
+                .append(this.canNotFindCmdErrorMessage)
+                .append(this.suggestionMessage)
+                .append(this.hideTypeCommandString).toHashCode();
+    }
+
     void execute(CommandBuilder cmd, CommandSender s, String[] a) throws Exception {
         if(!isValid()){
-            throw new Exception("This subcommand isn't valid, please normalize first");
+            throw new Exception("This sub-command isn't valid, please normalize first");
         }        SubCommandBuilder sc = this;
         // [vi] neu khong co tham so dong
         if(a.length == 0){
@@ -276,7 +321,7 @@ public class SubCommandBuilder extends CommandString{
             }
             // [vi] neu tham so dong da nhap ti hon tham so chi dinh thi se tinh la "khong du tham so"
             if(values.size() < getArguments(false).size()) {
-                s.sendMessage(sc.doesNotEnoughtArgsErrorMessage);
+                s.sendMessage(sc.doesNotEnoughArgsErrorMessage);
             } else {
                 boolean hasError = false;
                 argTypeValidator:
@@ -341,6 +386,41 @@ public class SubCommandBuilder extends CommandString{
                                 break argTypeValidator;
                             }
                             break;
+                        case NEGATIVE_INTEGER:
+                            if(!RegEx.NEGATIVE_INTEGER.matches(value)) {
+                                s.sendMessage(sc.argErrorMessages.get(CommandArgument.Type.NEGATIVE_INTEGER));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case NEGATIVE_REAL_NUMBER:
+                            if(!RegEx.NEGATIVE_REAL_NUMBER.matches(value)) {
+                                s.sendMessage(sc.argErrorMessages.get(CommandArgument.Type.NEGATIVE_REAL_NUMBER));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case POSITIVE_INTEGER:
+                            if(!RegEx.POSITIVE_INTEGER.matches(value)) {
+                                s.sendMessage(sc.argErrorMessages.get(CommandArgument.Type.POSITIVE_INTEGER));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case POSITIVE_REAL_NUMBER:
+                            if(!RegEx.POSITIVE_REAL_NUMBER.matches(value)) {
+                                s.sendMessage(sc.argErrorMessages.get(CommandArgument.Type.POSITIVE_REAL_NUMBER));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
+                        case IP_V4:
+                            if(!RegEx.POSITIVE_REAL_NUMBER.matches(value)) {
+                                s.sendMessage(sc.argErrorMessages.get(CommandArgument.Type.IP_V4));
+                                hasError = true;
+                                break argTypeValidator;
+                            }
+                            break;
                     }
                 }
                 if(!hasError) {
@@ -364,7 +444,7 @@ public class SubCommandBuilder extends CommandString{
      * The command string (with colors) will put at the end of this message.
      * @param suggestMessage the suggestion message
      */
-    public void setSuggestMessage(String suggestMessage) {
-        this.suggestMessage = suggestMessage;
+    public void setSuggestionMessage(String suggestMessage) {
+        this.suggestionMessage = suggestMessage;
     }
 }

@@ -2,11 +2,15 @@ package org.anhcraft.spaciouslibtest;
 
 import net.pieroxy.ua.detection.Browser;
 import org.anhcraft.spaciouslib.io.FileManager;
-import org.anhcraft.spaciouslib.socket.*;
+import org.anhcraft.spaciouslib.socket.ServerSocketClientManager;
+import org.anhcraft.spaciouslib.socket.ServerSocketHandler;
+import org.anhcraft.spaciouslib.socket.ServerSocketManager;
 import org.anhcraft.spaciouslib.socket.web.HTTPRequestReader;
 import org.anhcraft.spaciouslib.socket.web.HTTPResponseWriter;
 import org.anhcraft.spaciouslib.socket.web.WebServerManager;
+import org.anhcraft.spaciouslib.utils.TimedList;
 import org.anhcraft.spaciouslib.utils.TimedMap;
+import org.anhcraft.spaciouslib.utils.TimedSet;
 
 import java.io.File;
 import java.io.IOException;
@@ -112,6 +116,38 @@ public class SpaciousLibTestProgram {
         // after 10 seconds...
         System.out.println("A: " + map.isExpired("A")); // returns true
         System.out.println("B: " + map.isExpired("B")); // returns true
+
+        //////////////////////////////////////////////////////////////////////
+
+        // initializes the list
+        TimedList<String> list = new TimedList<>();
+        // adds some data to that list
+        list.add("A",3);
+        list.add("B",5);
+
+        System.out.println(list.size()); // returns 2
+        try {
+            Thread.sleep(4000);
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(list.size()); // returns 1
+
+        //////////////////////////////////////////////////////////////////////
+
+        // initializes the set
+        TimedSet<String> set = new TimedSet<>();
+        // adds some data to thatset
+        set.add("A",2);
+        set.add("B",3);
+        System.out.println(set.size()); // returns 2
+
+        try {
+            Thread.sleep(3500);
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(set.size()); // returns 0
 
         //======================================================================================
 

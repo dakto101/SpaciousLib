@@ -2,7 +2,7 @@ package org.anhcraft.spaciouslib.listeners;
 
 import org.anhcraft.spaciouslib.compatibility.CompatibilityInventoryClickEvent;
 import org.anhcraft.spaciouslib.inventory.InteractItemRunnable;
-import org.bukkit.Material;
+import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -29,18 +29,18 @@ public class InteractItemListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void interact(InventoryClickEvent event){
+    public void click(InventoryClickEvent event){
         Player player = (Player) event.getWhoClicked();
         Inventory inventory = CompatibilityInventoryClickEvent.getInventory(event);
         ClickType type = event.getClick();
         if (inventory != null && data.containsKey(inventory)){
-            event.setCancelled(true);
-            event.setResult(Event.Result.DENY);
             ItemStack item = event.getCurrentItem();
-            if(item != null && !item.getType().equals(Material.AIR) && data.get(inventory).containsKey(item)){
+            if(!InventoryUtils.isNull(item) && data.get(inventory).containsKey(item)){
                 LinkedHashMap<ItemStack, InteractItemRunnable> items = data.get(inventory);
                 items.get(item).run(player, item, type, event.getSlot());
                 data.put(inventory, items);
+                event.setCancelled(true);
+                event.setResult(Event.Result.DENY);
             }
         }
     }

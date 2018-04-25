@@ -1,5 +1,5 @@
 name: SpaciousLib
-version: 1.5.3
+version: 1.5.4
 main: org.anhcraft.spaciouslib.SpaciousLib
 loadbefore: [Vault]
 authors: [anhcraft]
