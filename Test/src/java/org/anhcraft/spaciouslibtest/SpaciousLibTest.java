@@ -17,10 +17,7 @@ import org.anhcraft.spaciouslib.entity.NPC;
 import org.anhcraft.spaciouslib.entity.PlayerManager;
 import org.anhcraft.spaciouslib.entity.bossbar.BossBar;
 import org.anhcraft.spaciouslib.events.*;
-import org.anhcraft.spaciouslib.inventory.BookManager;
-import org.anhcraft.spaciouslib.inventory.EquipSlot;
-import org.anhcraft.spaciouslib.inventory.ItemManager;
-import org.anhcraft.spaciouslib.inventory.RecipeManager;
+import org.anhcraft.spaciouslib.inventory.*;
 import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.mojang.GameProfileManager;
 import org.anhcraft.spaciouslib.mojang.MojangAPI;
@@ -40,6 +37,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -85,19 +85,6 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
 
             //======================================================================================
 
-            // initializes the client socket
-            client = new ClientSocketManager("localhost", 25568, new ClientSocketHandler() {
-                @Override
-                public void response(ClientSocketManager manager, byte[] data){
-                    // prints the sent message
-                    System.out.println("Server >> " + new String(data));
-                }
-            });
-            // sends messages to the socket server
-            client.send("Hi server!");
-
-            //======================================================================================
-
             // the root command
             new CommandBuilder("slt", new CommandRunnable() {
                 @Override
@@ -119,6 +106,30 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
                                 player.sendMessage("You've typed " + input);
                             }
                         }).setItem(Anvil.Slot.INPUT_LEFT, new ItemStack(Material.DIAMOND, 1)).open();
+                    }
+                }
+            }))
+
+            .addSubCommand(new SubCommandBuilder("inv", null, new CommandRunnable() {
+                @Override
+                public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                    if(sender instanceof Player){
+                        new InventoryManager("Test", 9).fill(new ItemStack(Material.APPLE, 1), new ClickableItemHandler() {
+                            @Override
+                            public void run(Player player, ItemStack item, ClickType click, int slot, InventoryAction action, Inventory inventory) {
+
+                            }
+                        }).set(CenterPosition.CENTER_2_A, new ItemStack(Material.DIAMOND, 1), new ClickableItemHandler() {
+                            @Override
+                            public void run(Player player, ItemStack item, ClickType click, int slot, InventoryAction action, Inventory inventory) {
+
+                            }
+                        }).set(CenterPosition.CENTER_2_B, new ItemStack(Material.EMERALD, 1), new ClickableItemHandler() {
+                            @Override
+                            public void run(Player player, ItemStack item, ClickType click, int slot, InventoryAction action, Inventory inventory) {
+
+                            }
+                        }).open((Player) sender);
                     }
                 }
             }))
@@ -277,6 +288,22 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
         }
 
         getServer().getPluginManager().registerEvents(this, this);
+
+
+        // initializes the client socket
+        client = new ClientSocketManager("localhost", 25568, new ClientSocketHandler() {
+            @Override
+            public void response(ClientSocketManager manager, byte[] data){
+                // prints the sent message
+                System.out.println("Server >> " + new String(data));
+            }
+        });
+        // sends messages to the socket server
+        try {
+            client.send("Hi server!");
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @EventHandler

@@ -59,7 +59,7 @@ public final class SpaciousLib extends JavaPlugin {
 
         chat.sendSender("&eRegistering the event listeners...");
         getServer().getPluginManager().registerEvents(new PlayerJumpEventListener(), this);
-        getServer().getPluginManager().registerEvents(new InteractItemListener(), this);
+        getServer().getPluginManager().registerEvents(new ClickableItemListener(), this);
         getServer().getPluginManager().registerEvents(new BowArrowHitEventListener(), this);
         getServer().getPluginManager().registerEvents(new PacketListener(), this);
         getServer().getPluginManager().registerEvents(new PlaceholderListener(), this);

@@ -137,8 +137,8 @@ public class CommonUtils {
     }
 
     /**
-     * Shuffles
-     * @param array
+     * Shuffles the order of all elements in an array
+     * @param array an array
      */
     public static <T> T[] shuffle(T[] array) {
         Random rnd = ThreadLocalRandom.current();
