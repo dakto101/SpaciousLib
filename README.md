@@ -6,40 +6,6 @@ Website: https://spaciouslib.anhcraft.org/<br>
 Javadoc: http://spaciouslib.anhcraft.org/javadoc/<br><br>
 Only works in Java 8.<br><br>
 
-**Maven**
-```
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-```
-
-```
-    <dependency>
-        <groupId>com.github.anhcraft</groupId>
-        <artifactId>SpaciousLib</artifactId>
-        <version>v1.5.3</version>
-    </dependency>
-```
-
-**Gradle**
-```
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-```
-
-```
-	dependencies {
-	        compile 'com.github.anhcraft:SpaciousLib:v1.5.3'
-	}
-```
-
 ## How to contribute?
 1. Clones this repository
 2. Edits the code...
