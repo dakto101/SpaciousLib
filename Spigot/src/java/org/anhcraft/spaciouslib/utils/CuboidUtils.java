@@ -13,7 +13,7 @@ public class CuboidUtils {
      * @param pos2 the bottom corner which is opposite the top corner of the cuboid
      * @return the volume
      */
-    public double getVolume(Location pos1, Location pos2) throws Exception {
+    public static double getVolume(Location pos1, Location pos2) throws Exception {
         if(pos1.getWorld() != pos2.getWorld()){
             throw new Exception("The locations must be in a same world");
         }
@@ -59,7 +59,7 @@ public class CuboidUtils {
      * @param pos2 the bottom corner which is opposite the top corner of the cuboid
      * @return list of locations
      */
-    public List<Location> getLocations(Location pos1, Location pos2) throws Exception {
+    public static List<Location> getLocations(Location pos1, Location pos2) throws Exception {
         if(pos1.getWorld() != pos2.getWorld()){
             throw new Exception("The locations must be in a same world");
         }
@@ -136,7 +136,7 @@ public class CuboidUtils {
      * @param pos2 the bottom corner which is opposite the top corner of the cuboid
      * @return list of entities
      */
-    public List<Entity> getEntities(Location pos1, Location pos2) throws Exception {
+    public static List<Entity> getEntities(Location pos1, Location pos2) throws Exception {
         if(pos1.getWorld() != pos2.getWorld()){
             throw new Exception("The locations must be in a same world");
         }
