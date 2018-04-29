@@ -64,4 +64,16 @@ public class VaultUtils {
         }
         return eco.depositPlayer(player, amount).transactionSuccess();
     }
+
+    /**
+     * Gets the balance of a player
+     * @param player a player
+     * @return the balance
+     */
+    public static double getBalance(OfflinePlayer player) throws Exception {
+        if(eco == null){
+            throw new Exception();
+        }
+        return eco.getBalance(player);
+    }
 }

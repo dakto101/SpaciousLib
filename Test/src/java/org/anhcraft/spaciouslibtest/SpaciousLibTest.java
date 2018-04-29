@@ -28,6 +28,7 @@ import org.anhcraft.spaciouslib.socket.ClientSocketHandler;
 import org.anhcraft.spaciouslib.socket.ClientSocketManager;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.anhcraft.spaciouslib.utils.RandomUtils;
+import org.anhcraft.spaciouslib.utils.ServerUtils;
 import org.anhcraft.spaciouslib.utils.TimedSet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -131,6 +132,13 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
                             }
                         }).open((Player) sender);
                     }
+                }
+            }))
+
+            .addSubCommand(new SubCommandBuilder("tps", null, new CommandRunnable() {
+                @Override
+                public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                    sender.sendMessage(Double.toString(ServerUtils.getTPS()));
                 }
             }))
 
@@ -289,21 +297,18 @@ public class SpaciousLibTest extends JavaPlugin implements Listener {
 
         getServer().getPluginManager().registerEvents(this, this);
 
-
-        // initializes the client socket
-        client = new ClientSocketManager("localhost", 25568, new ClientSocketHandler() {
-            @Override
-            public void response(ClientSocketManager manager, byte[] data){
-                // prints the sent message
-                System.out.println("Server >> " + new String(data));
-            }
-        });
-        // sends messages to the socket server
-        try {
+        try{
+            // initializes the client socket
+            client = new ClientSocketManager("localhost", 25568, new ClientSocketHandler() {
+                @Override
+                public void response(ClientSocketManager manager, byte[] data){
+                    // prints the sent message
+                    System.out.println("Server >> " + new String(data));
+                }
+            });
+            // sends messages to the socket server
             client.send("Hi server!");
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        } catch(Exception ignored) {}
     }
 
     @EventHandler

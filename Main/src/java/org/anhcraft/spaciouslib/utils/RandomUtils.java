@@ -54,16 +54,4 @@ public class RandomUtils {
         max++;
         return ThreadLocalRandom.current().nextDouble(min, max);
     }
-
-    /**
-     * Creates a unique number based on the current time
-     * @return the unique number
-     */
-    public static int unique(){
-        double a = System.currentTimeMillis() + randomInt(0, 100);
-        if(Integer.MAX_VALUE < a){
-            a = Integer.MAX_VALUE;
-        }
-        return (int) a;
-    }
 }

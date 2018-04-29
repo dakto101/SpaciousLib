@@ -10,7 +10,8 @@ public enum GameVersion {
     v1_9_R2(4),
     v1_10_R1(5),
     v1_11_R1(6),
-    v1_12_R1(7);
+    v1_12_R1(7),
+    v1_13_R1(8);
 
     private int id;
 
@@ -49,5 +50,9 @@ public enum GameVersion {
 
     public static boolean is1_12Above(){
         return GameVersion.v1_12_R1.getID() <= getVersion().getID();
+    }
+
+    public static boolean is1_13Above(){
+        return GameVersion.v1_13_R1.getID() <= getVersion().getID();
     }
 }

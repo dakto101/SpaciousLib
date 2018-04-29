@@ -27,7 +27,7 @@ public class SubCommandBuilder extends CommandString{
     private String doesNotEnoughArgsErrorMessage;
     protected String canNotFindCmdErrorMessage;
     protected String suggestionMessage;
-    private boolean hideTypeCommandString = false;
+    private boolean hideTypeCommandString = true;
 
     /**
      * Creates a new SubCommandBuilder instance

@@ -31,4 +31,22 @@ public class ServerUtils {
         }
         return e;
     }
+
+    /**
+     * Gets the current TPS of the server
+     * @return the TPS
+     */
+    public static double getTPS(){
+        try{
+            Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");
+            Class<?> nmsServerClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".MinecraftServer");
+            Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
+            Object nmsServer = ReflectionUtils.getMethod("getServer", craftServerClass, craftServer);
+            double[] d = (double[]) ReflectionUtils.getField("recentTps", nmsServerClass, nmsServer);
+            return d[0];
+        } catch(ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

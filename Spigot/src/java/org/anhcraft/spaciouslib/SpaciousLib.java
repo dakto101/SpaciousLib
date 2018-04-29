@@ -29,6 +29,13 @@ public final class SpaciousLib extends JavaPlugin {
 
     @Override
     public void onEnable(){
+        try{
+            Class.forName("org.spigotmc.SpigotConfig");
+        } catch(ClassNotFoundException e) {
+            getLogger().info("SpaciousLib only works in Spigot-based servers (Spigot, PaperSpigot, etc)");
+            Bukkit.getServer().getPluginManager().disablePlugin(this);
+        }
+
         instance = this;
 
         try {

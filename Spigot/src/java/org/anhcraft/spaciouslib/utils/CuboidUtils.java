@@ -17,39 +17,24 @@ public class CuboidUtils {
         if(pos1.getWorld() != pos2.getWorld()){
             throw new Exception("The locations must be in a same world");
         }
-        if (pos1 == null && pos2 == null) {
+        if (pos1 == null || pos2 == null) {
             return 0;
-        }
-        if ((pos1 == null) || (pos2 == null)) {
-            return 1;
         }
         double x = pos2.getX() - pos1.getX();
         double y = pos2.getY() - pos1.getY();
         double z = pos2.getZ() - pos1.getZ();
         if (x < 0.0D) {
-            x *= -1.0D;
-        } else if (x == 0.0D) {
-            x = 1.0D;
+            x = -x;
         }
         if (y < 0.0D) {
-            y *= -1.0D;
-        } else if (y == 0.0D) {
-            y = 1.0D;
+            y = -y;
         }
         if (z < 0.0D) {
-            z *= -1.0D;
-        } else if (z == 0.0D) {
-            z = 1.0D;
+            z = -z;
         }
-        if (pos2.getX() != pos1.getX()) {
-            x += 1.0D;
-        }
-        if (pos2.getY() != pos1.getY()) {
-            y += 1.0D;
-        }
-        if (pos2.getZ() != pos1.getZ()) {
-            z += 1.0D;
-        }
+        x += 1.0D;
+        y += 1.0D;
+        z += 1.0D;
         return x * y * z;
     }
 

@@ -10,10 +10,27 @@ public class Cooldown {
     private long current;
 
     /**
-     * Resets the beginning time of this cooldown to make it equal with the current time
+     * Creates a new Cooldown instance
      */
-    public void reset(){
+    public Cooldown(){
         this.current = System.currentTimeMillis();
+    }
+
+    /**
+     * Creates a new Cooldown instance
+     * @param current the beginning time of this cooldown, in milliseconds
+     */
+    public Cooldown(long current){
+        this.current = current;
+    }
+
+    /**
+     * Resets the beginning time of this cooldown to make it equal with the current time
+     * @return this object
+     */
+    public Cooldown reset(){
+        this.current = System.currentTimeMillis();
+        return this;
     }
 
     /**
