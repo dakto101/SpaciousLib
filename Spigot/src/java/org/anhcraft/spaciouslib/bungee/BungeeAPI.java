@@ -5,6 +5,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.events.BungeeForwardEvent;
+import org.anhcraft.spaciouslib.mojang.Skin;
 import org.anhcraft.spaciouslib.utils.Chat;
 import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.bukkit.Bukkit;
@@ -27,8 +28,8 @@ public class BungeeAPI implements PluginMessageListener {
     public BungeeAPI(){
         queue = new ArrayList<>();
 
-        Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(SpaciousLib.instance, "BungeeCord");
-        Bukkit.getServer().getMessenger().registerIncomingPluginChannel(SpaciousLib.instance, "BungeeCord", this);
+        Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(SpaciousLib.instance, CHANNEL);
+        Bukkit.getServer().getMessenger().registerIncomingPluginChannel(SpaciousLib.instance, CHANNEL, this);
     }
 
     /**
@@ -304,60 +305,72 @@ public class BungeeAPI implements PluginMessageListener {
                 .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
     }
 
-    @Override
-    public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        if (!channel.equals(CHANNEL)) {
+    public static void requestChangeSkin(String player, Skin skin){
+        if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
         }
-        ByteArrayDataInput i = ByteStreams.newDataInput(message);
-        String sc = i.readUTF();
-        boolean b = false;
-        for(BungeeResponse br : queue){
-            if (sc.equals("IP") && br instanceof BungeePlayerIPResponse) {
-                ((BungeePlayerIPResponse) br).result(i.readUTF(), i.readInt());
-                b = true;
-            }
-            if (sc.equals("PlayerCount") && br instanceof BungeePlayerAmountResponse) {
-                ((BungeePlayerAmountResponse) br).result(i.readUTF(), i.readInt());
-                b = true;
-            }
-            if (sc.equals("PlayerList") && br instanceof BungeePlayerListResponse) {
-                ((BungeePlayerListResponse) br).result(i.readUTF(), CommonUtils.toList(i.readUTF().split(", ")));
-                b = true;
-            }
-            if (sc.equals("GetServers") && br instanceof BungeeServerListResponse) {
-                ((BungeeServerListResponse) br).result(CommonUtils.toList(i.readUTF().split(", ")));
-                b = true;
-            }
-            if (sc.equals("GetServer") && br instanceof BungeeServerNameResponse) {
-                ((BungeeServerNameResponse) br).result(i.readUTF());
-                b = true;
-            }
-            if (sc.equals("UUID") && br instanceof BungeePlayerUUIDResponse) {
-                ((BungeePlayerUUIDResponse) br).result(UUID.fromString(i.readUTF()));
-                b = true;
-            }
-            if (sc.equals("UUIDOther") && br instanceof BungeeOtherPlayerUUIDResponse) {
-                ((BungeeOtherPlayerUUIDResponse) br).result(i.readUTF(), UUID.fromString(i.readUTF()));
-                b = true;
-            }
-            if (sc.equals("ServerIP") && br instanceof BungeeServerIPResponse) {
-                ((BungeeServerIPResponse) br).result(i.readUTF(), i.readUTF(), i.readUnsignedShort());
-                b = true;
-            }
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("skin");
+        out.writeUTF(player);
+        out.writeUTF(skin.getValue());
+        out.writeUTF(skin.getSignature());
+        Bukkit.getServer().getOnlinePlayers().iterator().next()
+                .sendPluginMessage(SpaciousLib.instance, SpaciousLib.CHANNEL, out.toByteArray());
+    }
 
-            if(b){
-                break;
+    @Override
+    public void onPluginMessageReceived(String channel, Player player, byte[] message) {
+        ByteArrayDataInput i = ByteStreams.newDataInput(message);
+        if (channel.equals(CHANNEL)) {
+            String sc = i.readUTF();
+            boolean b = false;
+            for(BungeeResponse br : queue) {
+                if(sc.equals("IP") && br instanceof BungeePlayerIPResponse) {
+                    ((BungeePlayerIPResponse) br).result(i.readUTF(), i.readInt());
+                    b = true;
+                }
+                if(sc.equals("PlayerCount") && br instanceof BungeePlayerAmountResponse) {
+                    ((BungeePlayerAmountResponse) br).result(i.readUTF(), i.readInt());
+                    b = true;
+                }
+                if(sc.equals("PlayerList") && br instanceof BungeePlayerListResponse) {
+                    ((BungeePlayerListResponse) br).result(i.readUTF(), CommonUtils.toList(i.readUTF().split(", ")));
+                    b = true;
+                }
+                if(sc.equals("GetServers") && br instanceof BungeeServerListResponse) {
+                    ((BungeeServerListResponse) br).result(CommonUtils.toList(i.readUTF().split(", ")));
+                    b = true;
+                }
+                if(sc.equals("GetServer") && br instanceof BungeeServerNameResponse) {
+                    ((BungeeServerNameResponse) br).result(i.readUTF());
+                    b = true;
+                }
+                if(sc.equals("UUID") && br instanceof BungeePlayerUUIDResponse) {
+                    ((BungeePlayerUUIDResponse) br).result(UUID.fromString(i.readUTF()));
+                    b = true;
+                }
+                if(sc.equals("UUIDOther") && br instanceof BungeeOtherPlayerUUIDResponse) {
+                    ((BungeeOtherPlayerUUIDResponse) br).result(i.readUTF(), UUID.fromString(i.readUTF()));
+                    b = true;
+                }
+                if(sc.equals("ServerIP") && br instanceof BungeeServerIPResponse) {
+                    ((BungeeServerIPResponse) br).result(i.readUTF(), i.readUTF(), i.readUnsignedShort());
+                    b = true;
+                }
+
+                if(b) {
+                    break;
+                }
             }
-        }
-        if(b){
-            queue.remove(0);
-        } else {
-            byte[] bytedata = new byte[i.readShort()];
-            i.readFully(bytedata);
-            DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytedata));
-            BungeeForwardEvent ev = new BungeeForwardEvent(sc, data);
-            Bukkit.getServer().getPluginManager().callEvent(ev);
+            if(b) {
+                queue.remove(0);
+            } else {
+                byte[] bytedata = new byte[i.readShort()];
+                i.readFully(bytedata);
+                DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytedata));
+                BungeeForwardEvent ev = new BungeeForwardEvent(data);
+                Bukkit.getServer().getPluginManager().callEvent(ev);
+            }
         }
     }
 }

@@ -24,7 +24,7 @@ public class BookManager extends ItemManager {
         super(book);
         if(book == null || !book.getType().equals(Material.WRITTEN_BOOK)){
             try {
-                throw new Exception("Item must be a written book");
+                throw new Exception("The item must be a written book");
             } catch(Exception e) {
                 e.printStackTrace();
             }

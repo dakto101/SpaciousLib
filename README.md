@@ -1,10 +1,10 @@
 # SpaciousLib
 
-A library has necessary utilities for all plugins<br><br>
+A useful library for your Spigot/Bungeecord plugins and Java programs<br><br>
 Spigot: https://www.spigotmc.org/resources/1-8-1-12-spaciouslib.39007/<br>
 Website: https://spaciouslib.anhcraft.org/<br>
 Javadoc: http://spaciouslib.anhcraft.org/javadoc/<br><br>
-Only works in Java 8.<br><br>
+Only works in Java 8+.<br><br>
 
 ## How to contribute?
 1. Clones this repository
@@ -21,7 +21,8 @@ Only works in Java 8.<br><br>
 7. [User-Agent detection](https://github.com/pieroxy/java-user-agent-detection)
 
 * All libraries above is included in the SpaciousLibMain.jar file
-* Only libraries (1, 6, 7) is included in the SpaciousLibSpigot.jar file, other libraries have already included in Spigot's jar file
+* Only libraries (1, 6, 7) are included in the SpaciousLibSpigot.jar file
+* All libraries, excepts the third are included in the SpaciousLibBungeecord.jar file
 
 ## Credits
-Thanks every author of all above libraries and also thanks Spigot team <3
+Thanks every author of all above libraries and also thanks Spigot/Bungeecord team <3

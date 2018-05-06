@@ -34,7 +34,7 @@ public class CommandArgument {
          */
         BOOLEAN,
         /**
-         * AThe players can only type a loaded world
+         * The players can only type a loaded world
          */
         WORLD,
         /**

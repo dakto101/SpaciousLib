@@ -6,21 +6,15 @@ import org.bukkit.event.HandlerList;
 import java.io.DataInputStream;
 
 /**
- * An event triggers when a data was sent from a specific channel in another server
+ * An event triggers when a data was sent from the Bungeecord channel
  */
 public class BungeeForwardEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
-    private String channel;
     private DataInputStream data;
 
-    public BungeeForwardEvent(String channel, DataInputStream data){
+    public BungeeForwardEvent(DataInputStream data){
         this.data = data;
-        this.channel = channel;
-    }
-
-    public String getChannel(){
-        return this.channel;
     }
 
     public DataInputStream getData(){

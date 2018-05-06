@@ -2,11 +2,7 @@
 <module type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="minecraft" name="Minecraft">
-      <configuration>
-        <autoDetectTypes>
-          <platformType>BUKKIT</platformType>
-        </autoDetectTypes>
-      </configuration>
+      <configuration />
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
@@ -61,7 +57,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="craftbukkit-1.10.2-R0.1-SNAPSHOT-latest (1)" level="project" />
     <orderEntry type="library" name="h2-1.4.197" level="project" />
     <orderEntry type="library" name="user-agent-detector" level="project" />
   </component>

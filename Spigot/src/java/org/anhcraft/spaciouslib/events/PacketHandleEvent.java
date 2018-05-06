@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.events;
 
+import io.netty.channel.Channel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -23,11 +24,13 @@ public class PacketHandleEvent extends Event implements Cancellable {
     private Object o;
     private boolean b = false;
     private Type t;
+    private Channel c;
 
-    public PacketHandleEvent(Player p, Object o, Type t){
+    public PacketHandleEvent(Player p, Object o, Type t, Channel c){
         this.p = p;
         this.o = o;
         this.t = t;
+        this.c = c;
     }
 
     public Player getPlayer(){
@@ -40,6 +43,10 @@ public class PacketHandleEvent extends Event implements Cancellable {
 
     public Type getType(){
         return this.t;
+    }
+
+    public Channel getChannel(){
+        return this.c;
     }
 
     public void setPacket(Object o){

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 public final class SpaciousLib extends JavaPlugin {
+    public final static String CHANNEL = "SpaciousLib";
     public final static File ROOT_FOLDER = new File("plugins/SpaciousLib/");
     public final static File SKINS_FOLDER = new File(ROOT_FOLDER, "skins/");
     public final static File CONFIG_FILE = new File(ROOT_FOLDER, "config.yml");
@@ -50,6 +51,11 @@ public final class SpaciousLib extends JavaPlugin {
         chat = new Chat("&f[&bSpaciousLib&f] ");
         ////////////////////////////////////////////////////////////////////////////////////////////
 
+        chat.sendSender("&eInitializing the APIs...");
+        new PlaceholderAPI();
+        new SkinAPI();
+        new BungeeAPI();
+
         chat.sendSender("&eStarting the tasks...");
         if(config.getBoolean("stats")){
             new Updater1520156620("1520156620", this);
@@ -57,14 +63,9 @@ public final class SpaciousLib extends JavaPlugin {
 
         // uses synchronous task because this task will call the ArmorEquipEvent event
         new ArmorEquipEventTask().runTaskTimer(this, 0, 20);
-        new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 200);
+        new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 300);
 
-        chat.sendSender("&eInitializing the APIs...");
-        new PlaceholderAPI();
-        new SkinAPI();
-        new BungeeAPI();
-
-        chat.sendSender("&eRegistering the event listeners...");
+        chat.sendSender("&eRegistering the listeners...");
         getServer().getPluginManager().registerEvents(new PlayerJumpEventListener(), this);
         getServer().getPluginManager().registerEvents(new ClickableItemListener(), this);
         getServer().getPluginManager().registerEvents(new BowArrowHitEventListener(), this);
@@ -74,10 +75,17 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerCleaner(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
         getServer().getPluginManager().registerEvents(new NPCInteractEventListener(), this);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
+        getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, new BungeeListener());
 
         PlayerCleaner.add(AnvilListener.data);
         if(Bukkit.getServer().getPluginManager().isPluginEnabled("Vault") && VaultUtils.init()){
             chat.sendSender("&aHooked to Vault plugin...");
+        }
+
+        if(config.getBoolean("dev_mode")){
+            chat.sendSender("&aSwitched to the development mode!");
+            getServer().getPluginManager().registerEvents(new Test(), this);
         }
     }
 

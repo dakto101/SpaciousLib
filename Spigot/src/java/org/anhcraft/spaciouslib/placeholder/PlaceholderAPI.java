@@ -44,6 +44,18 @@ public class PlaceholderAPI {
             }
         });
 
+        register(new FixedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{player_id}";
+            }
+
+            @Override
+            public String getValue(Player player) {
+                return player.getUniqueId().toString();
+            }
+        });
+
         register(new CachedPlaceholder() {
             @Override
             public String getPlaceholder() {
