@@ -573,7 +573,7 @@ public class BossBar {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(14, 29)
+        return new HashCodeBuilder(29, 15)
                 .append(this.entities).append(this.title).append(this.viewers).append(this.style)
                 .append(this.color).append(this.health).append(this.flags)
                 .append(this.bossBattles).append(this.locationTracker).toHashCode();

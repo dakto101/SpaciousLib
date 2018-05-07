@@ -1,5 +1,8 @@
 package org.anhcraft.spaciouslib.scheduler;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public abstract class TaskScheduler {
     protected Runnable runnable;
     protected boolean stopped;
@@ -20,5 +23,20 @@ public abstract class TaskScheduler {
      */
     public void stop(){
         this.stopped = true;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            TaskScheduler d = (TaskScheduler) o;
+            return new EqualsBuilder().append(d.runnable, this.runnable).build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(27, 19)
+                .append(runnable).toHashCode();
     }
 }

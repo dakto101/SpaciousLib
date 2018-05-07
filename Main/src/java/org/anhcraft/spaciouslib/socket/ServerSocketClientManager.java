@@ -100,7 +100,7 @@ public class ServerSocketClientManager extends SocketHandler {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(28, 12)
+        return new HashCodeBuilder(25, 33)
                 .append(this.client.getInetAddress()).toHashCode();
     }
 }

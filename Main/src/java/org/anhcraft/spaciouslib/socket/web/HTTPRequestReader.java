@@ -183,7 +183,7 @@ public class HTTPRequestReader{
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(31, 19)
+        return new HashCodeBuilder(35, 19)
                 .append(this.fields).toHashCode();
     }
 }

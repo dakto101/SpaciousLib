@@ -128,7 +128,7 @@ public class TimedList<E> {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(20, 33)
+        return new HashCodeBuilder(21, 33)
                 .append(this.a).append(this.b).toHashCode();
     }
 }

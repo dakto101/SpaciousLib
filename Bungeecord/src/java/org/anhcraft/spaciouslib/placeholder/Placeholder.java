@@ -36,7 +36,7 @@ public abstract class Placeholder {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(11, 52)
+        return new HashCodeBuilder(39, 11)
                 .append(getPlaceholder()).toHashCode();
     }
 }

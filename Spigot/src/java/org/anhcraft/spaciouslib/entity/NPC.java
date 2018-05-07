@@ -270,7 +270,7 @@ public class NPC {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(6, 17)
+        return new HashCodeBuilder(17, 27)
                 .append(this.gameProfile).append(this.location).append(this.tablist).append(this.entity).append(this.viewers).toHashCode();
     }
 }

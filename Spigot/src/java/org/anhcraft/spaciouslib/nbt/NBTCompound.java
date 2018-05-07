@@ -308,7 +308,7 @@ public abstract class NBTCompound {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(23, 47)
+        return new HashCodeBuilder(33, 21)
                 .append(tags).toHashCode();
     }
 }

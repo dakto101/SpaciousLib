@@ -136,7 +136,7 @@ public class Attribute {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(7, 30)
+        return new HashCodeBuilder(23, 7)
                 .append(modifiers).append(type).toHashCode();
     }
 }

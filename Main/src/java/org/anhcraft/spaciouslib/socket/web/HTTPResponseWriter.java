@@ -133,7 +133,7 @@ public class HTTPResponseWriter {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(30, 17)
+        return new HashCodeBuilder(31, 15)
                 .append(this.fields).toHashCode();
     }
 }

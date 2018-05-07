@@ -87,7 +87,7 @@ public class ServerSocketManager extends Thread {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(29, 14)
+        return new HashCodeBuilder(35, 51)
                 .append(this.clients).toHashCode();
     }
 }

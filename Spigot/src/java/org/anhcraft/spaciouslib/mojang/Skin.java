@@ -77,7 +77,7 @@ public class Skin {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(14, 31)
+        return new HashCodeBuilder(15, 43)
                 .append(this.signature)
                 .append(this.value).toHashCode();
     }

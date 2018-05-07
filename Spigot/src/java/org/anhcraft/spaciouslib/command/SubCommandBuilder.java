@@ -285,7 +285,7 @@ public class SubCommandBuilder extends CommandString{
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(16, 47)
+        return new HashCodeBuilder(15, 47)
                 .append(this.description)
                 .append(this.name)
                 .append(this.rootRunnable)

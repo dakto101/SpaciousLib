@@ -328,7 +328,7 @@ public class Hologram {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(9, 16)
+        return new HashCodeBuilder(9, 17)
                 .append(this.entities).append(this.lineSpacing).append(this.viewers)
                 .append(this.lines).append(this.location).toHashCode();
     }

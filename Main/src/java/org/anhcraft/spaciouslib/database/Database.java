@@ -81,7 +81,7 @@ public abstract class Database {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(4, 31)
+        return new HashCodeBuilder(5, 31)
                 .append(conn).append(state).toHashCode();
     }
 }

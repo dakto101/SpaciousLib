@@ -99,7 +99,7 @@ public class TimedSet<E> {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(17, 14)
+        return new HashCodeBuilder(21, 17)
                 .append(this.data).toHashCode();
     }
 }

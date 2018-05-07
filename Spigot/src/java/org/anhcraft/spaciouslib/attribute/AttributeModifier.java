@@ -128,7 +128,7 @@ public class AttributeModifier {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(5, 14)
+        return new HashCodeBuilder(29, 11)
                 .append(amount)
                 .append(uuid)
                 .append(operation)

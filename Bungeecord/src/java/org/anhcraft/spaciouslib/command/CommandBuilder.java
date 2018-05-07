@@ -333,7 +333,7 @@ public class CommandBuilder extends CommandString {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(18, 33)
+        return new HashCodeBuilder(19, 33)
                 .append(this.command)
                 .append(this.name)
                 .append(this.rootCmd)
