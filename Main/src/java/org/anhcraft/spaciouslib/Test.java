@@ -2,12 +2,15 @@ package org.anhcraft.spaciouslib;
 
 import net.pieroxy.ua.detection.Browser;
 import org.anhcraft.spaciouslib.io.FileManager;
+import org.anhcraft.spaciouslib.scheduler.DelayedTask;
+import org.anhcraft.spaciouslib.scheduler.TimerTask;
 import org.anhcraft.spaciouslib.socket.ServerSocketClientManager;
 import org.anhcraft.spaciouslib.socket.ServerSocketHandler;
 import org.anhcraft.spaciouslib.socket.ServerSocketManager;
 import org.anhcraft.spaciouslib.socket.web.HTTPRequestReader;
 import org.anhcraft.spaciouslib.socket.web.HTTPResponseWriter;
 import org.anhcraft.spaciouslib.socket.web.WebServerManager;
+import org.anhcraft.spaciouslib.utils.TimeUnit;
 import org.anhcraft.spaciouslib.utils.TimedList;
 import org.anhcraft.spaciouslib.utils.TimedMap;
 import org.anhcraft.spaciouslib.utils.TimedSet;
@@ -18,7 +21,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Test {
+    private static TimerTask task;
+
     public static void main(String[] args){
+        task = new TimerTask(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Your message...");
+            }
+        }, 0, 1);
+        task.run();
+        new DelayedTask(new Runnable() {
+            @Override
+            public void run() {
+                task.stop();
+                System.out.println("Stopped.");
+            }
+        }, (long) TimeUnit.MINUTE.getSeconds()).run();
+        /////////////////////////////////////////////////////////////////////////
+
         // creates a web server
         new WebServerManager(new ServerSocketHandler() {
             @Override

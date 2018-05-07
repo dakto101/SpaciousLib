@@ -6,7 +6,7 @@ import net.md_5.bungee.api.plugin.Cancellable;
 import net.md_5.bungee.api.plugin.Event;
 
 /**
- * An event triggers when a packet was sent from the server or received by the server.<br>
+ * An event triggers when a packet was sent from the proxy or received by the proxy.<br>
  * This event is not ran in the main thread.
  */
 public class PacketHandleEvent extends Event implements Cancellable {

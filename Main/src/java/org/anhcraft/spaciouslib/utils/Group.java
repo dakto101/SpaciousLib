@@ -75,7 +75,7 @@ public class Group<A, B> {
 
     @Override
     public int hashCode(){
-        return new HashCodeBuilder(24, 44)
+        return new HashCodeBuilder(23, 45)
                 .append(this.a).append(this.b).toHashCode();
     }
 }

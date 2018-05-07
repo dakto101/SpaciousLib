@@ -12,7 +12,7 @@ public class RandomUtils {
     /**
      * Picks a random element from the given list
      * @param list the list
-     * @return the random element of that list
+     * @return the random element in that list
      */
     public static <X> X pickRandom(List<X> list) {
         if(list.size() == 0){
@@ -24,7 +24,7 @@ public class RandomUtils {
     /**
      * Picks a random element from the given array
      * @param array the array
-     * @return the random element of that array
+     * @return the random element in that array
      */
     public static <X> X pickRandom(X[] array) {
         if(array.length == 0){

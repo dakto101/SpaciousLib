@@ -6,8 +6,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.anhcraft.spaciouslib.utils.Group;
+import org.anhcraft.spaciouslib.utils.ProxyUtils;
 import org.apache.commons.io.IOUtils;
 
+import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -46,14 +49,20 @@ public class MojangAPI {
 
     /**
      * Gets the skin data of a player.<br>
-     * Warning: The limit request is 1 request/minute<br>
+     * SpaciousLib will use a random HTTPS proxy to bypass the limit rate.<br>
      * <b>Please use SkinAPI instead</b>
      * @param player the unique id of the player
      * @return a group of two string objects. The first is the skin value, and the second is the skin signature
      */
     public static Group<String, String> getSkin(UUID player) throws Exception {
         String url = "https://sessionserver.mojang.com/session/minecraft/profile/"+player.toString().replace("-", "")+"?unsigned=false";
-        String json = IOUtils.toString(new URL(url), StandardCharsets.UTF_8);
+        HttpURLConnection connection = (HttpURLConnection) (new URL(url)
+                .openConnection(ProxyUtils.getRandom(Proxy.Type.HTTP)));
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+        connection.setRequestMethod("GET");
+        String json = new String(IOUtils.toByteArray(connection.getInputStream()));
         JsonObject obj = new Gson().fromJson(json, new TypeToken<JsonObject>(){}.getType());
         if(obj.has("properties")){
             JsonArray properties = obj.get("properties").getAsJsonArray();
