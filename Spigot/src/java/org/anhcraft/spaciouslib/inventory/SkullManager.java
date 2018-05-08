@@ -53,7 +53,7 @@ public class SkullManager extends ItemManager {
                 data = 0;
                 break;
         }
-        this.item.getData().setData(data);
+        this.item.setDurability(data);
     }
 
     /**
@@ -62,7 +62,8 @@ public class SkullManager extends ItemManager {
      */
     public SkullManager(Skin skin) {
         super(new ItemStack(Material.SKULL_ITEM, 1));
-        this.item.getData().setData((byte) 3);
+        this.item.setDurability((byte) 3);
+        setSkin(skin);
     }
 
     /**
@@ -71,7 +72,7 @@ public class SkullManager extends ItemManager {
      * @param skin the skin
      */
     public void setSkin(Skin skin){
-        NBTCompound root = NBTLoader.fromItem(item);
+        NBTCompound root = NBTLoader.fromItem(this.item);
         NBTCompound skullOwner = NBTLoader.create();
         if(root.hasKey("SkullOwner")){
             skullOwner = root.getCompound("SkullOwner");
@@ -97,7 +98,7 @@ public class SkullManager extends ItemManager {
      * @return the skin
      */
     public Skin getSkin(){
-        NBTCompound root = NBTLoader.fromItem(item);
+        NBTCompound root = NBTLoader.fromItem(this.item);
         NBTCompound skullOwner = NBTLoader.create();
         if(root.hasKey("SkullOwner")){
             skullOwner = root.getCompound("SkullOwner");
