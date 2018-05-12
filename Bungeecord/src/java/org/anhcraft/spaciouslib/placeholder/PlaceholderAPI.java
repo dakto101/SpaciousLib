@@ -3,6 +3,7 @@ package org.anhcraft.spaciouslib.placeholder;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.anhcraft.spaciouslib.SpaciousLib;
+import org.anhcraft.spaciouslib.listeners.PlayerCleaner;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -90,6 +91,30 @@ public class PlaceholderAPI {
             }
         });
 
+        register(new FixedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{player_ip_host}";
+            }
+
+            @Override
+            public String getValue(ProxiedPlayer player) {
+                return player.getPendingConnection().getVirtualHost().getHostName();
+            }
+        });
+
+        register(new FixedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{player_ip_port}";
+            }
+
+            @Override
+            public String getValue(ProxiedPlayer player) {
+                return Integer.toString(player.getPendingConnection().getVirtualHost().getPort());
+            }
+        });
+
         for(ProxiedPlayer player: ProxyServer.getInstance().getPlayers()) {
             PlaceholderAPI.updateCache(player);
         }
@@ -108,7 +133,9 @@ public class PlaceholderAPI {
             }
         }
         if(placeholder instanceof CachedPlaceholder){
-            ((CachedPlaceholder) placeholder).updateCache();
+            CachedPlaceholder cache = (CachedPlaceholder) placeholder;
+            cache.updateCache();
+            PlayerCleaner.add(cache.cache);
         }
         data.put(placeholder.getPlaceholder(), placeholder);
     }
@@ -118,6 +145,10 @@ public class PlaceholderAPI {
      * @param placeholder Placeholder object
      */
     public static void unregister(Placeholder placeholder){
+        if(placeholder instanceof CachedPlaceholder){
+            CachedPlaceholder cache = (CachedPlaceholder) placeholder;
+            PlayerCleaner.remove(cache.cache);
+        }
         data.remove(placeholder.getPlaceholder());
     }
 
@@ -126,6 +157,11 @@ public class PlaceholderAPI {
      * @param placeholder the placeholder name
      */
     public static void unregister(String placeholder){
+        Placeholder p = data.get(placeholder);
+        if(p instanceof CachedPlaceholder){
+            CachedPlaceholder cache = (CachedPlaceholder) p;
+            PlayerCleaner.remove(cache.cache);
+        }
         data.remove(placeholder);
     }
 
@@ -137,10 +173,14 @@ public class PlaceholderAPI {
      */
     public static String replace(String text, ProxiedPlayer player){
         for(Placeholder p : data.values()){
+            String x;
             if(p instanceof CachedPlaceholder){
-                text = text.replace(p.getPlaceholder(), ((CachedPlaceholder) p).getCache(player));
+                x = ((CachedPlaceholder) p).getCache(player);
             } else {
-                text = text.replace(p.getPlaceholder(), p.getValue(player));
+                x = p.getValue(player);
+            }
+            if(x != null) {
+                text = text.replace(p.getPlaceholder(), x);
             }
         }
         return text;

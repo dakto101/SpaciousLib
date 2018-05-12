@@ -15,6 +15,7 @@ import org.anhcraft.spaciouslib.utils.TimedList;
 import org.anhcraft.spaciouslib.utils.TimedMap;
 import org.anhcraft.spaciouslib.utils.TimedSet;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,6 +25,8 @@ public class Test {
     private static TimerTask task;
 
     public static void main(String[] args){
+        System.out.println(Color.GREEN.getGreen());
+
         task = new TimerTask(new Runnable() {
             @Override
             public void run() {

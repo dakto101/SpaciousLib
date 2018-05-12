@@ -24,7 +24,7 @@ public class Hologram {
     private LinkedList<String> lines = new LinkedList<>();
     private Location location;
     private double lineSpacing = 0.25;
-    private List<UUID> viewers = new ArrayList<>();
+    private Set<UUID> viewers = new HashSet<>();
 
     /**
      * Creates a new Hologram instance
@@ -87,7 +87,7 @@ public class Hologram {
      * Gets all viewers
      * @return a list contains unique ids of viewers
      */
-    public List<UUID> getViewers(){
+    public Set<UUID> getViewers(){
         return this.viewers;
     }
 
@@ -160,7 +160,7 @@ public class Hologram {
      * @param viewers a list contains unique ids of viewers
      * @return this object
      */
-    public Hologram setViewers(List<UUID> viewers) {
+    public Hologram setViewers(Set<UUID> viewers) {
         this.viewers = viewers;
         return this;
     }

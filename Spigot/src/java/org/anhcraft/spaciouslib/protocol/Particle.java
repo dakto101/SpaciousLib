@@ -3,9 +3,10 @@ package org.anhcraft.spaciouslib.protocol;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+
+import java.awt.*;
 
 /**
  * A class helps you to send particle packets
@@ -77,7 +78,7 @@ public class Particle {
         return create(type, location, count, 0, 0, 0, false, 0, Material.AIR, 0);
     }
 
-    public static PacketSender create(Type type, Location location, int count, Color color){
+    public static PacketSender create(Type type, Location location, Color color){
         float offsetX = (float) color.getRed() / 255;
         float offsetY = (float) color.getGreen() / 255;
         float offsetZ = (float) color.getBlue() / 255;
@@ -92,7 +93,25 @@ public class Particle {
             offsetZ = 0;
         }
 
-        return create(type, location, count, offsetX, offsetY, offsetZ, false, 1, Material.AIR, 0);
+        return create(type, location, 0, offsetX, offsetY, offsetZ, false, 1, Material.AIR, 0);
+    }
+
+    public static PacketSender create(Color color, Location location){
+        float offsetX = (float) color.getRed() / 255;
+        float offsetY = (float) color.getGreen() / 255;
+        float offsetZ = (float) color.getBlue() / 255;
+
+        if (offsetX < 0) {
+            offsetX = 0;
+        }
+        if (offsetY < 0) {
+            offsetY = 0;
+        }
+        if (offsetZ < 0) {
+            offsetZ = 0;
+        }
+
+        return create(Type.SPELL_MOB, location, 0, offsetX, offsetY, offsetZ, false, 1, Material.AIR, 0);
     }
 
     public static PacketSender create(Type type, Location location, int count, int speed){

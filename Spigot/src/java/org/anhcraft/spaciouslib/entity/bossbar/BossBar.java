@@ -56,7 +56,7 @@ public class BossBar {
     private Color color = Color.BLUE;
     private Style style = Style.PROGRESS;
     private HashSet<Flag> flags = new HashSet<>();
-    private List<UUID> viewers = new ArrayList<>();
+    private Set<UUID> viewers = new HashSet<>();
 
     // 1.8
     private BukkitTask task;
@@ -76,7 +76,7 @@ public class BossBar {
         locationTracker = new LinkedHashMap<>();
         entities = new LinkedHashMap<>();
         bossBattles = new LinkedHashMap<>();
-        viewers = new ArrayList<>();
+        viewers = new HashSet<>();
         PlayerCleaner.remove(this.bossBattles);
         PlayerCleaner.remove(this.entities);
         PlayerCleaner.remove(this.locationTracker);
@@ -240,7 +240,7 @@ public class BossBar {
      * Gets all viewers
      * @return a list contains unique ids of the viewers
      */
-    public List<UUID> getViewers(){
+    public Set<UUID> getViewers(){
         return this.viewers;
     }
 
@@ -289,15 +289,15 @@ public class BossBar {
      * @param viewers a list contains unique ids of the viewers
      * @return this object
      */
-    public BossBar setViewers(List<UUID> viewers) {
+    public BossBar setViewers(Set<UUID> viewers) {
         // adds the boss bars for new viewers
-        List<UUID> add = new ArrayList<>(viewers); // clones
+        Set<UUID> add = new HashSet<>(viewers); // clones
         add.removeAll(this.viewers); // removes all existed viewers
         for(UUID player : add){
             add(player);
         }
         // removes the boss bars of old viewers which aren't existed in the new list
-        List<UUID> remove = new ArrayList<>(this.viewers); // clones
+        Set<UUID> remove = new HashSet<>(this.viewers); // clones
         remove.removeAll(viewers); // removes all non-existed viewers
         for(UUID player : remove){
             remove(player);

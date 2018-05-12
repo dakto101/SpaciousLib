@@ -18,16 +18,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class NPC {
     private Object nmsEntityPlayer;
     private int entity = -1;
     private GameProfile gameProfile;
     private Location location;
-    private List<UUID> viewers = new ArrayList<>();
+    private Set<UUID> viewers = new HashSet<>();
     private boolean tablist = false;
 
     private void init() {
@@ -108,7 +106,7 @@ public class NPC {
      * Gets all viewers
      * @return a list contains unique ids of viewers
      */
-    public List<UUID> getViewers(){
+    public Set<UUID> getViewers(){
         return this.viewers;
     }
 
@@ -125,7 +123,7 @@ public class NPC {
      * @param viewers a list contains unique ids of viewers
      * @return this object
      */
-    public NPC setViewers(List<UUID> viewers) {
+    public NPC setViewers(Set<UUID> viewers) {
         this.viewers = viewers;
         return this;
     }

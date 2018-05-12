@@ -28,8 +28,4 @@ public abstract class CachedPlaceholder extends Placeholder {
     protected String getCache(ProxiedPlayer player){
         return cache.get(player.getUniqueId());
     }
-
-    public void removeCache(ProxiedPlayer player){
-        cache.remove(player.getUniqueId());
-    }
 }

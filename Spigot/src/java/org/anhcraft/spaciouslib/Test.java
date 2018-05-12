@@ -11,6 +11,7 @@ import org.anhcraft.spaciouslib.command.CommandBuilder;
 import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SubCommandBuilder;
 import org.anhcraft.spaciouslib.database.SQLiteDatabase;
+import org.anhcraft.spaciouslib.effects.*;
 import org.anhcraft.spaciouslib.entity.Hologram;
 import org.anhcraft.spaciouslib.entity.NPC;
 import org.anhcraft.spaciouslib.entity.PlayerManager;
@@ -23,6 +24,8 @@ import org.anhcraft.spaciouslib.mojang.MojangAPI;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
 import org.anhcraft.spaciouslib.placeholder.FixedPlaceholder;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
+import org.anhcraft.spaciouslib.protocol.Particle;
+import org.anhcraft.spaciouslib.scheduler.TimerTask;
 import org.anhcraft.spaciouslib.socket.ClientSocketHandler;
 import org.anhcraft.spaciouslib.socket.ClientSocketManager;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
@@ -46,14 +49,17 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.SpigotConfig;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Test implements Listener {
     private static final File DB_FILE = new File("test.db");
     private static ClientSocketManager client;
+    private static double[] effectRotateAngle = new double[3];
 
     public Test(){
 
@@ -282,6 +288,131 @@ public class Test implements Listener {
                         }
                     }))
 
+
+                    .addSubCommand(new SubCommandBuilder("effect circle", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                CircleEffect effect = new CircleEffect(player.getLocation());
+                                effect.setRadius(5);
+                                effect.addNearbyViewers(10);
+                                new TimerTask(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        effect.setParticleColor(new Color(
+                                                ThreadLocalRandom.current().nextInt(0, 256),
+                                                ThreadLocalRandom.current().nextInt(0, 256),
+                                                ThreadLocalRandom.current().nextInt(0, 256)
+                                        ));
+                                        effect.setAngleX(effectRotateAngle[0]);
+                                        effect.setAngleY(effectRotateAngle[0]);
+                                        effect.setAngleZ(effectRotateAngle[0]);
+                                        effect.spawn();
+                                        effectRotateAngle[0]++;
+                                    }
+                                }, 0, 0.05, 60).run();
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("effect image", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                ImageEffect effect = new ImageEffect(player.getLocation(), getClass().getResourceAsStream("/test.png"));
+                                effect.setAngleX(90);
+                                effect.addNearbyViewers(10);
+                                effect.setImageSize(0.5);
+                                effect.setParticleAmount(effect.getParticleAmount() * 20);
+                                new TimerTask(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        effect.spawn();
+                                    }
+                                }, 0, 1, 120).run();
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("effect cuboid", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                CuboidEffect effect = new CuboidEffect(player.getLocation(),
+                                        10, 10, 10, true);
+                                effect.addViewer(player.getUniqueId());
+                                effect.setParticleType(Particle.Type.FLAME);
+                                effect.setParticleAmount(effect.getParticleAmount() * 2);
+                                new TimerTask(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        effect.setAngleX(effectRotateAngle[1]);
+                                        effect.setAngleY(effectRotateAngle[1]);
+                                        effect.setAngleZ(effectRotateAngle[1]);
+                                        effect.spawn();
+                                        effectRotateAngle[1]++;
+                                    }
+                                }, 0, 0.05, 60).run();
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("effect vortex", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                VortexEffect effect = new VortexEffect(player.getLocation());
+                                effect.addViewer(player.getUniqueId());
+                                effect.setParticleType(Particle.Type.FLAME);
+                                effect.setParticleAmount(800);
+                                effect.setVortexLineAmount(8);
+                                effect.setVortexLineLength(2);
+                                new TimerTask(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        effect.setAngleX(effectRotateAngle[2]);
+                                        effect.setAngleY(effectRotateAngle[2]);
+                                        effect.setAngleZ(effectRotateAngle[2]);
+                                        effect.spawn();
+                                        effectRotateAngle[2]++;
+                                    }
+                                }, 0, 0.05, 60).run();
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("effect cone", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                ConeEffect effect = new ConeEffect(player.getLocation());
+                                effect.addViewer(player.getUniqueId());
+                                effect.setParticleType(Particle.Type.FLAME);
+                                effect.setParticleAmount(800);
+                                effect.spawn();
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("effect line", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                LineEffect effect = new LineEffect(player.getLocation(), 10);
+                                effect.addViewer(player.getUniqueId());
+                                effect.setParticleType(Particle.Type.TOTEM);
+                                effect.setParticleAmount(100);
+                                effect.spawn();
+                            }
+                        }
+                    }))
+
                     // build the command executor
                     .buildExecutor(SpaciousLib.instance);
         } catch(Exception e) {
@@ -351,9 +482,8 @@ public class Test implements Listener {
     @EventHandler
     public void packet(PacketHandleEvent event){
         if(event.getPacket().getClass().getSimpleName().equals("PacketPlayInChat")){
-            if(event.getPacketValue("a").toString().equalsIgnoreCase("test")){
-                event.setCancelled(true);
-            }
+            event.setPacketValue("a", PlaceholderAPI.replace((String) event.getPacketValue("a"),
+                    event.getPlayer()));
         }
     }
 

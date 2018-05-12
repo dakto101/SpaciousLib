@@ -30,7 +30,7 @@ public class PlayerCleaner implements Listener {
             if(obj instanceof Collection){
                 ((Collection<UUID>) obj).remove(event.getPlayer().getUniqueId());
             }
-            if(obj instanceof Map){
+            else if(obj instanceof Map){
                 ((Map<UUID, ?>) obj).remove(event.getPlayer().getUniqueId());
             }
         }

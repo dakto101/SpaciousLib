@@ -1,14 +1,14 @@
 package org.anhcraft.spaciouslib.scheduler;
 
 public class DelayedTask extends TaskScheduler {
-    private long delay;
+    private double delay;
 
     /**
      * Creates a delayed scheduler
      * @param runnable the runnable for executing
      * @param delay the delay time (in seconds) before execute
      */
-    public DelayedTask(Runnable runnable, long delay) {
+    public DelayedTask(Runnable runnable, double delay) {
         super(runnable);
         this.delay = delay;
     }
@@ -19,7 +19,7 @@ public class DelayedTask extends TaskScheduler {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(delay*1000);
+                    Thread.sleep((long) (delay*1000));
                     if(!stopped){
                         runnable.run();
                         stopped = true;
