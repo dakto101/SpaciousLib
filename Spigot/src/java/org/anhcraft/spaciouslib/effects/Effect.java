@@ -33,6 +33,10 @@ public abstract class Effect {
     protected int particleData;
     protected Color particleColor;
 
+    /**
+     * Creates a new Effect instance
+     * @param location a location
+     */
     public Effect(Location location){
         this.location = location;
         this.angleX = 0;
@@ -52,144 +56,284 @@ public abstract class Effect {
         this.particleColor = Color.WHITE;
     }
 
+    /**
+     * Gets the location which this effect will spawn at
+     * @return the location
+     */
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Sets the location which this effect will spawn at
+     * @param location a location
+     */
     public void setLocation(Location location) {
         this.location = location;
     }
 
+    /**
+     * Gets the angle of rotation in x-axis
+     * @return the angle
+     */
     public double getAngleX() {
         return angleX;
     }
 
+    /**
+     * Sets the angle of rotation in x-axis
+     * @param angleX the angle
+     */
     public void setAngleX(double angleX) {
         this.angleX = angleX;
     }
 
+    /**
+     * Gets the angle of rotation in y-axis
+     * @return the angle
+     */
     public double getAngleY() {
         return angleY;
     }
 
+    /**
+     * Sets the angle of rotation in y-axis
+     * @param angleY the angle
+     */
     public void setAngleY(double angleY) {
         this.angleY = angleY;
     }
 
+    /**
+     * Gets the angle of rotation in z-axis
+     * @return the angle
+     */
     public double getAngleZ() {
         return angleZ;
     }
 
+    /**
+     * Sets the angle of rotation in z-axis
+     * @param angleZ the angle
+     */
     public void setAngleZ(double angleZ) {
         this.angleZ = angleZ;
     }
 
+    /**
+     * Gets all viewers
+     * @return a list contains unique ids of viewers
+     */
     public List<UUID> getViewers() {
         return viewers;
     }
 
+    /**
+     * Sets the viewers who you want to show this effect to
+     * @param viewers a list contains unique ids of viewers
+     */
     public void setViewers(List<UUID> viewers) {
         this.viewers = viewers;
     }
 
+    /**
+     * Adds a viewer who you want to show this effect to
+     * @param viewer the unique id of a viewer
+     */
     public void addViewer(UUID viewer) {
         this.viewers.add(viewer);
     }
 
+    /**
+     * Adds all viewers who are near the spawning location
+     * @param radius the radius
+     */
     public void addNearbyViewers(double radius) {
         for(Entity entity : location.getWorld().getNearbyEntities(location, radius, radius, radius).stream().filter(entity -> entity instanceof Player).collect(Collectors.toList())){
             addViewer(entity.getUniqueId());
         }
     }
 
+    /**
+     * Removes a player
+     * @param viewer the unique id of a player
+     */
     public void removeViewer(UUID viewer) {
         this.viewers.remove(viewer);
     }
 
+    /**
+     * Gets the particle type of this effect
+     * @return the type of particle
+     */
     public Particle.Type getParticleType() {
         return particleType;
     }
 
+    /**
+     * Sets the particle type for this effect
+     * @param particleType the type of particle
+     */
     public void setParticleType(Particle.Type particleType) {
         this.particleType = particleType;
     }
 
+    /**
+     * Gets the allowed amount of particles
+     * @return the amount
+     */
     public double getParticleAmount() {
         return particleAmount;
     }
 
+    /**
+     * Sets the allowed amount of particles
+     * @param particleAmount the amount
+     */
     public void setParticleAmount(double particleAmount) {
         this.particleAmount = particleAmount;
     }
 
+    /**
+     * Is this particle can be viewed from long distance
+     * @return true if yes
+     */
     public boolean isParticleLongDistance() {
         return particleLongDistance;
     }
 
+    /**
+     * Allows or disallows this particle can be viewed from long distance
+     * @param particleDistance true if allows
+     */
     public void setParticleLongDistance(boolean particleDistance) {
         this.particleLongDistance = particleDistance;
     }
 
+    /**
+     * Gets the particle count
+     * @return the particle count
+     */
     public int getParticleCount() {
         return particleCount;
     }
 
+    /**
+     * Sets the particle count
+     * @param particleCount particle count
+     */
     public void setParticleCount(int particleCount) {
         this.particleCount = particleCount;
     }
 
+    /**
+     * Gets the offset in x-axis
+     * @return the offset
+     */
     public float getParticleOffsetX() {
         return particleOffsetX;
     }
 
+    /**
+     * Sets the offset in x-axis
+     * @param particleOffsetX the offset
+     */
     public void setParticleOffsetX(float particleOffsetX) {
         this.particleOffsetX = particleOffsetX;
     }
 
+    /**
+     * Gets the offset in y-axis
+     * @return the offset
+     */
     public float getParticleOffsetY() {
         return particleOffsetY;
     }
 
+    /**
+     * Sets the offset in y-axis
+     * @param particleOffsetY the offset
+     */
     public void setParticleOffsetY(float particleOffsetY) {
         this.particleOffsetY = particleOffsetY;
     }
 
+    /**
+     * Gets the offset in z-axis
+     * @return the offset
+     */
     public float getParticleOffsetZ() {
         return particleOffsetZ;
     }
 
+    /**
+     * Sets the offset in z-axis
+     * @param particleOffsetZ the offset
+     */
     public void setParticleOffsetZ(float particleOffsetZ) {
         this.particleOffsetZ = particleOffsetZ;
     }
 
+    /**
+     * Gets 'the speed' of the particle
+     * @return 'the speed'
+     */
     public float getParticleSpeed() {
         return particleSpeed;
     }
 
+    /**
+     * Sets 'the speed' for the particle
+     * @param particleSpeed 'the speed'
+     */
     public void setParticleSpeed(float particleSpeed) {
         this.particleSpeed = particleSpeed;
     }
 
+    /**
+     * Gets the material of the particle
+     * @return the material
+     */
     public Material getParticleMaterial() {
         return particleMaterial;
     }
 
+    /**
+     * Sets the material for the particle
+     * @param particleMaterial the material
+     */
     public void setParticleMaterial(Material particleMaterial) {
         this.particleMaterial = particleMaterial;
     }
 
+    /**
+     * Gets the data of the particle
+     * @return the data
+     */
     public int getParticleData() {
         return particleData;
     }
 
+    /**
+     * Sets the data for the particle
+     * @param particleData the data
+     */
     public void setParticleData(int particleData) {
         this.particleData = particleData;
     }
 
+    /**
+     * Gets the color of this particle
+     * @return the color
+     */
     public Color getParticleColor() {
         return particleColor;
     }
 
+    /**
+     * Sets the color for this particle
+     * @param particleColor the color
+     */
     public void setParticleColor(Color particleColor) {
         this.particleColor = particleColor;
         particleOffsetX = (float) particleColor.getRed() / 255;
@@ -211,6 +355,9 @@ public abstract class Effect {
         setParticleType(Particle.Type.SPELL_MOB);
     }
 
+    /**
+     * Spawns this effect
+     */
     public abstract void spawn();
 
     protected double safeDivide(double dividend, double divisor){
