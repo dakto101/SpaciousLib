@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.listeners;
 
+import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.anvil.Anvil;
 import org.anhcraft.spaciouslib.anvil.Anvil.Handler;
 import org.anhcraft.spaciouslib.compatibility.CompatibilityInventoryClickEvent;
@@ -18,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.UUID;
 
 public class AnvilListener implements Listener {
+    @PlayerCleaner
     public static LinkedHashMap<UUID, Group<Inventory, Handler>> data = new LinkedHashMap<>();
 
     @EventHandler

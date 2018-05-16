@@ -1,6 +1,7 @@
 package org.anhcraft.spaciouslib.entity;
 
-import org.anhcraft.spaciouslib.listeners.PlayerCleaner;
+import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
+import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.protocol.EntityDestroy;
 import org.anhcraft.spaciouslib.protocol.EntityTeleport;
 import org.anhcraft.spaciouslib.protocol.LivingEntitySpawn;
@@ -24,6 +25,7 @@ public class Hologram {
     private LinkedList<String> lines = new LinkedList<>();
     private Location location;
     private double lineSpacing = 0.25;
+    @PlayerCleaner
     private Set<UUID> viewers = new HashSet<>();
 
     /**
@@ -60,7 +62,7 @@ public class Hologram {
     }
 
     private void init() {
-        PlayerCleaner.add(this.viewers);
+        AnnotationHandler.register(Hologram.class, this);
     }
 
     /**
@@ -97,7 +99,7 @@ public class Hologram {
      * @return this object
      */
     public Hologram addLine(String content){
-        this.lines.add(Chat.color(content));
+        this.lines.addFirst(Chat.color(content));
         return this;
     }
 
@@ -308,7 +310,7 @@ public class Hologram {
             EntityDestroy.create(hw).sendPlayers(receivers);
         }
         this.entities = new LinkedHashMap<>();
-        PlayerCleaner.remove(this.viewers);
+        AnnotationHandler.unregister(Hologram.class, this);
     }
 
     @Override

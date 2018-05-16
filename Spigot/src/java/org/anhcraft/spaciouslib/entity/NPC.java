@@ -2,8 +2,9 @@ package org.anhcraft.spaciouslib.entity;
 
 import com.mojang.authlib.GameProfile;
 import org.anhcraft.spaciouslib.SpaciousLib;
+import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
+import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.listeners.NPCInteractEventListener;
-import org.anhcraft.spaciouslib.listeners.PlayerCleaner;
 import org.anhcraft.spaciouslib.protocol.EntityDestroy;
 import org.anhcraft.spaciouslib.protocol.EntityTeleport;
 import org.anhcraft.spaciouslib.protocol.NamedEntitySpawn;
@@ -25,12 +26,13 @@ public class NPC {
     private int entity = -1;
     private GameProfile gameProfile;
     private Location location;
+    @PlayerCleaner
     private Set<UUID> viewers = new HashSet<>();
     private boolean tablist = false;
 
     private void init() {
         NPCInteractEventListener.data.add(this);
-        PlayerCleaner.add(this.viewers);
+        AnnotationHandler.register(NPC.class, this);
     }
 
     /**
@@ -248,7 +250,7 @@ public class NPC {
         EntityDestroy.create(this.entity).sendPlayers(receivers);
         this.entity = -1;
         NPCInteractEventListener.data.remove(this);
-        PlayerCleaner.remove(this.viewers);
+        AnnotationHandler.unregister(NPC.class, this);
     }
 
     @Override

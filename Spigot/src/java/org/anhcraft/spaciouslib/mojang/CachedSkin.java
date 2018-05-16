@@ -12,8 +12,8 @@ import java.util.UUID;
  * The skin will be renewed automatically when it expired.
  */
 public class CachedSkin {
-    private int cachedTime = 0;
-    private long expiredTime = 0;
+    private int cachedTime;
+    private long expiredTime;
     private Skin skin;
     private UUID owner;
 

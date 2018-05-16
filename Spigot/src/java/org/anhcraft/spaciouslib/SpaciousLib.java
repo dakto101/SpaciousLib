@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib;
 
+import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.bungee.BungeeAPI;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
 import org.anhcraft.spaciouslib.io.FileManager;
@@ -72,15 +73,18 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PacketListener(), this);
         getServer().getPluginManager().registerEvents(new PlaceholderListener(), this);
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerCleaner(), this);
+        getServer().getPluginManager().registerEvents(new PlayerCleanerListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
         getServer().getPluginManager().registerEvents(new NPCInteractEventListener(), this);
         getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, new BungeeListener());
 
-        PlayerCleaner.add(AnvilListener.data);
-        if(Bukkit.getServer().getPluginManager().isPluginEnabled("Vault") && VaultUtils.init()){
-            chat.sendSender("&aHooked to Vault plugin...");
+        AnnotationHandler.register(AnvilListener.class, null);
+        if(Bukkit.getServer().getPluginManager().isPluginEnabled("Vault")){
+            VaultUtils.init();
+            if(VaultUtils.isInitialized()) {
+                chat.sendSender("&aHooked to Vault plugin...");
+            }
         }
 
         if(config.getBoolean("dev_mode")){

@@ -47,8 +47,6 @@ public class ClickableItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void close(InventoryCloseEvent event){
-        if(data.containsKey(event.getInventory())){
-            data.remove(event.getInventory());
-        }
+        data.remove(event.getInventory());
     }
 }

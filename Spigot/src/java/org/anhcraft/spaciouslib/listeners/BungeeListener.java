@@ -20,11 +20,20 @@ public class BungeeListener implements PluginMessageListener {
                 String sc = data.readUTF();
                 switch(sc) {
                     case "skin":
-                        String player = data.readUTF();
+                        String player1 = data.readUTF();
                         String value = data.readUTF();
                         String signature = data.readUTF();
-                        new PlayerManager(Bukkit.getServer().getPlayer(player))
+                        new PlayerManager(Bukkit.getServer().getPlayer(player1))
                                 .changeSkin(new Skin(value, signature));
+                        break;
+                    case "cmdsv":
+                        String cmd1 = data.readUTF();
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd1);
+                        break;
+                    case "playercmdsv":
+                        String cmd2 = data.readUTF();
+                        String player2 = data.readUTF();
+                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getPlayer(player2), cmd2);
                         break;
                 }
             }

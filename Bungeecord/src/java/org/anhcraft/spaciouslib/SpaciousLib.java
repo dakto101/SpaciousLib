@@ -7,7 +7,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
 import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.listeners.PacketListener;
-import org.anhcraft.spaciouslib.listeners.PlayerCleaner;
+import org.anhcraft.spaciouslib.listeners.PlayerCleanerListener;
 import org.anhcraft.spaciouslib.listeners.SpigotListener;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
@@ -61,7 +61,7 @@ public final class SpaciousLib extends Plugin {
         chat.sendSender("&eRegistering the listeners...");
         getProxy().getPluginManager().registerListener(this, new PacketListener());
         getProxy().getPluginManager().registerListener(this, new SpigotListener());
-        getProxy().getPluginManager().registerListener(this, new PlayerCleaner());
+        getProxy().getPluginManager().registerListener(this, new PlayerCleanerListener());
 
         chat.sendSender("&eRegistering the messaging channel...");
         getProxy().registerChannel(CHANNEL);

@@ -1,9 +1,10 @@
 package org.anhcraft.spaciouslib.placeholder;
 
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.anhcraft.spaciouslib.SpaciousLib;
-import org.anhcraft.spaciouslib.listeners.PlayerCleaner;
+import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -115,6 +116,42 @@ public class PlaceholderAPI {
             }
         });
 
+        register(new FixedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{proxy_name}";
+            }
+
+            @Override
+            public String getValue(ProxiedPlayer player) {
+                return BungeeCord.getInstance().getName();
+            }
+        });
+
+        register(new CachedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{proxy_online}";
+            }
+
+            @Override
+            public String getValue(ProxiedPlayer player) {
+                return Integer.toString(BungeeCord.getInstance().getOnlineCount());
+            }
+        });
+
+        register(new FixedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{proxy_max_players}";
+            }
+
+            @Override
+            public String getValue(ProxiedPlayer player) {
+                return Integer.toString(BungeeCord.getInstance().getConfig().getPlayerLimit());
+            }
+        });
+
         for(ProxiedPlayer player: ProxyServer.getInstance().getPlayers()) {
             PlaceholderAPI.updateCache(player);
         }
@@ -135,7 +172,7 @@ public class PlaceholderAPI {
         if(placeholder instanceof CachedPlaceholder){
             CachedPlaceholder cache = (CachedPlaceholder) placeholder;
             cache.updateCache();
-            PlayerCleaner.add(cache.cache);
+            AnnotationHandler.register(CachedPlaceholder.class, cache);
         }
         data.put(placeholder.getPlaceholder(), placeholder);
     }
@@ -147,7 +184,7 @@ public class PlaceholderAPI {
     public static void unregister(Placeholder placeholder){
         if(placeholder instanceof CachedPlaceholder){
             CachedPlaceholder cache = (CachedPlaceholder) placeholder;
-            PlayerCleaner.remove(cache.cache);
+            AnnotationHandler.unregister(CachedPlaceholder.class, cache);
         }
         data.remove(placeholder.getPlaceholder());
     }
@@ -160,7 +197,7 @@ public class PlaceholderAPI {
         Placeholder p = data.get(placeholder);
         if(p instanceof CachedPlaceholder){
             CachedPlaceholder cache = (CachedPlaceholder) p;
-            PlayerCleaner.remove(cache.cache);
+            AnnotationHandler.unregister(CachedPlaceholder.class, cache);
         }
         data.remove(placeholder);
     }

@@ -1,9 +1,11 @@
 package org.anhcraft.spaciouslib.placeholder;
 
 import org.anhcraft.spaciouslib.SpaciousLib;
+import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.entity.PlayerManager;
-import org.anhcraft.spaciouslib.listeners.PlayerCleaner;
 import org.anhcraft.spaciouslib.utils.MathUtils;
+import org.anhcraft.spaciouslib.utils.ServerUtils;
+import org.anhcraft.spaciouslib.utils.VaultUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -309,6 +311,100 @@ public class PlaceholderAPI {
             }
         });
 
+        register(new CachedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{vault_balance}";
+            }
+
+            @Override
+            public String getValue(Player player) {
+                try {
+                    return Double.toString(Math.round(VaultUtils.getBalance(player)));
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+                return "0";
+            }
+        });
+
+        register(new CachedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{vault_permission_group}";
+            }
+
+            @Override
+            public String getValue(Player player) {
+                try {
+                    return VaultUtils.getPrimaryPermissionGroup(player);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+                return "0";
+            }
+        });
+
+        register(new FixedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{server_name}";
+            }
+
+            @Override
+            public String getValue(Player player) {
+                return Bukkit.getServer().getServerName();
+            }
+        });
+
+        register(new FixedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{server_motd}";
+            }
+
+            @Override
+            public String getValue(Player player) {
+                return Bukkit.getServer().getMotd();
+            }
+        });
+
+        register(new CachedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{server_online}";
+            }
+
+            @Override
+            public String getValue(Player player) {
+                return Integer.toString(Bukkit.getServer().getOnlinePlayers().size());
+            }
+        });
+
+        register(new FixedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{server_max_players}";
+            }
+
+            @Override
+            public String getValue(Player player) {
+                return Integer.toString(Bukkit.getServer().getMaxPlayers());
+            }
+        });
+
+        register(new CachedPlaceholder() {
+            @Override
+            public String getPlaceholder() {
+                return "{server_tps}";
+            }
+
+            @Override
+            public String getValue(Player player) {
+                return Double.toString(Math.round(ServerUtils.getTPS()));
+            }
+        });
+
         for(Player player : Bukkit.getServer().getOnlinePlayers()){
             PlaceholderAPI.updateCache(player);
         }
@@ -329,7 +425,7 @@ public class PlaceholderAPI {
         if(placeholder instanceof CachedPlaceholder){
             CachedPlaceholder cache = (CachedPlaceholder) placeholder;
             cache.updateCache();
-            PlayerCleaner.add(cache.cache);
+            AnnotationHandler.register(CachedPlaceholder.class, cache);
         }
         data.put(placeholder.getPlaceholder(), placeholder);
     }
@@ -341,7 +437,7 @@ public class PlaceholderAPI {
     public static void unregister(Placeholder placeholder){
         if(placeholder instanceof CachedPlaceholder){
             CachedPlaceholder cache = (CachedPlaceholder) placeholder;
-            PlayerCleaner.remove(cache.cache);
+            AnnotationHandler.unregister(CachedPlaceholder.class, cache);
         }
         data.remove(placeholder.getPlaceholder());
     }
@@ -354,7 +450,7 @@ public class PlaceholderAPI {
         Placeholder p = data.get(placeholder);
         if(p instanceof CachedPlaceholder){
             CachedPlaceholder cache = (CachedPlaceholder) p;
-            PlayerCleaner.remove(cache.cache);
+            AnnotationHandler.unregister(CachedPlaceholder.class, cache);
         }
         data.remove(placeholder);
     }

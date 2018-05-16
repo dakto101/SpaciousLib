@@ -2,6 +2,7 @@ package org.anhcraft.spaciouslib.placeholder;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 
 import java.util.LinkedHashMap;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import java.util.UUID;
  * By default, the cached placeholder will renew every 10 seconds.
  */
 public abstract class CachedPlaceholder extends Placeholder {
+    @PlayerCleaner
     protected LinkedHashMap<UUID, String> cache = new LinkedHashMap<>();
 
     protected void updateCache(){

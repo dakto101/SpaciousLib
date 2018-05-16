@@ -10,7 +10,6 @@ import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.TimeUnit;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.UUID;
@@ -27,12 +26,7 @@ public class SkinAPI {
     public SkinAPI() {
         try {
             cachedSkins = new LinkedHashMap<>();
-            for(File file : SpaciousLib.SKINS_FOLDER.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".skin");
-                }
-            })) {
+            for(File file : SpaciousLib.SKINS_FOLDER.listFiles((dir, name) -> name.endsWith(".skin"))) {
                 CachedSkin cs = fromJSON(new String(GZipUtils.decompress(new FileManager(file).read())));
                 cachedSkins.put(cs.getOwner(), cs);
             }

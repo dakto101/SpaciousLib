@@ -305,6 +305,11 @@ public class BungeeAPI implements PluginMessageListener {
                 .sendPluginMessage(SpaciousLib.instance, CHANNEL, out.toByteArray());
     }
 
+    /**
+     * Requests the SpaciousLib plugin (on proxy-side) to change the skin of a player
+     * @param player a player
+     * @param skin a skin
+     */
     public static void requestChangeSkin(String player, Skin skin){
         if(Bukkit.getServer().getOnlinePlayers().size() == 0){
             return;
@@ -314,6 +319,72 @@ public class BungeeAPI implements PluginMessageListener {
         out.writeUTF(player);
         out.writeUTF(skin.getValue());
         out.writeUTF(skin.getSignature());
+        Bukkit.getServer().getOnlinePlayers().iterator().next()
+                .sendPluginMessage(SpaciousLib.instance, SpaciousLib.CHANNEL, out.toByteArray());
+    }
+
+    /**
+     * Requests the SpaciousLib plugin (on proxy-side) to execute a Bungeecord command as a console
+     * @param command a command without "/" before
+     */
+    public static void requestExecuteCommand(String command){
+        if(Bukkit.getServer().getOnlinePlayers().size() == 0){
+            return;
+        }
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("cmd");
+        out.writeUTF(command);
+        Bukkit.getServer().getOnlinePlayers().iterator().next()
+                .sendPluginMessage(SpaciousLib.instance, SpaciousLib.CHANNEL, out.toByteArray());
+    }
+
+    /**
+     * Requests the SpaciousLib plugin in a server to execute a command as a console
+     * @param command a command without "/" before
+     * @param server a server
+     */
+    public static void requestExecuteCommandServer(String command, String server){
+        if(Bukkit.getServer().getOnlinePlayers().size() == 0){
+            return;
+        }
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("cmdsv");
+        out.writeUTF(command);
+        out.writeUTF(server);
+        Bukkit.getServer().getOnlinePlayers().iterator().next()
+                .sendPluginMessage(SpaciousLib.instance, SpaciousLib.CHANNEL, out.toByteArray());
+    }
+
+    /**
+     * Requests the SpaciousLib plugin (on proxy-side) to execute a Bungeecord command as a player
+     * @param command a command without "/" before
+     * @param player a player
+     */
+    public static void requestExecutePlayerCommand(String command, String player){
+        if(Bukkit.getServer().getOnlinePlayers().size() == 0){
+            return;
+        }
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("playercmd");
+        out.writeUTF(command);
+        out.writeUTF(player);
+        Bukkit.getServer().getOnlinePlayers().iterator().next()
+                .sendPluginMessage(SpaciousLib.instance, SpaciousLib.CHANNEL, out.toByteArray());
+    }
+
+    /**
+     * Requests the SpaciousLib plugin in a server to execute a command as a player
+     * @param command a command without "/" before
+     * @param player a player
+     */
+    public static void requestExecutePlayerCommandServer(String command, String player){
+        if(Bukkit.getServer().getOnlinePlayers().size() == 0){
+            return;
+        }
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("playercmdsv");
+        out.writeUTF(command);
+        out.writeUTF(player);
         Bukkit.getServer().getOnlinePlayers().iterator().next()
                 .sendPluginMessage(SpaciousLib.instance, SpaciousLib.CHANNEL, out.toByteArray());
     }

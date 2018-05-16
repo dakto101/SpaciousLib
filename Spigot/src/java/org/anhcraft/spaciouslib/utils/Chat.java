@@ -24,7 +24,7 @@ public class Chat {
      */
     public Chat(String prefix){
         this.prefix = prefix;
-        this.placeholder = true;
+        this.placeholder = false;
     }
 
     /**

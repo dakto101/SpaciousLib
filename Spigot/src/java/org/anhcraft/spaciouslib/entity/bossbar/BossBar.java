@@ -1,7 +1,8 @@
 package org.anhcraft.spaciouslib.entity.bossbar;
 
 import org.anhcraft.spaciouslib.SpaciousLib;
-import org.anhcraft.spaciouslib.listeners.PlayerCleaner;
+import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
+import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.protocol.*;
 import org.anhcraft.spaciouslib.utils.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -12,7 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Represents a boss bar implementation.
@@ -56,14 +60,18 @@ public class BossBar {
     private Color color = Color.BLUE;
     private Style style = Style.PROGRESS;
     private HashSet<Flag> flags = new HashSet<>();
+    @PlayerCleaner
     private Set<UUID> viewers = new HashSet<>();
 
     // 1.8
     private BukkitTask task;
+    @PlayerCleaner
     private LinkedHashMap<UUID, String> locationTracker = new LinkedHashMap<>();
+    @PlayerCleaner
     private LinkedHashMap<UUID, Group<Object, Integer>> entities = new LinkedHashMap<>();
 
     // 1.9 and above
+    @PlayerCleaner
     private LinkedHashMap<UUID, Object> bossBattles = new LinkedHashMap<>();
 
     /**
@@ -77,17 +85,11 @@ public class BossBar {
         entities = new LinkedHashMap<>();
         bossBattles = new LinkedHashMap<>();
         viewers = new HashSet<>();
-        PlayerCleaner.remove(this.bossBattles);
-        PlayerCleaner.remove(this.entities);
-        PlayerCleaner.remove(this.locationTracker);
-        PlayerCleaner.remove(this.viewers);
+        AnnotationHandler.unregister(BossBar.class, this);
     }
 
     private void init() {
-        PlayerCleaner.add(this.bossBattles);
-        PlayerCleaner.add(this.entities);
-        PlayerCleaner.add(this.locationTracker);
-        PlayerCleaner.add(this.viewers);
+        AnnotationHandler.register(BossBar.class, this);
         if(GameVersion.is1_9Above()){
             return;
         }
