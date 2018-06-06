@@ -6,9 +6,8 @@ import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.*;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -38,21 +37,34 @@ public class RecipeManager {
     public void unregister(){
         String v = GameVersion.getVersion().toString();
         try {
-            Class craftingManagerClass = Class.forName("net.minecraft.server."+v+".CraftingManager");
-            Class recipeClass = Class.forName("net.minecraft.server."+v+".IRecipe");
-            Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", craftingManagerClass);
-            Method nmsRecipesMethod = craftingManagerClass.getDeclaredMethod("getRecipes");
-            List<Object> newNmsRecipes = new ArrayList<>();
-            List<Object> nmsRecipes = (List<Object>) nmsRecipesMethod.invoke(craftingManager);
-            for(Object nr : nmsRecipes){
-                Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, nr);
-                if(compare(recipeBukkit)){
-                    continue;
+            Class<?> craftingManagerClass = Class.forName("net.minecraft.server."+v+".CraftingManager");
+            Class<?> recipeClass = Class.forName("net.minecraft.server."+v+".IRecipe");
+            Class<?> registryMaterialClass = Class.forName("net.minecraft.server."+v+".RegistryMaterials");
+
+            if(GameVersion.is1_12Above()) {
+                Object registryMaterials = ReflectionUtils.getStaticField("recipes", craftingManagerClass);
+                Iterator<Object> iterator = (Iterator<Object>) ReflectionUtils.getMethod("iterator", registryMaterialClass, registryMaterials);
+                for(Iterator<Object> it = iterator; it.hasNext(); ) {
+                    Object recipe = it.next();
+                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, recipe);
+                    if(compare(recipeBukkit)) {
+                        it.remove();
+                    }
                 }
-                newNmsRecipes.add(nr);
+            } else {
+                Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", craftingManagerClass);
+                List<Object> newNmsRecipes = new ArrayList<>();
+                List<Object> nmsRecipes = (List<Object>) ReflectionUtils.getMethod("getRecipes", craftingManagerClass, craftingManager);
+                for(Object nr : nmsRecipes) {
+                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, nr);
+                    if(compare(recipeBukkit)) {
+                        continue;
+                    }
+                    newNmsRecipes.add(nr);
+                }
+                ReflectionUtils.setField("recipes", craftingManagerClass, craftingManager, newNmsRecipes);
             }
-            ReflectionUtils.setField("recipes", craftingManagerClass, craftingManager, newNmsRecipes);
-        } catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -66,12 +78,26 @@ public class RecipeManager {
         try {
             Class<?> craftingManagerClass = Class.forName("net.minecraft.server."+v+".CraftingManager");
             Class<?> recipeClass = Class.forName("net.minecraft.server."+v+".IRecipe");
-            Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", craftingManagerClass);
-            List<Object> nmsRecipes = (List<Object>) ReflectionUtils.getMethod("getRecipes", craftingManagerClass, craftingManager);
-            for(Object nr : nmsRecipes){
-                Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, nr);
-                if(compare(recipeBukkit)){
-                    return true;
+            Class<?> registryMaterialClass = Class.forName("net.minecraft.server."+v+".RegistryMaterials");
+
+            if(GameVersion.is1_12Above()) {
+                Object registryMaterials = ReflectionUtils.getStaticField("recipes", craftingManagerClass);
+                Iterator<Object> iterator = (Iterator<Object>) ReflectionUtils.getMethod("iterator", registryMaterialClass, registryMaterials);
+                for(Iterator<Object> it = iterator; it.hasNext(); ) {
+                    Object recipe = it.next();
+                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, recipe);
+                    if(compare(recipeBukkit)) {
+                        return true;
+                    }
+                }
+            } else {
+                Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", craftingManagerClass);
+                List<Object> nmsRecipes = (List<Object>) ReflectionUtils.getMethod("getRecipes", craftingManagerClass, craftingManager);
+                for(Object nr : nmsRecipes) {
+                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, nr);
+                    if(compare(recipeBukkit)) {
+                        return true;
+                    }
                 }
             }
         } catch(ClassNotFoundException e) {
@@ -115,11 +141,9 @@ public class RecipeManager {
         if(recipe instanceof FurnaceRecipe && otherRecipe instanceof FurnaceRecipe){
             FurnaceRecipe a = (FurnaceRecipe) recipe;
             FurnaceRecipe b = (FurnaceRecipe) otherRecipe;
-            if(a.getExperience() == b.getExperience()
+            return a.getExperience() == b.getExperience()
                     && InventoryUtils.compare(a.getInput(), b.getInput())
-                    && InventoryUtils.compare(a.getResult(), b.getResult())){
-                return true;
-            }
+                    && InventoryUtils.compare(a.getResult(), b.getResult());
         }
         return false;
     }

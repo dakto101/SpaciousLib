@@ -1,6 +1,7 @@
 package org.anhcraft.spaciouslib.effects;
 
 import org.anhcraft.spaciouslib.protocol.Particle;
+import org.anhcraft.spaciouslib.scheduler.DelayedTask;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -53,27 +54,29 @@ public class ImageEffect extends Effect {
 
     @Override
     public void spawn() {
-        int w = image.getWidth();
-        int h = image.getHeight();
-        double ratio = safeDivide(w * h, particleAmount);
-        double ratioX = safeDivide(w, h) * ratio;
-        double ratioY = safeDivide(h, w) * ratio;
-        for(int x = 0; x < w; x++){
-            for(int y = 0; y < h; y++){
-                Color color = new Color(image.getRGB(x, y));
-                if(transparent && (color.getRGB() >> 24) == 0x00) {
-                    continue;
+        new DelayedTask(() -> {
+            int w = image.getWidth();
+            int h = image.getHeight();
+            double ratio = safeDivide(w * h, particleAmount);
+            double ratioX = safeDivide(w, h) * ratio;
+            double ratioY = safeDivide(h, w) * ratio;
+            for(int x = 0; x < w; x++){
+                for(int y = 0; y < h; y++){
+                    Color color = new Color(image.getRGB(x, y));
+                    if(transparent && (color.getRGB() >> 24) == 0x00) {
+                        continue;
+                    }
+                    Location loc = location.clone();
+                    if(alignCenter) {
+                        loc.setX(loc.getX() - (w / 2));
+                        loc.setY(loc.getY() - (h / 2));
+                    }
+                    Vector vec = rotate(new Vector(ratioX * x, ratioY * y, 0));
+                    loc = location.clone().add(vec);
+                    spawnParticle(loc, color);
                 }
-                Location loc = location.clone();
-                if(alignCenter) {
-                    loc.setX(loc.getX() - (w / 2));
-                    loc.setY(loc.getY() - (h / 2));
-                }
-                Vector vec = rotate(new Vector(ratioX * x, ratioY * y, 0));
-                loc = location.clone().add(vec);
-                spawnParticle(loc, color);
             }
-        }
+        }, 0).run();
     }
 
     public BufferedImage getImage() {

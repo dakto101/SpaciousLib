@@ -78,6 +78,9 @@ public class BossBar {
      * Removes this boss bar
      */
     public void remove(){
+        for(UUID p : getViewers()){
+            removeViewer(p);
+        }
         if(task != null){
             task.cancel();
         }

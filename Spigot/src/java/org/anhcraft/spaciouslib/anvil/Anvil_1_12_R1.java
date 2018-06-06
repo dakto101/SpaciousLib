@@ -9,16 +9,12 @@ import org.bukkit.inventory.ItemStack;
 import java.util.LinkedHashMap;
 
 public class Anvil_1_12_R1 extends AnvilWrapper {
-   private class Container extends ContainerAnvil {
-        Container(EntityHuman e) {
-            super(e.inventory, e.world, new BlockPosition(0,0,0), e);
-        }
-
-        @Override
-        public boolean a(EntityHuman e) {
-            return true;
-        }
-    }
+   private class Container extends ContainerAnvil{
+       Container(EntityHuman e) {
+           super(e.inventory, e.world, new BlockPosition(0,0,0), e);
+           this.checkReachable = false;
+       }
+   }
 
     private LinkedHashMap<Anvil.Slot, ItemStack> items = new LinkedHashMap<>();
     private EntityPlayer player;
@@ -37,7 +33,7 @@ public class Anvil_1_12_R1 extends AnvilWrapper {
         }
         int id = this.player.nextContainerCounter();
         this.player.playerConnection.sendPacket(new PacketPlayOutOpenWindow(id,
-                "minecraft:anvil", new ChatMessage("Repairing"), 0));
+                "minecraft:anvil", new ChatMessage("tile.anvil.name"), 0));
         this.player.activeContainer = container;
         this.player.activeContainer.windowId = id;
         this.player.activeContainer.addSlotListener(this.player);

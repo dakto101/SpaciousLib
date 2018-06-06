@@ -415,14 +415,7 @@ public class PlaceholderAPI {
      * @param placeholder Placeholder object
      */
     public static void register(Placeholder placeholder){
-        if(data.containsKey(placeholder.getPlaceholder())){
-            try {
-                throw new Exception("Placeholder have already initialized!");
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-        if(placeholder instanceof CachedPlaceholder){
+        if(!data.containsKey(placeholder.getPlaceholder()) && placeholder instanceof CachedPlaceholder){
             CachedPlaceholder cache = (CachedPlaceholder) placeholder;
             cache.updateCache();
             AnnotationHandler.register(CachedPlaceholder.class, cache);

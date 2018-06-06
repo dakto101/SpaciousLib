@@ -10,14 +10,14 @@ import java.util.LinkedHashMap;
 
 public class Anvil_1_11_R1 extends AnvilWrapper {
    private class Container extends ContainerAnvil {
-        Container(EntityHuman e) {
-            super(e.inventory, e.world, new BlockPosition(0,0,0), e);
-        }
+       Container(EntityHuman e) {
+           super(e.inventory, e.world, new BlockPosition(0,0,0), e);
+       }
 
-        @Override
-        public boolean a(EntityHuman e) {
-            return true;
-        }
+       @Override
+       public boolean a(EntityHuman e) {
+           return true;
+       }
     }
 
     private LinkedHashMap<Anvil.Slot, ItemStack> items = new LinkedHashMap<>();

@@ -245,7 +245,6 @@ public class NPC {
         for(UUID uuid : getViewers()){
             receivers.add(Bukkit.getServer().getPlayer(uuid));
         }
-
         PlayerInfo.create(PlayerInfo.Type.REMOVE_PLAYER, this.nmsEntityPlayer).sendPlayers(receivers);
         EntityDestroy.create(this.entity).sendPlayers(receivers);
         this.entity = -1;

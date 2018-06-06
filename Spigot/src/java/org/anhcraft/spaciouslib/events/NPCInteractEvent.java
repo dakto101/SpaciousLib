@@ -11,14 +11,14 @@ import org.bukkit.event.HandlerList;
  */
 public class NPCInteractEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private boolean leftClick;
+    private Action action;
     private EquipSlot slot;
     private Player player;
     private NPC npc;
 
-    public NPCInteractEvent(Player player, NPC npc, boolean leftClick, EquipSlot slot){
+    public NPCInteractEvent(Player player, NPC npc, Action action, EquipSlot slot){
         this.player = player;
-        this.leftClick = leftClick;
+        this.action = action;
         this.slot = slot;
         this.npc = npc;
     }
@@ -35,14 +35,6 @@ public class NPCInteractEvent extends Event {
         return this.player;
     }
 
-    public boolean isLeftClick(){
-        return this.leftClick;
-    }
-
-    public boolean isRightClick(){
-        return !this.leftClick;
-    }
-
     @Override
     public HandlerList getHandlers() {
         return handlers;
@@ -50,5 +42,13 @@ public class NPCInteractEvent extends Event {
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public enum Action {
+        INTERACT, ATTACK, INTERACT_AT;
     }
 }

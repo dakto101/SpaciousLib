@@ -78,8 +78,11 @@ public class InventoryUtils {
         } else {
             mt = Material.valueOf(x[0].toUpperCase());
         }
-        byte data = (byte) Integer.parseInt(x[1]);
-        return new MaterialData(mt, data);
+        if(x.length == 2) {
+            return new MaterialData(mt, (byte) Integer.parseInt(x[1]));
+        } else {
+            return new MaterialData(mt, (byte) 0);
+        }
     }
 
     /**

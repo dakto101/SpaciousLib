@@ -21,13 +21,10 @@ public class PlaceholderAPI {
      * Initializes PlaceholderAPI
      */
     public PlaceholderAPI(){
-        ProxyServer.getInstance().getScheduler().schedule(SpaciousLib.instance, new Runnable() {
-            @Override
-            public void run() {
-                for(Placeholder p : data.values()) {
-                    if(p instanceof CachedPlaceholder && !(p instanceof FixedPlaceholder)){
-                        ((CachedPlaceholder) p).updateCache();
-                    }
+        ProxyServer.getInstance().getScheduler().schedule(SpaciousLib.instance, () -> {
+            for(Placeholder p : data.values()) {
+                if(p instanceof CachedPlaceholder && !(p instanceof FixedPlaceholder)){
+                    ((CachedPlaceholder) p).updateCache();
                 }
             }
         }, 20, 20, TimeUnit.SECONDS);

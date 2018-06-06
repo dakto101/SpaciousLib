@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.bungee.BungeeAPI;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
@@ -64,20 +65,19 @@ public final class SpaciousLib extends JavaPlugin {
 
         // uses synchronous task because this task will call the ArmorEquipEvent event
         new ArmorEquipEventTask().runTaskTimer(this, 0, 20);
-        new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 300);
+        new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 1200);
 
         chat.sendSender("&eRegistering the listeners...");
         getServer().getPluginManager().registerEvents(new PlayerJumpEventListener(), this);
         getServer().getPluginManager().registerEvents(new ClickableItemListener(), this);
         getServer().getPluginManager().registerEvents(new BowArrowHitEventListener(), this);
-        getServer().getPluginManager().registerEvents(new PacketListener(), this);
         getServer().getPluginManager().registerEvents(new PlaceholderListener(), this);
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerCleanerListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
-        getServer().getPluginManager().registerEvents(new NPCInteractEventListener(), this);
         getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, new BungeeListener());
+        new NPCInteractEventListener();
 
         AnnotationHandler.register(AnvilListener.class, null);
         if(Bukkit.getServer().getPluginManager().isPluginEnabled("Vault")){
@@ -95,5 +95,6 @@ public final class SpaciousLib extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        ProtocolLibrary.getProtocolManager().removePacketListeners(this);
     }
 }

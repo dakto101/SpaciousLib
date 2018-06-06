@@ -1,7 +1,8 @@
 name: SpaciousLib
-version: 1.6.0
+version: 1.6.1
 main: org.anhcraft.spaciouslib.SpaciousLib
-loadbefore: [Vault]
+loadbefore: [Vault,ProtocolLib]
+depend: [ProtocolLib]
 authors: [anhcraft]
 softdepend: [Vault]
 description: A useful library for your Spigot/Bungeecord plugins and Java programs

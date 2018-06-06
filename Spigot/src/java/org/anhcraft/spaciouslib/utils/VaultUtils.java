@@ -93,7 +93,7 @@ public class VaultUtils {
      * @return a permission group
      */
     public static String getPrimaryPermissionGroup(Player player) {
-        if(perm == null || !perm.isEnabled()){
+        if(perm == null || !perm.isEnabled() || !perm.hasGroupSupport()){
             return null;
         }
         return perm.getPrimaryGroup(player);
@@ -105,7 +105,7 @@ public class VaultUtils {
      * @return an array of permission groups
      */
     public static String[] getPlayerPermissionGroups(Player player) {
-        if(perm == null || !perm.isEnabled()){
+        if(perm == null || !perm.isEnabled() || !perm.hasGroupSupport()){
             return null;
         }
         return perm.getPlayerGroups(player);
@@ -116,7 +116,7 @@ public class VaultUtils {
      * @return an array of permission groups
      */
     public static String[] getPermissionGroups() {
-        if(perm == null || !perm.isEnabled()){
+        if(perm == null || !perm.isEnabled() || !perm.hasGroupSupport()){
             return null;
         }
         return perm.getGroups();
@@ -127,7 +127,7 @@ public class VaultUtils {
      * @return an array of chat groups
      */
     public static String[] getChatGroups() {
-        if(chat == null || !perm.isEnabled()){
+        if(perm == null || !chat.isEnabled()){
             return null;
         }
         return chat.getGroups();
@@ -139,7 +139,7 @@ public class VaultUtils {
      * @return an array of chat groups
      */
     public static String[] getPlayerChatGroups(Player player) {
-        if(chat == null || !perm.isEnabled()){
+        if(chat == null || !chat.isEnabled()){
             return null;
         }
         return chat.getPlayerGroups(player);

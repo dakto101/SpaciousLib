@@ -6,7 +6,6 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
 import org.anhcraft.spaciouslib.io.FileManager;
-import org.anhcraft.spaciouslib.listeners.PacketListener;
 import org.anhcraft.spaciouslib.listeners.PlayerCleanerListener;
 import org.anhcraft.spaciouslib.listeners.SpigotListener;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
@@ -53,13 +52,12 @@ public final class SpaciousLib extends Plugin {
         new SkinAPI();
 
         chat.sendSender("&eStarting the tasks...");
-        getProxy().getScheduler().schedule(this, new CachedSkinTask(), 0, 30, TimeUnit.SECONDS);
+        getProxy().getScheduler().schedule(this, new CachedSkinTask(), 0, 60, TimeUnit.SECONDS);
         if(config.getBoolean("stats")){
             new Updater1520156620("1520156620", this);
         }
 
         chat.sendSender("&eRegistering the listeners...");
-        getProxy().getPluginManager().registerListener(this, new PacketListener());
         getProxy().getPluginManager().registerListener(this, new SpigotListener());
         getProxy().getPluginManager().registerListener(this, new PlayerCleanerListener());
 

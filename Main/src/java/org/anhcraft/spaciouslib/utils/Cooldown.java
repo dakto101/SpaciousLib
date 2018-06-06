@@ -43,7 +43,7 @@ public class Cooldown {
      * @param seconds a duration in seconds
      * @return true if yes
      */
-    public boolean isTimeout(int seconds){
+    public boolean isTimeout(double seconds){
         return !((System.currentTimeMillis() - this.current) < (seconds * 1000d));
     }
 
@@ -54,7 +54,7 @@ public class Cooldown {
      * @param seconds a duration in seconds
      * @return the time left
      */
-    public double timeLeft(int seconds){
+    public double timeLeft(double seconds){
         return seconds - ((System.currentTimeMillis()-this.current)/1000d);
     }
 

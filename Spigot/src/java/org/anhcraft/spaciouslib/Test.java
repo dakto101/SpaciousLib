@@ -479,14 +479,6 @@ public class Test implements Listener {
         event.getPlayer().updateInventory();
     }
 
-    @EventHandler
-    public void packet(PacketHandleEvent event){
-        if(event.getPacket().getClass().getSimpleName().equals("PacketPlayInChat")){
-            event.setPacketValue("a", PlaceholderAPI.replace((String) event.getPacketValue("a"),
-                    event.getPlayer()));
-        }
-    }
-
     public static TimedSet<UUID> jumpers = new TimedSet<>();
 
     @EventHandler

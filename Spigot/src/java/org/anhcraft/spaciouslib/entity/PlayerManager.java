@@ -133,4 +133,29 @@ public class PlayerManager extends EntityManager {
             e.printStackTrace();
         }
     }
+
+    public void respawn(){
+        String v = GameVersion.getVersion().toString();
+        try {
+            Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer");
+            Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v + ".EntityPlayer");
+            Class<?> playerConnClass = Class.forName("net.minecraft.server." + v + ".PlayerConnection");
+            Class<?> packetClass = Class.forName("net.minecraft.server." + v + ".PacketPlayInClientCommand");
+            Class<?> enumClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "PacketPlayInClientCommand$") + "EnumClientCommand");
+            Object craftPlayer = ReflectionUtils.cast(craftPlayerClass, getPlayer());
+            Object nmsEntityPlayer = ReflectionUtils.getMethod("getHandle", craftPlayerClass, craftPlayer);
+            Object enum_ = ReflectionUtils.getEnum("PERFORM_RESPAWN", enumClass);
+            Object packet = ReflectionUtils.getConstructor(packetClass, new Group<>(
+                    new Class<?>[]{enumClass},
+                    new Object[]{enum_}
+            ));
+            Object playerConn = ReflectionUtils.getField("playerConnection", nmsEntityPlayerClass, nmsEntityPlayer);
+            ReflectionUtils.getMethod("a", playerConnClass, playerConn, new Group<>(
+                    new Class<?>[]{packetClass},
+                    new Object[]{packet}
+            ));
+        } catch(ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 }
