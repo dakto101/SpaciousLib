@@ -15,19 +15,16 @@ public class DelayedTask extends TaskScheduler {
 
     @Override
     public void run() {
-        this.thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep((long) (delay*1000));
-                    if(!stopped){
-                        runnable.run();
-                        stopped = true;
-                    }
-                    thread.interrupt();
-                } catch(InterruptedException e) {
-                    e.printStackTrace();
+        this.thread = new Thread(() -> {
+            try {
+                Thread.sleep((long) (delay*1000));
+                if(!stopped){
+                    runnable.run();
+                    stopped = true;
                 }
+                thread.interrupt();
+            } catch(InterruptedException e) {
+                e.printStackTrace();
             }
         });
         this.thread.start();

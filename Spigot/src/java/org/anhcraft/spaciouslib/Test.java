@@ -22,7 +22,6 @@ import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.mojang.GameProfileManager;
 import org.anhcraft.spaciouslib.mojang.MojangAPI;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
-import org.anhcraft.spaciouslib.placeholder.FixedPlaceholder;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.anhcraft.spaciouslib.protocol.Particle;
 import org.anhcraft.spaciouslib.scheduler.TimerTask;
@@ -243,22 +242,15 @@ public class Test implements Listener {
                     .addSubCommand(new SubCommandBuilder("placeholder", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("text", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String s) {
                             if(sender instanceof Player) {
-                                PlaceholderAPI.register(new FixedPlaceholder() {
-                                    @Override
-                                    public String getPlaceholder() {
-                                        return "{server_name}";
-                                    }
-
-                                    @Override
-                                    public String getValue(Player player) {
-                                        return Bukkit.getServer().getServerName();
-                                    }
-                                });
-                                sender.sendMessage(PlaceholderAPI.replace("{server_name}", (Player) sender));
+                                sender.sendMessage(PlaceholderAPI.replace(s, (Player) sender));
                             }
                         }
-                    }))
+                    }, CommandArgument.Type.CUSTOM, false))
 
                     .addSubCommand(new SubCommandBuilder("npc", null, new CommandRunnable() {
                         @Override

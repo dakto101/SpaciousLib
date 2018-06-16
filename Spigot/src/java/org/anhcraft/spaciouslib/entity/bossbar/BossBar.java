@@ -13,10 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Represents a boss bar implementation.
@@ -78,8 +75,10 @@ public class BossBar {
      * Removes this boss bar
      */
     public void remove(){
-        for(UUID p : getViewers()){
-            removeViewer(p);
+        for(Iterator<UUID> it = getViewers().iterator(); it.hasNext(); ) {
+            UUID p = it.next();
+            remove(p);
+            it.remove();
         }
         if(task != null){
             task.cancel();

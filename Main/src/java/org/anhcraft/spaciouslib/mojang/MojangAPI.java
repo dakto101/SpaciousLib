@@ -47,6 +47,7 @@ public class MojangAPI {
                 CommonUtils.getUUIDWithoutDashes(obj.get("id").getAsString()));
     }
 
+
     /**
      * Gets the skin data of a player.<br>
      * SpaciousLib will use a random HTTPS proxy to bypass the limit rate.<br>
@@ -55,9 +56,25 @@ public class MojangAPI {
      * @return a group of two string objects. The first is the skin value, and the second is the skin signature
      */
     public static Group<String, String> getSkin(UUID player) throws Exception {
+        return getSkin(player, true);
+    }
+
+    /**
+     * Gets the skin data of a player.<br>
+     * <b>Please use SkinAPI instead</b>
+     * @param player the unique id of the player
+     * @param proxy uses a random proxy to get or not?
+     * @return a group of two string objects. The first is the skin value, and the second is the skin signature
+     */
+    public static Group<String, String> getSkin(UUID player, boolean proxy) throws Exception {
         String url = "https://sessionserver.mojang.com/session/minecraft/profile/"+player.toString().replace("-", "")+"?unsigned=false";
-        HttpURLConnection connection = (HttpURLConnection) (new URL(url)
-                .openConnection(ProxyUtils.getRandom(Proxy.Type.HTTP)));
+        HttpURLConnection connection;
+        if(proxy){
+            connection = (HttpURLConnection) new URL(url).openConnection(ProxyUtils.getRandom(Proxy.Type.HTTP));
+        } else {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+        }
+        connection.setConnectTimeout(3000);
         connection.setDoOutput(true);
         connection.setDoInput(true);
         connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");

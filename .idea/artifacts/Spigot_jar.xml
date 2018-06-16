@@ -5,7 +5,6 @@
       <element id="module-output" name="Spigot" />
       <element id="module-output" name="Main" />
       <element id="extracted-dir" path="$PROJECT_DIR$/Main/src/resources/commons-io-2.6.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/LIBRARY/h2-1.4.197.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/LIBRARY/user-agent-detector.jar" path-in-jar="/" />
       <element id="dir-copy" path="$PROJECT_DIR$/Spigot/src/resources" />
     </root>
