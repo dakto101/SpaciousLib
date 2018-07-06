@@ -19,6 +19,12 @@ public class InventoryUtils {
         return item == null || item.getType() == Material.AIR;
     }
 
+    /**
+     * Compares two given item stacks
+     * @param a the first item stack
+     * @param b the second item stack
+     * @return true if they're equal
+     */
     public static boolean compare(ItemStack a, ItemStack b) {
         if(isNull(a)){
             return isNull(b);
@@ -31,6 +37,12 @@ public class InventoryUtils {
         }
     }
 
+    /**
+     * Compares two given list of item stacks
+     * @param a the first list
+     * @param b the second list
+     * @return true if they're equal
+     */
     public static boolean compare(List<ItemStack> a, List<ItemStack> b) {
         if(a.size() == b.size()){
             int i = 0;
@@ -45,6 +57,12 @@ public class InventoryUtils {
         return false;
     }
 
+    /**
+     * Compares two given array of item stacks
+     * @param a the first array
+     * @param b the second array
+     * @return true if they're equal
+     */
     public static boolean compare(ItemStack[] a, ItemStack[] b) {
         if(a.length == b.length){
             int i = 0;
@@ -59,14 +77,29 @@ public class InventoryUtils {
         return false;
     }
 
+    /**
+     * Clones the given item safely
+     * @param item an items tack
+     * @return the clone of the item
+     */
     public static ItemStack clone(ItemStack item) {
         return isNull(item) ? null : item.clone();
     }
 
+    /**
+     * Serializes the given material data to string
+     * @param md MaterialData object
+     * @return a string represents for the object
+     */
     public static String materialData2Str(MaterialData md){
         return md.getItemType().toString()+":"+md.getData();
     }
 
+    /**
+     * Deserialize the given string to its material data
+     * @param s a string represents for the object
+     * @return the material data
+     */
     public static MaterialData str2MaterialData(String s){
         if(s == null || s.equalsIgnoreCase("null")){
             return new MaterialData(Material.AIR);

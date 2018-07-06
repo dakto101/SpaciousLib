@@ -3,7 +3,6 @@ package org.anhcraft.spaciouslib.utils;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -31,7 +30,7 @@ public class CommonUtils {
      * @param str the string
      * @return base64 encoded string
      */
-    public static String toBase64(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static String toBase64(String str) throws UnsupportedEncodingException {
         byte[] bytes = str.getBytes("UTF-8");
         return Base64.getEncoder().encodeToString(bytes);
     }
@@ -41,7 +40,7 @@ public class CommonUtils {
      * @param str the base64 encoded string
      * @return the string
      */
-    public static String fromBase64(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static String fromBase64(String str) {
         return new String(Base64.getDecoder().decode(str), StandardCharsets.UTF_8);
     }
 

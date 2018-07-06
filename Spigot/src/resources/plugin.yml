@@ -1,5 +1,5 @@
 name: SpaciousLib
-version: 1.6.2
+version: 1.6.3
 main: org.anhcraft.spaciouslib.SpaciousLib
 loadbefore: [Vault,ProtocolLib]
 depend: [ProtocolLib]

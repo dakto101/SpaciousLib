@@ -14,7 +14,7 @@ public class LocationUtils {
     /**
      * Serializes the given location to string
      * @param loc Location object
-     * @return the string
+     * @return a string represents for the object
      */
     public static String loc2str(Location loc) {
         return loc.getWorld().getName() + ":" + Double.toString(loc.getX()) + ":" +
@@ -23,8 +23,8 @@ public class LocationUtils {
     }
 
     /**
-     * Deserializes the given string to its location
-     * @param str the string
+     * Deserialize the given string to its location
+     * @param str a string represents for the object
      * @return the location
      */
     public static Location str2loc(String str) {
@@ -42,12 +42,37 @@ public class LocationUtils {
     }
 
     /**
-     * Gets all nearby blocks
+     * Gets nearby locations
      * @param loc the center location
-     * @param rx nearby distance in the x axis
-     * @param ry nearby distance in the y axis
-     * @param rz nearby distance in the z axis
-     * @return the list of all nearby blocks
+     * @param rx distance on the x axis
+     * @param ry distance on the y axis
+     * @param rz distance on the z axis
+     * @return a list of all nearby locations
+     */
+    public static List<Location> getNearbyLocations(Location loc, int rx, int ry, int rz){
+        List<Location> list = new ArrayList<>();
+        for (int x = -(rx); x <= rx; x++){
+            for (int y = -(ry); y <= ry; y++) {
+                for (int z = -(rz); z <= rz; z++) {
+                    list.add(new Location(
+                            loc.getWorld(),
+                            loc.getX() + x,
+                            loc.getY() + y,
+                            loc.getZ() + z));
+                }
+            }
+        }
+        return list;
+    }
+
+
+    /**
+     * Gets nearby blocks
+     * @param loc the center location
+     * @param rx distance on the x axis
+     * @param ry distance on the y axis
+     * @param rz distance on the z axis
+     * @return a list of all nearby blocks
      */
     public static List<Block> getNearbyBlocks(Location loc, int rx, int ry, int rz){
         List<Block> list = new ArrayList<>();
