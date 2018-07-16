@@ -106,8 +106,12 @@ public class InventoryUtils {
         }
         String[] x = s.split(":");
         Material mt;
-        if(StringUtils.isNumeric(x[0])) {
-            mt = Material.getMaterial(CommonUtils.toIntegerNumber(x[0]));
+        if(!GameVersion.is1_13Above() && StringUtils.isNumeric(x[0])) {
+            mt = (Material) ReflectionUtils.getStaticMethod("getMaterial",
+                    Material.class, new Group<>(
+                    new Class<?>[]{int.class},
+                    new Object[]{CommonUtils.toIntegerNumber(x[0])}
+            ));
         } else {
             mt = Material.valueOf(x[0].toUpperCase());
         }
@@ -119,11 +123,31 @@ public class InventoryUtils {
     }
 
     /**
+     * Gets all material types for skulls
+     */
+    public static List<Material> getSkulls(){
+        List<Material> m = new ArrayList<>();
+        if(GameVersion.is1_13Above()){
+            m.add(Material.CREEPER_HEAD);
+            m.add(Material.DRAGON_HEAD);
+            m.add(Material.PLAYER_HEAD);
+            m.add(Material.ZOMBIE_HEAD);
+            m.add(Material.SKELETON_SKULL);
+            m.add(Material.WITHER_SKELETON_SKULL);
+        } else {
+            m.add(Material.valueOf("SKULL_ITEM"));
+        }
+        return m;
+    }
+
+    /**
      * Gets all material types for armor
-     * @return list of material types
      */
     public static List<Material> getArmors(){
         List<Material> m = new ArrayList<>();
+        if(GameVersion.is1_9Above()) {
+            m.add(Material.ELYTRA);
+        }
         m.add(Material.LEATHER_HELMET);
         m.add(Material.LEATHER_CHESTPLATE);
         m.add(Material.LEATHER_LEGGINGS);
@@ -140,12 +164,16 @@ public class InventoryUtils {
         m.add(Material.DIAMOND_CHESTPLATE);
         m.add(Material.DIAMOND_LEGGINGS);
         m.add(Material.DIAMOND_BOOTS);
-        m.add(Material.GOLD_HELMET);
-        m.add(Material.GOLD_CHESTPLATE);
-        m.add(Material.GOLD_LEGGINGS);
-        m.add(Material.GOLD_BOOTS);
-        if(GameVersion.is1_9Above()) {
-            m.add(Material.ELYTRA);
+        if(GameVersion.is1_13Above()){
+            m.add(Material.GOLDEN_HELMET);
+            m.add(Material.GOLDEN_CHESTPLATE);
+            m.add(Material.GOLDEN_LEGGINGS);
+            m.add(Material.GOLDEN_BOOTS);
+        } else {
+            m.add(Material.valueOf("GOLD_HELMET"));
+            m.add(Material.valueOf("GOLD_CHESTPLATE"));
+            m.add(Material.valueOf("GOLD_LEGGINGS"));
+            m.add(Material.valueOf("GOLD_BOOTS"));
         }
         return m;
     }

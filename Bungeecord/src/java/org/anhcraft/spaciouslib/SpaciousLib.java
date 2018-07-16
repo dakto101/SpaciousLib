@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public final class SpaciousLib extends Plugin {
-    public final static String CHANNEL = "SpaciousLib";
+    public final static String CHANNEL = "spaciouslib:plugin";
     public final static File ROOT_FOLDER = new File("plugins/SpaciousLib/");
     public final static File SKINS_FOLDER = new File(ROOT_FOLDER, "skins/");
     public final static File CONFIG_FILE = new File(ROOT_FOLDER, "config.yml");

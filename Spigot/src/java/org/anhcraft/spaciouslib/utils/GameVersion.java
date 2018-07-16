@@ -19,7 +19,7 @@ public enum GameVersion {
         this.id = id;
     }
 
-    public int getID(){
+    public int getId(){
         return this.id;
     }
 
@@ -33,26 +33,26 @@ public enum GameVersion {
     }
 
     public static boolean is1_8Above(){
-        return GameVersion.v1_8_R1.getID() <= getVersion().getID();
+        return GameVersion.v1_8_R1.getId() <= getVersion().getId();
     }
 
     public static boolean is1_9Above(){
-        return GameVersion.v1_9_R1.getID() <= getVersion().getID();
+        return GameVersion.v1_9_R1.getId() <= getVersion().getId();
     }
 
     public static boolean is1_10Above(){
-        return GameVersion.v1_10_R1.getID() <= getVersion().getID();
+        return GameVersion.v1_10_R1.getId() <= getVersion().getId();
     }
 
     public static boolean is1_11Above(){
-        return GameVersion.v1_11_R1.getID() <= getVersion().getID();
+        return GameVersion.v1_11_R1.getId() <= getVersion().getId();
     }
 
     public static boolean is1_12Above(){
-        return GameVersion.v1_12_R1.getID() <= getVersion().getID();
+        return GameVersion.v1_12_R1.getId() <= getVersion().getId();
     }
 
     public static boolean is1_13Above(){
-        return GameVersion.v1_13_R1.getID() <= getVersion().getID();
+        return GameVersion.v1_13_R1.getId() <= getVersion().getId();
     }
 }

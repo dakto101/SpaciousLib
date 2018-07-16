@@ -21,12 +21,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="spigot" level="project" />
-    <orderEntry type="library" name="craftbukkit-1.10.2-R0.1-SNAPSHOT-latest (1)" level="project" />
+    <orderEntry type="library" name="spigot-1.13-pre7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-lang:commons-lang:2.6" level="project" />
     <orderEntry type="module" module-name="Main" />
     <orderEntry type="library" name="user-agent-detector" level="project" />
     <orderEntry type="library" name="VaultAPI-1.6" level="project" />
     <orderEntry type="library" name="ProtocolLib" level="project" />
+    <orderEntry type="library" name="craftbukkit-1.10.2-R0.1-SNAPSHOT-latest (1)" level="project" />
   </component>
 </module>

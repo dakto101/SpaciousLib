@@ -3,6 +3,8 @@ package org.anhcraft.spaciouslib.inventory;
 import org.anhcraft.spaciouslib.mojang.Skin;
 import org.anhcraft.spaciouslib.nbt.NBTCompound;
 import org.anhcraft.spaciouslib.nbt.NBTLoader;
+import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.inventory.ItemStack;
@@ -17,12 +19,23 @@ import java.util.UUID;
 public class SkullManager extends ItemManager {
     public SkullManager(ItemStack skull) {
         super(skull);
-        if(skull == null || !skull.getType().equals(Material.SKULL_ITEM)){
-            try {
-                throw new Exception("The item must be a skull");
-            } catch(Exception e) {
-                e.printStackTrace();
+        if(skull != null){
+            return;
+        } else {
+            if(GameVersion.is1_13Above()){
+                if(InventoryUtils.getSkulls().contains(skull.getType())){
+                    return;
+                }
+            } else {
+                if(skull.getType().equals(Material.valueOf("SKULL_ITEM"))){
+                    return;
+                }
             }
+        }
+        try {
+            throw new Exception("The item must be a skull");
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -31,7 +44,11 @@ public class SkullManager extends ItemManager {
      * @param skull the type of this skull
      */
     public SkullManager(SkullType skull) {
-        super(new ItemStack(Material.SKULL_ITEM, 1));
+        super(new ItemStack(GameVersion.is1_13Above() ? Material.PLAYER_HEAD : Material
+                .valueOf("SKULL_ITEM"), 1));
+        if(GameVersion.is1_13Above()) {
+            return;
+        }
         byte data = -1;
         switch(skull){
             case DRAGON:
@@ -61,8 +78,11 @@ public class SkullManager extends ItemManager {
      * @param skin the skin for this skull
      */
     public SkullManager(Skin skin) {
-        super(new ItemStack(Material.SKULL_ITEM, 1));
-        this.item.setDurability((byte) 3);
+        super(new ItemStack(GameVersion.is1_13Above() ? Material.PLAYER_HEAD : Material
+                .valueOf("SKULL_ITEM"), 1));
+        if(!GameVersion.is1_13Above()) {
+            this.item.setDurability((byte) 3);
+        }
         setSkin(skin);
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ServerUtils {
     /**
-     * Gets all entities in the server
+     * Gets all entities over the server
      * @return list of entities
      */
     public static List<Entity> getAllEntities(){
@@ -21,7 +21,7 @@ public class ServerUtils {
     }
 
     /**
-     * Gets all entities by class in the server
+     * Gets all specified entities by their class over the server
      * @return list of entities
      */
     public static <E extends Entity> List<Entity> getAllEntitiesByClass(Class<E> c){
@@ -33,7 +33,7 @@ public class ServerUtils {
     }
 
     /**
-     * Gets the current TPS of the server
+     * Gets the current TPS (tick-per-second) of this server
      * @return the TPS
      */
     public static double getTPS(){
