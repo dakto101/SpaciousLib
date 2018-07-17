@@ -401,7 +401,7 @@ public class PlaceholderAPI {
 
             @Override
             public String getValue(Player player) {
-                return Double.toString(Math.round(ServerUtils.getTPS()));
+                return Double.toString(MathUtils.round(ServerUtils.getTPS()));
             }
         });
 

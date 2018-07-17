@@ -1,6 +1,5 @@
 package org.anhcraft.spaciouslib.effects;
 
-import org.anhcraft.spaciouslib.scheduler.DelayedTask;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -15,13 +14,11 @@ public class LineEffect extends TargetedEffect {
 
     @Override
     public void spawn() {
-        new DelayedTask(() -> {
-            double length = target.distance(location);
-            double part = safeDivide(length, particleAmount);
-            Vector dir = target.toVector().subtract(location.toVector());
-            for(double x = 0; x < length; x += part){
-                spawnParticle(location.add(rotate(dir.clone().normalize().multiply(x))));
-            }
-        }, 0).run();
+        double length = target.distance(location);
+        double part = safeDivide(length, particleAmount);
+        Vector dir = target.toVector().subtract(location.toVector());
+        for(double x = 0; x < length; x += part){
+            spawnParticle(location.add(rotate(dir.clone().normalize().multiply(x))));
+        }
     }
 }
