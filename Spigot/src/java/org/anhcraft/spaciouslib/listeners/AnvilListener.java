@@ -3,8 +3,8 @@ package org.anhcraft.spaciouslib.listeners;
 import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.anvil.Anvil;
 import org.anhcraft.spaciouslib.anvil.Anvil.Handler;
-import org.anhcraft.spaciouslib.compatibility.CompatibilityInventoryClickEvent;
 import org.anhcraft.spaciouslib.inventory.ItemManager;
+import org.anhcraft.spaciouslib.utils.CompatibilityUtils;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,7 +31,7 @@ public class AnvilListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event){
         if ((event.getWhoClicked() instanceof Player)) {
             Player player = (Player) event.getWhoClicked();
-            Inventory inv = CompatibilityInventoryClickEvent.getInventory(event);
+            Inventory inv = CompatibilityUtils.getInventory(event);
             if (inv != null && data.containsKey(player.getUniqueId())){
                 ItemStack item = event.getCurrentItem();
                 Group<Inventory, Anvil.Handler> anvil = data.get(player.getUniqueId());

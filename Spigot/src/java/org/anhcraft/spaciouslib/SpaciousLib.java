@@ -29,6 +29,7 @@ public final class SpaciousLib extends JavaPlugin {
     public static SpaciousLib instance;
     public static FileConfiguration config;
     public static Chat chat;
+    private static boolean protocolLib = false;
 
     @Override
     public void onEnable(){
@@ -79,6 +80,7 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, new BungeeListener());
 
         if(getServer().getPluginManager().isPluginEnabled("ProtocolLib")){
+            protocolLib = true;
             new NPCInteractEventListener();
         }
 
@@ -98,6 +100,8 @@ public final class SpaciousLib extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        ProtocolLibrary.getProtocolManager().removePacketListeners(this);
+        if(protocolLib) {
+            ProtocolLibrary.getProtocolManager().removePacketListeners(this);
+        }
     }
 }
