@@ -24,16 +24,31 @@ public class PlaceholderAPI {
      * Initializes PlaceholderAPI
      */
     public PlaceholderAPI(){
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for(Placeholder p : data.values()) {
-                    if(p instanceof CachedPlaceholder && !(p instanceof FixedPlaceholder)){
-                        ((CachedPlaceholder) p).updateCache();
+        if(SpaciousLib.config.getBoolean("placeholder_cache_async", false)) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    for(Placeholder p : data.values()) {
+                        if(p instanceof CachedPlaceholder && !(p instanceof FixedPlaceholder)) {
+                            ((CachedPlaceholder) p).updateCache();
+                        }
                     }
                 }
-            }
-        }.runTaskTimer(SpaciousLib.instance, 200, 200);
+            }.runTaskTimerAsynchronously(SpaciousLib.instance, 0, 20 * SpaciousLib.
+                    config.getLong("placeholder_cache_duration"));
+        } else {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    for(Placeholder p : data.values()) {
+                        if(p instanceof CachedPlaceholder && !(p instanceof FixedPlaceholder)) {
+                            ((CachedPlaceholder) p).updateCache();
+                        }
+                    }
+                }
+            }.runTaskTimer(SpaciousLib.instance, 0, 20 * SpaciousLib.
+                    config.getLong("placeholder_cache_duration"));
+        }
 
         register(new FixedPlaceholder() {
             @Override

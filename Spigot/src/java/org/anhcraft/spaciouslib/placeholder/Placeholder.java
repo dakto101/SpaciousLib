@@ -17,7 +17,7 @@ public abstract class Placeholder {
     public abstract String getPlaceholder();
 
     /**
-     * Gets the value of this placeholder with the given player
+     * Gets the replaced text for the given player
      * @param player the player
      * @return the replaced text, returns null if you want to prevent replace
      */

@@ -53,8 +53,10 @@ public final class SpaciousLib extends Plugin {
         new SkinAPI();
 
         chat.sendSender("&eStarting the tasks...");
-        getProxy().getScheduler().schedule(this, new CachedSkinTask(), 0, 60, TimeUnit.SECONDS);
-        if(config.getBoolean("stats")){
+        if(config.getBoolean("auto_renew_skin", true)) {
+            getProxy().getScheduler().schedule(this, new CachedSkinTask(), 0, 60, TimeUnit.SECONDS);
+        }
+        if(config.getBoolean("stats", true)){
             new Updater1520156620("1520156620", this);
         }
 
@@ -66,7 +68,7 @@ public final class SpaciousLib extends Plugin {
         chat.sendSender("&eRegistering the messaging channel...");
         getProxy().registerChannel(CHANNEL);
 
-        if(config.getBoolean("dev_mode")){
+        if(config.getBoolean("dev_mode", false)){
             chat.sendSender("&aSwitched to the development mode!");
             getProxy().getPluginManager().registerListener(this, new Test());
         }

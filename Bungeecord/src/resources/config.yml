@@ -1,2 +1,4 @@
 stats: true
 dev_mode: false
+auto_renew_skin: true
+placeholder_cache_duration: 10
