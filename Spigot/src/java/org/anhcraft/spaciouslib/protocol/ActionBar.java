@@ -41,8 +41,8 @@ public class ActionBar {
                             new String[]{text}
                     ));
 
-            // 1.11 - 1.12
-            if(v.equals(GameVersion.v1_11_R1.toString()) || v.equals(GameVersion.v1_12_R1.toString())){
+            // 1.11 above
+            if(GameVersion.is1_11Above()){
                 Class<?> packetPlayOutTitleClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutTitle");
                 Class<?> enumTitleActionClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutTitle$EnumTitleAction");
                 Object enumActionBar = ReflectionUtils.getEnum("ACTIONBAR", enumTitleActionClass);

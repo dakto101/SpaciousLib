@@ -4,9 +4,7 @@ import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.inventory.EquipSlot;
 import org.anhcraft.spaciouslib.protocol.*;
-import org.anhcraft.spaciouslib.utils.GameVersion;
-import org.anhcraft.spaciouslib.utils.Group;
-import org.anhcraft.spaciouslib.utils.ReflectionUtils;
+import org.anhcraft.spaciouslib.utils.*;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -342,7 +340,7 @@ public class ArmorStand extends PacketBuilder<ArmorStand> {
     }
 
     public ArmorStand setCustomName(String customName) {
-        this.customName = customName;
+        this.customName = Chat.color(customName);
         return this;
     }
 
@@ -480,6 +478,9 @@ public class ArmorStand extends PacketBuilder<ArmorStand> {
                     new Group<>(new Class<?>[]{boolean.class}, new Object[]{!visible})
             );
             if(GameVersion.is1_13Above()){
+                if(!CommonUtils.isValidJSON(customName)){
+                    customName = "{\"text\": \"" + customName + "\"}";
+                }
                 Object customNameComponent = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
                         new Group<>(
                                 new Class<?>[]{String.class},

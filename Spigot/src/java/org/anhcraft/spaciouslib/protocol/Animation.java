@@ -1,7 +1,6 @@
 package org.anhcraft.spaciouslib.protocol;
 
 import org.anhcraft.spaciouslib.utils.GameVersion;
-import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.entity.Entity;
 
@@ -11,22 +10,28 @@ import org.bukkit.entity.Entity;
 public class Animation {
     /**
      * Creates an animation packet
-     * @param entity the entity
-     * @param type the type of the aniamtion
+     * @param entity an entity
+     * @param type the type of the animation
      * @return PacketSender object
      */
     public static PacketSender create(Entity entity, Type type) {
+        return create(entity.getEntityId(), type);
+    }
+
+    /**
+     * Creates an animation packet
+     * @param entityId the id of an entity
+     * @param type the type of the animation
+     * @return PacketSender object
+     */
+    public static PacketSender create(int entityId, Type type) {
         String v = GameVersion.getVersion().toString();
         try {
-            Class<?> craftEntityClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftEntity");
-            Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
             Class<?> packetPlayOutAnimationClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutAnimation");
-            Object craftEntity = ReflectionUtils.cast(craftEntityClass, entity);
-            Object nmsEntity = ReflectionUtils.getMethod("getHandle", craftEntityClass, craftEntity);
-            return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutAnimationClass, new Group<>(
-                   new Class<?>[]{nmsEntityClass, int.class},
-                   new Object[]{nmsEntity, type.getID()}
-            )));
+            Object ani = ReflectionUtils.getConstructor(packetPlayOutAnimationClass);
+            ReflectionUtils.setField("a", packetPlayOutAnimationClass, ani, entityId);
+            ReflectionUtils.setField("b", packetPlayOutAnimationClass, ani, type.getId());
+            return new PacketSender(ani);
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -47,7 +52,7 @@ public class Animation {
             this.i = i;
         }
 
-        public int getID(){
+        public int getId(){
             return i;
         }
     }

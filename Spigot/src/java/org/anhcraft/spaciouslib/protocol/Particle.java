@@ -12,6 +12,24 @@ import java.awt.*;
  * A class helps you to send particle packets
  */
 public class Particle {
+    public class Dust {
+        private Color color;
+        private float size;
+
+        public Dust(Color color, float size) {
+            this.color = color;
+            this.size = size;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+
+        public float getSize() {
+            return size;
+        }
+    }
+
     public enum Type{
         EXPLOSION_NORMAL(0),
         EXPLOSION_LARGE(1),
@@ -69,7 +87,7 @@ public class Particle {
             this.id = id;
         }
 
-        public int getID(){
+        public int getId(){
             return id;
         }
     }

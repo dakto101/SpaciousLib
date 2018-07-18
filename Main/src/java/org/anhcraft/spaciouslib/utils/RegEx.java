@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
  * A utility class which has useful RegEx checkers
  */
 public enum RegEx {
-    JSON("^(\\{)(|.)(\\})$"),
+    JSON("^(\\{)(|.*)(\\})$"),
     URL("^(https?|ftp|file):(\\/{1,})((?!-)([-a-zA-Z0-9]{1,})(?<!-))\\.((?!-)([-a-zA-Z0-9]{1,})).*$"),
     EMAIL("^[A-Za-z0-9\\.\\-\\_]+@[A-Za-z0-9\\-\\_]+\\.[A-Za-z0-9\\-\\_]+$"),
     REAL_NUMBER("(^(-|\\+|)[0-9]+$)|(^(-|\\+|)[0-9]+\\.[0-9]+$)"),

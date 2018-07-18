@@ -24,19 +24,18 @@ import org.anhcraft.spaciouslib.mojang.GameProfileManager;
 import org.anhcraft.spaciouslib.mojang.MojangAPI;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
-import org.anhcraft.spaciouslib.protocol.Particle;
+import org.anhcraft.spaciouslib.protocol.*;
 import org.anhcraft.spaciouslib.scheduler.TimerTask;
 import org.anhcraft.spaciouslib.socket.ClientSocketHandler;
 import org.anhcraft.spaciouslib.socket.ClientSocketManager;
-import org.anhcraft.spaciouslib.utils.InventoryUtils;
-import org.anhcraft.spaciouslib.utils.RandomUtils;
-import org.anhcraft.spaciouslib.utils.ServerUtils;
-import org.anhcraft.spaciouslib.utils.TimedSet;
+import org.anhcraft.spaciouslib.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Cow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -177,6 +176,53 @@ public class Test implements Listener {
                         }
                     }))
 
+                    .addSubCommand(new SubCommandBuilder("animation", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                Animation.create(player, Animation.Type.TAKE_DAMAGE).sendAll();
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("blockbreakanimation", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                for(Location loc : LocationUtils.getNearbyLocations(player.getLocation(), 3, 3, 3)){
+                                    BlockBreakAnimation.create(RandomUtils.randomInt(0, 10000), loc, RandomUtils.randomInt(0, 9)).sendAll();
+                                }
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("camera", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                Cow cow = player.getWorld().spawn(player.getLocation(), Cow.class);
+                                Camera.create(cow).sendPlayer(player);
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("playerlist create", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            PlayerList.create("aaa","bbb").sendAll();
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("playerlist remove", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            PlayerList.remove().sendAll();
+                        }
+                    }))
+
                     .addSubCommand(new SubCommandBuilder("bungee", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
@@ -200,6 +246,29 @@ public class Test implements Listener {
                             });
                         }
                     }))
+
+                    .addSubCommand(new SubCommandBuilder("title", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("text", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            Title.create(String.join(" ", args), Title.Type.TITLE).sendAll();
+                            Title.create(String.join(" ", args), Title.Type.SUBTITLE).sendAll();
+                        }
+                    }, CommandArgument.Type.CUSTOM, false))
+
+                    .addSubCommand(new SubCommandBuilder("actionbar", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("text", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            ActionBar.create(String.join(" ", args)).sendAll();
+                        }
+                    }, CommandArgument.Type.CUSTOM, false))
 
                     .addSubCommand(new SubCommandBuilder("uuid", null, new CommandRunnable() {
                         @Override

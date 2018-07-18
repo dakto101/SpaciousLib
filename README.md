@@ -11,16 +11,17 @@ Only works in Java 8+.<br><br>
 ✔ Recipe<br>
 ✔ Command Builder<br>
 ✔ BossBar<br>
-✘ ArmorStand<br>
-✘ Hologram<br>
-✘ NPC<br>
-✘ NBT<br>
-✘ Title<br>
-✘ Animation<br>
-✘ BlockBreakAnimation<br>
-✘ Camera<br>
-✘ Particle<br>
-✘ ActionBar
+✔ ArmorStand<br>
+✔ Hologram<br>
+✔ Title<br>
+✔ Animation<br>
+✔ BlockBreakAnimation<br>
+✔ Camera<br>
+✔ ActionBar<br>
+✔ PlayerList<br>
+❌ NPC<br>
+❌ NBT<br>
+❌ Particle
 
 ## Credits
 Thanks every author of all above libraries and also thanks Spigot/Bungeecord team <3

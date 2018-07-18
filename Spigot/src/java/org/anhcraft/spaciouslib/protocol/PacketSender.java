@@ -16,32 +16,24 @@ import java.util.List;
  * A class helps you to send packet
  */
 public class PacketSender {
-    private Object[] packets = new Object[]{};
+    private Object[] packets;
 
     /**
-     * Creates PacketSender instance from the given packet
-     * @param packet the packet
+     * Creates PacketSender instance
+     * @param array this can be an array of packets, an array of packet senders, an array of collection which contains elements as packets or packet senders. You can also mix different types<br> Ex: #PacketSender(list<Packet>, Collection<PacketSender>, Packet, PacketSender, Packet[])
      */
-    public PacketSender(Object packet){
-        this.packets = new Object[]{packet};
-    }
-
-    /**
-     * Creates PacketSender instance from the given packet array
-     * @param packetArray ana rray of packets
-     */
-    public PacketSender(Object... packetArray){
-        this.packets = packetArray;
-    }
-
-    /**
-     * Creates PacketSender instance from the given packet(sender) list
-     * @param packetList a list of packets or a list of packet senders
-     */
-    public PacketSender(List<Object> packetList){
+    public PacketSender(Object... array){
         List<Object> packets = new ArrayList<>();
-        for(Object o : packetList){
-            if(o instanceof PacketSender){
+        for(Object o : array){
+            if(o instanceof Iterable){
+                for(Object obj : ((Iterable) o)) {
+                    if(obj instanceof PacketSender) {
+                        packets.addAll(CommonUtils.toList(((PacketSender) obj).packets));
+                    } else {
+                        packets.add(obj);
+                    }
+                }
+            } else if(o instanceof PacketSender){
                 packets.addAll(CommonUtils.toList(((PacketSender) o).packets));
             } else {
                 packets.add(o);

@@ -6,10 +6,7 @@ import org.anhcraft.spaciouslib.protocol.EntityDestroy;
 import org.anhcraft.spaciouslib.protocol.EntityTeleport;
 import org.anhcraft.spaciouslib.protocol.LivingEntitySpawn;
 import org.anhcraft.spaciouslib.protocol.PacketBuilder;
-import org.anhcraft.spaciouslib.utils.Chat;
-import org.anhcraft.spaciouslib.utils.GameVersion;
-import org.anhcraft.spaciouslib.utils.Group;
-import org.anhcraft.spaciouslib.utils.ReflectionUtils;
+import org.anhcraft.spaciouslib.utils.*;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -282,13 +279,11 @@ public class Hologram extends PacketBuilder<Hologram> {
     @Override
     public Hologram buildPackets() {
         String v = GameVersion.getVersion().toString();
-        int i = 0;
         Location location = getLocation().clone()
                 .add(0, getLineSpacing() * getLines().size(), 0);
         try {
             for(String line : getLines()){
-                double y = i * getLineSpacing();
-                location = location.subtract(0, y, 0);
+                location = location.subtract(0, getLineSpacing(), 0);
                 Class<?> craftWorldClass = Class.forName("org.bukkit.craftbukkit." + v + ".CraftWorld");
                 Class<?> nmsWorldClass = Class.forName("net.minecraft.server." + v + ".World");
                 Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
@@ -327,6 +322,9 @@ public class Hologram extends PacketBuilder<Hologram> {
                         new Group<>(new Class<?>[]{boolean.class}, new Object[]{true})
                 );
                 if(GameVersion.is1_13Above()) {
+                    if(!CommonUtils.isValidJSON(line)){
+                        line = "{\"text\": \"" + line + "\"}";
+                    }
                     Object customNameComponent = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
                             new Group<>(
                                     new Class<?>[]{String.class},
@@ -361,7 +359,6 @@ public class Hologram extends PacketBuilder<Hologram> {
                 int entityId = (int) ReflectionUtils.getMethod("getId", nmsEntityClass, nmsArmorStand);
                 this.entities.put(entityId, nmsArmorStand);
                 packets.add(LivingEntitySpawn.create(nmsArmorStand));
-                i++;
             }
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
