@@ -22,6 +22,3 @@ Only works in Java 8+.<br><br>
 ❌ NPC<br>
 ❌ NBT<br>
 ❌ Particle
-
-## Credits
-Thanks every author of all above libraries and also thanks Spigot/Bungeecord team <3
