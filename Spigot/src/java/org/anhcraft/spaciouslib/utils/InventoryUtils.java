@@ -11,7 +11,7 @@ import java.util.List;
 public class InventoryUtils {
 
     /**
-     * Checks is an item stack null
+     * Checks is the given item stack null
      * @param item itemStack object
      * @return true if yes
      */
@@ -80,7 +80,7 @@ public class InventoryUtils {
     /**
      * Clones the given item safely
      * @param item an items tack
-     * @return the clone of the item
+     * @return the clone of that item, returns null if the original is null
      */
     public static ItemStack clone(ItemStack item) {
         return isNull(item) ? null : item.clone();
@@ -110,7 +110,7 @@ public class InventoryUtils {
             mt = (Material) ReflectionUtils.getStaticMethod("getMaterial",
                     Material.class, new Group<>(
                     new Class<?>[]{int.class},
-                    new Object[]{CommonUtils.toIntegerNumber(x[0])}
+                    new Object[]{CommonUtils.toInteger(x[0])}
             ));
         } else {
             mt = Material.valueOf(x[0].toUpperCase());
@@ -174,6 +174,26 @@ public class InventoryUtils {
             m.add(Material.valueOf("GOLD_CHESTPLATE"));
             m.add(Material.valueOf("GOLD_LEGGINGS"));
             m.add(Material.valueOf("GOLD_BOOTS"));
+        }
+        return m;
+    }
+
+    /**
+     * Gets all material types for ores
+     */
+    public static List<Material> getOres(){
+        List<Material> m = new ArrayList<>();
+        m.add(Material.COAL_ORE);
+        m.add(Material.GOLD_ORE);
+        m.add(Material.DIAMOND_ORE);
+        m.add(Material.IRON_ORE);
+        m.add(Material.EMERALD_ORE);
+        m.add(Material.LAPIS_ORE);
+        m.add(Material.REDSTONE_ORE);
+        if(GameVersion.is1_13Above()) {
+            m.add(Material.NETHER_QUARTZ_ORE);
+        } else{
+            m.add(Material.valueOf("QUARTZ_ORE"));
         }
         return m;
     }

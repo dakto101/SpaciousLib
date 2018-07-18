@@ -1,7 +1,7 @@
 package org.anhcraft.spaciouslib.listeners;
 
-import org.anhcraft.spaciouslib.compatibility.CompatibilityInventoryClickEvent;
 import org.anhcraft.spaciouslib.inventory.ClickableItemHandler;
+import org.anhcraft.spaciouslib.utils.CompatibilityUtils;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -31,7 +31,7 @@ public class ClickableItemListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void click(InventoryClickEvent event){
         Player player = (Player) event.getWhoClicked();
-        Inventory inventory = CompatibilityInventoryClickEvent.getInventory(event);
+        Inventory inventory = CompatibilityUtils.getInventory(event);
         ClickType type = event.getClick();
         if (inventory != null && data.containsKey(inventory)){
             ItemStack item = event.getCurrentItem();

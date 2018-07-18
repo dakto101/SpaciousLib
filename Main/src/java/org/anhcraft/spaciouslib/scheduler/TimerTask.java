@@ -36,22 +36,19 @@ public class TimerTask extends TaskScheduler {
     @Override
     public void run() {
         endTime = System.currentTimeMillis() + duration * 1000;
-        this.thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep((long) (delay*1000));
-                    while(true) {
-                        if(stopped || (duration != -1 && endTime <= System.currentTimeMillis())){
-                            thread.interrupt();
-                            break;
-                        }
-                        runnable.run();
-                        Thread.sleep((long) (period*1000));
+        this.thread = new Thread(() -> {
+            try {
+                Thread.sleep((long) (delay*1000));
+                while(true) {
+                    if(stopped || (duration != -1 && endTime <= System.currentTimeMillis())){
+                        thread.interrupt();
+                        break;
                     }
-                } catch(InterruptedException e) {
-                    e.printStackTrace();
+                    runnable.run();
+                    Thread.sleep((long) (period*1000));
                 }
+            } catch(InterruptedException e) {
+                e.printStackTrace();
             }
         });
         this.thread.start();

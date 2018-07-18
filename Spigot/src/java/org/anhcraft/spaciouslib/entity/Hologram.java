@@ -5,10 +5,9 @@ import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.protocol.EntityDestroy;
 import org.anhcraft.spaciouslib.protocol.EntityTeleport;
 import org.anhcraft.spaciouslib.protocol.LivingEntitySpawn;
-import org.anhcraft.spaciouslib.utils.Chat;
-import org.anhcraft.spaciouslib.utils.GameVersion;
-import org.anhcraft.spaciouslib.utils.Group;
-import org.anhcraft.spaciouslib.utils.ReflectionUtils;
+import org.anhcraft.spaciouslib.protocol.PacketBuilder;
+import org.anhcraft.spaciouslib.utils.*;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bukkit.Bukkit;
@@ -20,7 +19,7 @@ import java.util.*;
 /**
  * Represents a hologram implementation.
  */
-public class Hologram {
+public class Hologram extends PacketBuilder<Hologram> {
     private LinkedHashMap<Integer, Object> entities = new LinkedHashMap<>();
     private LinkedList<String> lines = new LinkedList<>();
     private Location location;
@@ -71,7 +70,9 @@ public class Hologram {
      * @return this object
      */
     public Hologram addViewer(UUID player){
+        Validate.notNull(packetSender, "You must use the method #buildPackets first!");
         this.viewers.add(player);
+        add(player);
         return this;
     }
 
@@ -81,6 +82,7 @@ public class Hologram {
      * @return this object
      */
     public Hologram removeViewer(UUID player){
+        remove(player);
         this.viewers.remove(player);
         return this;
     }
@@ -163,6 +165,20 @@ public class Hologram {
      * @return this object
      */
     public Hologram setViewers(Set<UUID> viewers) {
+        Validate.notNull(packetSender, "You must use the method #buildPackets first!");
+        // sends holograms to new viewers
+        Set<UUID> add = new HashSet<>(viewers); // clones
+        add.removeAll(this.viewers); // removes all existed viewers
+        for(UUID player : add){
+            add(player);
+        }
+        // removes the holograms of old viewers which aren't existed in the new list
+        Set<UUID> remove = new HashSet<>(this.viewers); // clones
+        remove.removeAll(viewers); // removes all non-existed viewers
+        for(UUID player : remove){
+            remove(player);
+        }
+        // ... of course, any viewers that aren't affected won't have any updates for their holograms
         this.viewers = viewers;
         return this;
     }
@@ -212,29 +228,68 @@ public class Hologram {
         return this;
     }
 
+    private Hologram add(UUID uuid){
+        Player player = Bukkit.getServer().getPlayer(uuid);
+        packetSender.sendPlayer(player);
+        return this;
+    }
+
     /**
-     * Spawns this hologram.<br>
-     * If you just want to teleport this hologram, please use the method "teleport" instead
-     * @return this object
+     * Removes this hologram.<br>
+     * Once you call this method, this instance can no longer be used
      */
-    public Hologram spawn(){
+    public void remove(){
+        for(Iterator<UUID> it = getViewers().iterator(); it.hasNext(); ) {
+            UUID p = it.next();
+            remove(p);
+            it.remove();
+        }
+        this.entities = new LinkedHashMap<>();
+        AnnotationHandler.unregister(Hologram.class, this);
+    }
+
+    private void remove(UUID p) {
+        for(int id : entities.keySet()) {
+            EntityDestroy.create(id).sendPlayer(Bukkit.getServer().getPlayer(p));
+        }
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            Hologram h = (Hologram) o;
+            return new EqualsBuilder()
+                    .append(h.entities, this.entities)
+                    .append(h.lines, this.lines)
+                    .append(h.location, this.location)
+                    .append(h.lineSpacing, this.lineSpacing)
+                    .append(h.viewers, this.viewers)
+                    .build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(9, 17)
+                .append(this.entities).append(this.lineSpacing).append(this.viewers)
+                .append(this.lines).append(this.location).toHashCode();
+    }
+
+    @Override
+    public Hologram buildPackets() {
         String v = GameVersion.getVersion().toString();
-        if(0 < this.entities.size()){
-            remove();
-        }
-        List<Player> receivers = new ArrayList<>();
-        for(UUID uuid : getViewers()){
-            receivers.add(Bukkit.getServer().getPlayer(uuid));
-        }
-        int i = 0;
+        Location location = getLocation().clone()
+                .add(0, getLineSpacing() * getLines().size(), 0);
         try {
             for(String line : getLines()){
-                double y = i * getLineSpacing();
-                Location location = getLocation().clone().add(0, y, 0);
+                location = location.subtract(0, getLineSpacing(), 0);
                 Class<?> craftWorldClass = Class.forName("org.bukkit.craftbukkit." + v + ".CraftWorld");
                 Class<?> nmsWorldClass = Class.forName("net.minecraft.server." + v + ".World");
                 Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
                 Class<?> nmsArmorStandClass = Class.forName("net.minecraft.server." + v + ".EntityArmorStand");
+                Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "IChatBaseComponent$") + "ChatSerializer");
+                Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent");
                 Object craftWorld = ReflectionUtils.cast(craftWorldClass, location.getWorld());
                 Object nmsWorld = ReflectionUtils.getMethod("getHandle", craftWorldClass, craftWorld);
                 Object nmsArmorStand = ReflectionUtils.getConstructor(nmsArmorStandClass, new Group<>(
@@ -266,9 +321,23 @@ public class Hologram {
                 ReflectionUtils.getMethod("setInvisible", nmsArmorStandClass, nmsArmorStand,
                         new Group<>(new Class<?>[]{boolean.class}, new Object[]{true})
                 );
-                ReflectionUtils.getMethod("setCustomName", nmsEntityClass, nmsArmorStand,
-                        new Group<>(new Class<?>[]{String.class}, new Object[]{line})
-                );
+                if(GameVersion.is1_13Above()) {
+                    if(!CommonUtils.isValidJSON(line)){
+                        line = "{\"text\": \"" + line + "\"}";
+                    }
+                    Object customNameComponent = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
+                            new Group<>(
+                                    new Class<?>[]{String.class},
+                                    new String[]{line}
+                            ));
+                    ReflectionUtils.getMethod("setCustomName", nmsEntityClass, nmsArmorStand,
+                            new Group<>(new Class<?>[]{chatBaseComponentClass}, new Object[]{customNameComponent})
+                    );
+                } else {
+                    ReflectionUtils.getMethod("setCustomName", nmsEntityClass, nmsArmorStand,
+                            new Group<>(new Class<?>[]{String.class}, new Object[]{line})
+                    );
+                }
                 ReflectionUtils.getMethod("setCustomNameVisible", nmsEntityClass, nmsArmorStand,
                         new Group<>(new Class<?>[]{boolean.class}, new Object[]{true})
                 );
@@ -287,51 +356,14 @@ public class Hologram {
                 ReflectionUtils.getMethod("setArms", nmsArmorStandClass, nmsArmorStand,
                         new Group<>(new Class<?>[]{boolean.class}, new Object[]{false})
                 );
-                int entityID = (int) ReflectionUtils.getMethod("getId", nmsEntityClass, nmsArmorStand);
-                this.entities.put(entityID, nmsArmorStand);
-                LivingEntitySpawn.create(nmsArmorStand).sendPlayers(receivers);
-                i++;
+                int entityId = (int) ReflectionUtils.getMethod("getId", nmsEntityClass, nmsArmorStand);
+                this.entities.put(entityId, nmsArmorStand);
+                packets.add(LivingEntitySpawn.create(nmsArmorStand));
             }
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
+        createPacketSender();
         return this;
-    }
-
-    /**
-     * Removes this hologram
-     */
-    public void remove(){
-        List<Player> receivers = new ArrayList<>();
-        for(UUID uuid : getViewers()){
-            receivers.add(Bukkit.getServer().getPlayer(uuid));
-        }
-        for(int hw : this.entities.keySet()){
-            EntityDestroy.create(hw).sendPlayers(receivers);
-        }
-        this.entities = new LinkedHashMap<>();
-        AnnotationHandler.unregister(Hologram.class, this);
-    }
-
-    @Override
-    public boolean equals(Object o){
-        if(o != null && o.getClass() == this.getClass()){
-            Hologram h = (Hologram) o;
-            return new EqualsBuilder()
-                    .append(h.entities, this.entities)
-                    .append(h.lines, this.lines)
-                    .append(h.location, this.location)
-                    .append(h.lineSpacing, this.lineSpacing)
-                    .append(h.viewers, this.viewers)
-                    .build();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode(){
-        return new HashCodeBuilder(9, 17)
-                .append(this.entities).append(this.lineSpacing).append(this.viewers)
-                .append(this.lines).append(this.location).toHashCode();
     }
 }

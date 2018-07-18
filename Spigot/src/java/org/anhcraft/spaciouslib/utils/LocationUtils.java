@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,9 @@ public class LocationUtils {
      * @return a string represents for the object
      */
     public static String loc2str(Location loc) {
+        if(loc == null){
+            return "null";
+        }
         return loc.getWorld().getName() + ":" + Double.toString(loc.getX()) + ":" +
                 Double.toString(loc.getY()) + ":" + Double.toString(loc.getZ()) +
                 ":" + Float.toString(loc.getPitch()) + ":" + Float.toString(loc.getYaw());
@@ -24,7 +26,7 @@ public class LocationUtils {
 
     /**
      * Deserialize the given string to its location
-     * @param str a string represents for the object
+     * @param str a string represents for the original location object
      * @return the location
      */
     public static Location str2loc(String str) {
@@ -33,11 +35,11 @@ public class LocationUtils {
         }
         String str2loc[] = str.split(":");
         Location loc = new Location(Bukkit.getServer().getWorld(str2loc[0]), 0, 0, 0);
-        loc.setX(MathUtils.round(Double.parseDouble(str2loc[1])));
-        loc.setY(MathUtils.round(Double.parseDouble(str2loc[2])));
-        loc.setZ(MathUtils.round(Double.parseDouble(str2loc[3])));
-        loc.setPitch((float) MathUtils.round(Double.parseDouble(str2loc[4])));
-        loc.setYaw((float) MathUtils.round(Double.parseDouble(str2loc[5])));
+        loc.setX(Double.parseDouble(str2loc[1]));
+        loc.setY(Double.parseDouble(str2loc[2]));
+        loc.setZ(Double.parseDouble(str2loc[3]));
+        loc.setPitch(Float.parseFloat(str2loc[4]));
+        loc.setYaw(Float.parseFloat(str2loc[5]));
         return loc;
     }
 
@@ -65,7 +67,6 @@ public class LocationUtils {
         return list;
     }
 
-
     /**
      * Gets nearby blocks
      * @param loc the center location
@@ -91,18 +92,17 @@ public class LocationUtils {
     }
 
     /**
-     * Check is the player under a block
-     * @param p the player
+     * Check is the given location under a block
+     * @param loc a location
      * @return true if yes
      */
-    public static boolean isUnderBlock(Player p) {
-        Location l = p.getLocation();
-        if(l.getY() > 256){
+    public static boolean isUnderBlock(Location loc) {
+        if(loc.getY() > 256){
             return false;
         }
-        for(int i = l.getBlockY(); i < 256; i++){
-            l.setY(i);
-            if(!l.getBlock().getType().equals(Material.AIR)){
+        for(int i = loc.getBlockY(); i < 256; i++){
+            loc.setY(i);
+            if(!loc.getBlock().getType().equals(Material.AIR)){
                 return true;
             }
         }

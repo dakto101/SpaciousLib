@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,27 +19,39 @@ public class PacketSender {
     private Object[] packets;
 
     /**
-     * Creates PacketSender instance from the given packet
-     * @param packet the packet
+     * Creates PacketSender instance
+     * @param array this can be an array of packets, an array of packet senders, an array of collection which contains elements as packets or packet senders. You can also mix different types<br> Ex: #PacketSender(list<Packet>, Collection<PacketSender>, Packet, PacketSender, Packet[])
      */
-    public PacketSender(Object packet){
-        this.packets = new Object[]{ packet };
+    public PacketSender(Object... array){
+        List<Object> packets = new ArrayList<>();
+        for(Object o : array){
+            if(o instanceof Iterable){
+                for(Object obj : ((Iterable) o)) {
+                    if(obj instanceof PacketSender) {
+                        packets.addAll(CommonUtils.toList(((PacketSender) obj).packets));
+                    } else {
+                        packets.add(obj);
+                    }
+                }
+            } else if(o instanceof PacketSender){
+                packets.addAll(CommonUtils.toList(((PacketSender) o).packets));
+            } else {
+                packets.add(o);
+            }
+        }
+        this.packets = CommonUtils.toArray(packets, Object.class);
     }
 
     /**
-     * Creates PacketSender instance from the given packet array
-     * @param packetArray the packet array
+     * Creates PacketSender instance from the given packet sender array
+     * @param packetSenderArray an array of packet senders
      */
-    public PacketSender(Object... packetArray){
-        this.packets = packetArray;
-    }
-
-    /**
-     * Creates PacketSender instance from the given packet list
-     * @param packetArray the packet list
-     */
-    public PacketSender(List<Object> packetArray){
-        this.packets = CommonUtils.toArray(packetArray, Object.class);
+    public PacketSender(PacketSender... packetSenderArray){
+        List<Object> packets = new ArrayList<>();
+        for(PacketSender ps : packetSenderArray){
+            packets.addAll(CommonUtils.toList(ps.getPackets()));
+        }
+        this.packets = CommonUtils.toArray(packets, Object.class);
     }
 
     /**

@@ -24,6 +24,10 @@ public class PlayerList {
         } else {
             footer = "{\"text\": \"" + Chat.color(footer) + "\"}";
         }
+        return build(header, footer);
+    }
+
+    private static PacketSender build(String header, String footer) {
         String v = GameVersion.getVersion().toString();
         try {
             Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "IChatBaseComponent$") + "ChatSerializer");
@@ -54,6 +58,6 @@ public class PlayerList {
      * @return PacketSender object
      */
     public static PacketSender remove(){
-        return create("{\"translate\":\"\"}", "{\"translate\":\"\"}");
+        return build("{\"translate\":\"\"}", "{\"translate\":\"\"}");
     }
 }

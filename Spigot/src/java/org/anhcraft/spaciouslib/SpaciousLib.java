@@ -29,6 +29,7 @@ public final class SpaciousLib extends JavaPlugin {
     public static SpaciousLib instance;
     public static FileConfiguration config;
     public static Chat chat;
+    private static boolean protocolLib = false;
 
     @Override
     public void onEnable(){
@@ -59,13 +60,15 @@ public final class SpaciousLib extends JavaPlugin {
         new BungeeAPI();
 
         chat.sendSender("&eStarting the tasks...");
-        if(config.getBoolean("stats")){
+        if(config.getBoolean("stats", true)){
             new Updater1520156620("1520156620", this);
         }
 
         // uses synchronous task because this task will call the ArmorEquipEvent event
         new ArmorEquipEventTask().runTaskTimer(this, 0, 20);
-        new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 1200);
+        if(getConfig().getBoolean("auto_renew_skin", true)) {
+            new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 1200);
+        }
 
         chat.sendSender("&eRegistering the listeners...");
         getServer().getPluginManager().registerEvents(new PlayerJumpEventListener(), this);
@@ -79,6 +82,7 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, new BungeeListener());
 
         if(getServer().getPluginManager().isPluginEnabled("ProtocolLib")){
+            protocolLib = true;
             new NPCInteractEventListener();
         }
 
@@ -90,7 +94,7 @@ public final class SpaciousLib extends JavaPlugin {
             }
         }
 
-        if(config.getBoolean("dev_mode")){
+        if(config.getBoolean("dev_mode", false)){
             chat.sendSender("&aSwitched to the development mode!");
             getServer().getPluginManager().registerEvents(new Test(), this);
         }
@@ -98,6 +102,8 @@ public final class SpaciousLib extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        ProtocolLibrary.getProtocolManager().removePacketListeners(this);
+        if(protocolLib) {
+            ProtocolLibrary.getProtocolManager().removePacketListeners(this);
+        }
     }
 }

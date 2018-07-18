@@ -28,7 +28,7 @@ public class NPCInteractEventListener{
                         if (event.getPacketType() ==
                                 PacketType.Play.Client.USE_ENTITY) {
                             for(NPC n : data){
-                                if(n.getEntityID() == event.getPacket().getIntegers().read(0)){
+                                if(n.getEntityId() == event.getPacket().getIntegers().read(0)){
                                     NPCInteractEvent.Action action = NPCInteractEvent.Action.valueOf(
                                             event.getPacket().getEntityUseActions()
                                                     .read(0).toString().toUpperCase());

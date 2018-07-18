@@ -27,7 +27,8 @@ public class PlaceholderAPI {
                     ((CachedPlaceholder) p).updateCache();
                 }
             }
-        }, 20, 20, TimeUnit.SECONDS);
+        }, 0, SpaciousLib.
+                config.getLong("placeholder_cache_duration"), TimeUnit.SECONDS);
 
         register(new FixedPlaceholder() {
             @Override

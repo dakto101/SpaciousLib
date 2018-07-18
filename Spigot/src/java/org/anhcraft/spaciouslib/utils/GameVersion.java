@@ -24,8 +24,7 @@ public enum GameVersion {
     }
 
     /**
-     * Gets Minecraft version of this server
-     * @return current Minecraft version
+     * Gets current Minecraft version of this server
      */
     public static GameVersion getVersion(){
         return GameVersion.valueOf(Bukkit.getServer().getClass().getPackage()

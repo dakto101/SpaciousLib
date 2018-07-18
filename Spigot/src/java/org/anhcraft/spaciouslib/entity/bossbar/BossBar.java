@@ -72,7 +72,8 @@ public class BossBar {
     private LinkedHashMap<UUID, Object> bossBattles = new LinkedHashMap<>();
 
     /**
-     * Removes this boss bar
+     * Removes this boss bar.<br>
+     * Once you call this method, this instance can no longer be used
      */
     public void remove(){
         for(Iterator<UUID> it = getViewers().iterator(); it.hasNext(); ) {
@@ -294,7 +295,7 @@ public class BossBar {
      * @return this object
      */
     public BossBar setViewers(Set<UUID> viewers) {
-        // adds the boss bars for new viewers
+        // sends the boss bars to new viewers
         Set<UUID> add = new HashSet<>(viewers); // clones
         add.removeAll(this.viewers); // removes all existed viewers
         for(UUID player : add){

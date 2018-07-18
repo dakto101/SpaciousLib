@@ -8,11 +8,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CommonUtils {
     /**
-     * Parses the given string as an integer number safely.
+     * Parses the given string as an integer safely.
      * @param number a number in string
      * @return the number
      */
-    public static int toIntegerNumber(String number){
+    public static int toInteger(String number){
         return Integer.parseInt(number.replaceAll("[^\\d\\-]", ""));
     }
 

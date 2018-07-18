@@ -6,5 +6,19 @@ Website: https://spaciouslib.anhcraft.org/<br>
 Javadoc: http://spaciouslib.anhcraft.org/javadoc/<br><br>
 Only works in Java 8+.<br><br>
 
-## Credits
-Thanks every author of all above libraries and also thanks Spigot/Bungeecord team <3
+## 1.13 Support
+✔ Anvil<br>
+✔ Recipe<br>
+✔ Command Builder<br>
+✔ BossBar<br>
+✔ ArmorStand<br>
+✔ Hologram<br>
+✔ Title<br>
+✔ Animation<br>
+✔ BlockBreakAnimation<br>
+✔ Camera<br>
+✔ ActionBar<br>
+✔ PlayerList<br>
+❌ NPC<br>
+❌ NBT<br>
+❌ Particle
