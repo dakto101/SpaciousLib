@@ -9,36 +9,57 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A class helps you to send packet
  */
 public class PacketSender {
-    private Object[] packets;
+    private Object[] packets = new Object[]{};
 
     /**
      * Creates PacketSender instance from the given packet
      * @param packet the packet
      */
     public PacketSender(Object packet){
-        this.packets = new Object[]{ packet };
+        this.packets = new Object[]{packet};
     }
 
     /**
      * Creates PacketSender instance from the given packet array
-     * @param packetArray the packet array
+     * @param packetArray ana rray of packets
      */
     public PacketSender(Object... packetArray){
         this.packets = packetArray;
     }
 
     /**
-     * Creates PacketSender instance from the given packet list
-     * @param packetArray the packet list
+     * Creates PacketSender instance from the given packet(sender) list
+     * @param packetList a list of packets or a list of packet senders
      */
-    public PacketSender(List<Object> packetArray){
-        this.packets = CommonUtils.toArray(packetArray, Object.class);
+    public PacketSender(List<Object> packetList){
+        List<Object> packets = new ArrayList<>();
+        for(Object o : packetList){
+            if(o instanceof PacketSender){
+                packets.addAll(CommonUtils.toList(((PacketSender) o).packets));
+            } else {
+                packets.add(o);
+            }
+        }
+        this.packets = CommonUtils.toArray(packets, Object.class);
+    }
+
+    /**
+     * Creates PacketSender instance from the given packet sender array
+     * @param packetSenderArray an array of packet senders
+     */
+    public PacketSender(PacketSender... packetSenderArray){
+        List<Object> packets = new ArrayList<>();
+        for(PacketSender ps : packetSenderArray){
+            packets.addAll(CommonUtils.toList(ps.getPackets()));
+        }
+        this.packets = CommonUtils.toArray(packets, Object.class);
     }
 
     /**

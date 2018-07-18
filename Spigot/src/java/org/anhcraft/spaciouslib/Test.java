@@ -12,6 +12,7 @@ import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SubCommandBuilder;
 import org.anhcraft.spaciouslib.database.SQLiteDatabase;
 import org.anhcraft.spaciouslib.effects.*;
+import org.anhcraft.spaciouslib.entity.ArmorStand;
 import org.anhcraft.spaciouslib.entity.Hologram;
 import org.anhcraft.spaciouslib.entity.NPC;
 import org.anhcraft.spaciouslib.entity.PlayerManager;
@@ -59,6 +60,18 @@ public class Test implements Listener {
     private static final File DB_FILE = new File("test.db");
     private static ClientSocketManager client;
     private static double[] effectRotateAngle = new double[3];
+    private static ShapedRecipe recipe = new ShapedRecipe(
+            new ItemManager("Emerald sword", Material.DIAMOND_SWORD, 1)
+                    .addEnchant(Enchantment.DAMAGE_ALL, 3)
+                    .addAttributeModifier(Attribute.Type.GENERIC_MAX_HEALTH,
+                            new AttributeModifier("attr", 5,
+                                    AttributeModifier.Operation.ADD), EquipSlot.MAINHAND)
+                    .getItem()).shape("b", "b", "a").setIngredient('a', Material.STICK)
+            .setIngredient('b', Material.EMERALD);
+    private static Hologram hologram;
+    private static BossBar bossbar;
+    private static ArmorStand armorstand;
+    private static NPC npc;
 
     public Test(){
 
@@ -128,6 +141,35 @@ public class Test implements Listener {
                         }
                     }))
 
+                    .addSubCommand(new SubCommandBuilder("armorstand create", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                armorstand = new ArmorStand(player.getLocation()).setArms(true)
+                                        .setGravity(true).setCustomName("aaa").setMarker(true).setVisible(true).setHelmet(new ItemManager("&aaaa", Material.BEACON, 1).setUnbreakable(true).getItem());
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("armorstand build", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            armorstand.buildPackets();
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("armorstand addviewer", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("player", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            armorstand.addViewer(Bukkit.getServer().getPlayer(value).getUniqueId());
+                        }
+                    }, CommandArgument.Type.ONLINE_PLAYER, false))
+
                     .addSubCommand(new SubCommandBuilder("tps", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
@@ -172,30 +214,67 @@ public class Test implements Listener {
                         }
                     }))
 
-                    .addSubCommand(new SubCommandBuilder("hologram", null, new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("hologram create", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             if(sender instanceof Player) {
                                 Player player = (Player) sender;
-                                new Hologram(((Player) sender).getLocation()).addViewer(player.getUniqueId()).addLine("test 1").addLine("test 2").addLine("test 3").spawn();
+                                hologram = new Hologram(player.getLocation());
                             }
                         }
                     }))
 
-                    .addSubCommand(new SubCommandBuilder("recipe", null, new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("hologram addline", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
-                            ShapedRecipe recipe = new ShapedRecipe(
-                                    new ItemManager("Emerald sword", Material.DIAMOND_SWORD, 1)
-                                            .addEnchant(Enchantment.DAMAGE_ALL, 3)
-                                            .addAttributeModifier(Attribute.Type.GENERIC_MAX_HEALTH,
-                                                    new AttributeModifier("attr", 5,
-                                                            AttributeModifier.Operation.ADD), EquipSlot.MAINHAND)
-                                            .getItem());
-                            recipe.shape("b", "b", "a");
-                            recipe.setIngredient('a', Material.STICK);
-                            recipe.setIngredient('b', Material.EMERALD);
+                        }
+                    }).addArgument("text", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            hologram.addLine(String.join(" ", args));
+                        }
+                    }, CommandArgument.Type.CUSTOM, false))
+
+                    .addSubCommand(new SubCommandBuilder("hologram build", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            hologram.buildPackets();
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("hologram addviewer", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("player", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            hologram.addViewer(Bukkit.getServer().getPlayer(value).getUniqueId());
+                        }
+                    }, CommandArgument.Type.ONLINE_PLAYER, false))
+
+                    .addSubCommand(new SubCommandBuilder("hologram removeviewer", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("player", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            hologram.removeViewer(Bukkit.getServer().getPlayer(value).getUniqueId());
+                        }
+                    }, CommandArgument.Type.ONLINE_PLAYER, false))
+
+                    .addSubCommand(new SubCommandBuilder("recipe register", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             new RecipeManager(recipe).register();
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("recipe unregister", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            new RecipeManager(recipe).unregister();
                         }
                     }))
 
@@ -252,17 +331,14 @@ public class Test implements Listener {
                         }
                     }, CommandArgument.Type.CUSTOM, false))
 
-                    .addSubCommand(new SubCommandBuilder("npc", null, new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("npc create", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             if(sender instanceof Player) {
                                 try {
                                     Player player = (Player) sender;
-                                    new NPC(new GameProfileManager("test")
-                                            .setSkin(SkinAPI.getSkin(
-                                                    MojangAPI.getUUID("anhcraft").getB()).getSkin())
-                                            .getGameProfile(),
-                                            ((Player) sender).getLocation()).addViewer(player.getUniqueId()).spawn();
+                                    npc = new NPC(new GameProfileManager("test").getGameProfile(),
+                                            ((Player) sender).getLocation());
                                 } catch(Exception e) {
                                     e.printStackTrace();
                                 }
@@ -270,16 +346,71 @@ public class Test implements Listener {
                         }
                     }))
 
-                    .addSubCommand(new SubCommandBuilder("bossbar", null, new CommandRunnable() {
+                    .addSubCommand(new SubCommandBuilder("npc build", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             if(sender instanceof Player) {
-                                Player player = (Player) sender;
-                                new BossBar("test", BossBar.Color.GREEN, BossBar.Style.NOTCHED_6, 1, BossBar.Flag.CREATE_FOG, BossBar.Flag.DARKEN_SKY).addViewer(player.getUniqueId());
+                                try {
+                                    npc.buildPackets();
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }))
 
+                    .addSubCommand(new SubCommandBuilder("npc addviewer", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("player", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            npc.addViewer(Bukkit.getServer().getPlayer(value).getUniqueId());
+                        }
+                    }, CommandArgument.Type.ONLINE_PLAYER, false))
+
+                    .addSubCommand(new SubCommandBuilder("npc removeviewer", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("player", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            npc.removeViewer(Bukkit.getServer().getPlayer(value).getUniqueId());
+                        }
+                    }, CommandArgument.Type.ONLINE_PLAYER, false))
+
+                    .addSubCommand(new SubCommandBuilder("bossbar create", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                bossbar = new BossBar("test", BossBar.Color.GREEN, BossBar.Style.NOTCHED_6, 1, BossBar.Flag.CREATE_FOG, BossBar.Flag.DARKEN_SKY);
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("bossbar addviewer", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("player", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            bossbar.addViewer(Bukkit.getServer().getPlayer(value).getUniqueId());
+                        }
+                    }, CommandArgument.Type.ONLINE_PLAYER, false))
+
+                    .addSubCommand(new SubCommandBuilder("bossbar removeviewer", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("player", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            bossbar.removeViewer(Bukkit.getServer().getPlayer(value).getUniqueId());
+                        }
+                    }, CommandArgument.Type.ONLINE_PLAYER, false))
 
                     .addSubCommand(new SubCommandBuilder("effect circle", null, new CommandRunnable() {
                         @Override
@@ -289,20 +420,17 @@ public class Test implements Listener {
                                 CircleEffect effect = new CircleEffect(player.getLocation());
                                 effect.setRadius(5);
                                 effect.addNearbyViewers(10);
-                                new TimerTask(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        effect.setParticleColor(new Color(
-                                                ThreadLocalRandom.current().nextInt(0, 256),
-                                                ThreadLocalRandom.current().nextInt(0, 256),
-                                                ThreadLocalRandom.current().nextInt(0, 256)
-                                        ));
-                                        effect.setAngleX(effectRotateAngle[0]);
-                                        effect.setAngleY(effectRotateAngle[0]);
-                                        effect.setAngleZ(effectRotateAngle[0]);
-                                        effect.spawn();
-                                        effectRotateAngle[0]++;
-                                    }
+                                new TimerTask(() -> {
+                                    effect.setParticleColor(new Color(
+                                            ThreadLocalRandom.current().nextInt(0, 256),
+                                            ThreadLocalRandom.current().nextInt(0, 256),
+                                            ThreadLocalRandom.current().nextInt(0, 256)
+                                    ));
+                                    effect.setAngleX(effectRotateAngle[0]);
+                                    effect.setAngleY(effectRotateAngle[0]);
+                                    effect.setAngleZ(effectRotateAngle[0]);
+                                    effect.spawn();
+                                    effectRotateAngle[0]++;
                                 }, 0, 0.05, 60).run();
                             }
                         }
@@ -318,12 +446,7 @@ public class Test implements Listener {
                                 effect.addNearbyViewers(10);
                                 effect.setImageSize(0.5);
                                 effect.setParticleAmount(effect.getParticleAmount() * 20);
-                                new TimerTask(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        effect.spawn();
-                                    }
-                                }, 0, 1, 120).run();
+                                new TimerTask(() -> effect.spawn(), 0, 1, 120).run();
                             }
                         }
                     }))
@@ -338,15 +461,12 @@ public class Test implements Listener {
                                 effect.addViewer(player.getUniqueId());
                                 effect.setParticleType(Particle.Type.FLAME);
                                 effect.setParticleAmount(effect.getParticleAmount() * 2);
-                                new TimerTask(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        effect.setAngleX(effectRotateAngle[1]);
-                                        effect.setAngleY(effectRotateAngle[1]);
-                                        effect.setAngleZ(effectRotateAngle[1]);
-                                        effect.spawn();
-                                        effectRotateAngle[1]++;
-                                    }
+                                new TimerTask(() -> {
+                                    effect.setAngleX(effectRotateAngle[1]);
+                                    effect.setAngleY(effectRotateAngle[1]);
+                                    effect.setAngleZ(effectRotateAngle[1]);
+                                    effect.spawn();
+                                    effectRotateAngle[1]++;
                                 }, 0, 0.05, 60).run();
                             }
                         }
@@ -363,15 +483,12 @@ public class Test implements Listener {
                                 effect.setParticleAmount(800);
                                 effect.setVortexLineAmount(8);
                                 effect.setVortexLineLength(2);
-                                new TimerTask(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        effect.setAngleX(effectRotateAngle[2]);
-                                        effect.setAngleY(effectRotateAngle[2]);
-                                        effect.setAngleZ(effectRotateAngle[2]);
-                                        effect.spawn();
-                                        effectRotateAngle[2]++;
-                                    }
+                                new TimerTask(() -> {
+                                    effect.setAngleX(effectRotateAngle[2]);
+                                    effect.setAngleY(effectRotateAngle[2]);
+                                    effect.setAngleZ(effectRotateAngle[2]);
+                                    effect.spawn();
+                                    effectRotateAngle[2]++;
                                 }, 0, 0.05, 60).run();
                             }
                         }
@@ -420,8 +537,6 @@ public class Test implements Listener {
                     System.out.println("Server >> " + new String(data));
                 }
             });
-            // sends messages to the socket server
-            client.send("Hi server!");
         } catch(Exception ignored) {}
     }
 

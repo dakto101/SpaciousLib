@@ -123,6 +123,7 @@ public class Particle {
     }
 
     public static PacketSender create(Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed, Material material, int data){
+        // TO-DO: supports 1.13
         String v = GameVersion.getVersion().toString();
         try {
             Class<?> enumParticleClass = Class.forName("net.minecraft.server."+v+".EnumParticle");

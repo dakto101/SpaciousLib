@@ -110,7 +110,7 @@ public class InventoryUtils {
             mt = (Material) ReflectionUtils.getStaticMethod("getMaterial",
                     Material.class, new Group<>(
                     new Class<?>[]{int.class},
-                    new Object[]{CommonUtils.toIntegerNumber(x[0])}
+                    new Object[]{CommonUtils.toInteger(x[0])}
             ));
         } else {
             mt = Material.valueOf(x[0].toUpperCase());
