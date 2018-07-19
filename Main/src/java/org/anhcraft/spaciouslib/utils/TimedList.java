@@ -3,12 +3,14 @@ package org.anhcraft.spaciouslib.utils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 /**
  * A TimedList is a list which removes any expired element automatically.
  */
-public class TimedList<E> {
+public class TimedList<E> implements Iterable<E> {
     private LinkedList<E> a = new LinkedList<>();
     private LinkedList<Long> b = new LinkedList<>();
 
@@ -130,5 +132,37 @@ public class TimedList<E> {
     public int hashCode(){
         return new HashCodeBuilder(21, 33)
                 .append(this.a).append(this.b).toHashCode();
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new Itr();
+    }
+
+    private class Itr implements Iterator<E> {
+        private int next = 0;
+        private E current;
+
+        @Override
+        public boolean hasNext(){
+            return next < size();
+        }
+
+        @Override
+        public E next(){
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            current = a.get(next);
+            next++;
+            return current;
+        }
+
+        @Override
+        public void remove() {
+            next--;
+            a.remove(next);
+            b.remove(next);
+        }
     }
 }

@@ -27,19 +27,11 @@ public class Test {
     public static void main(String[] args){
         System.out.println(Color.GREEN.getGreen());
 
-        task = new TimerTask(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Your message...");
-            }
-        }, 0, 1);
+        task = new TimerTask(() -> System.out.println("Your message..."), 0, 1);
         task.run();
-        new DelayedTask(new Runnable() {
-            @Override
-            public void run() {
-                task.stop();
-                System.out.println("Stopped.");
-            }
+        new DelayedTask(() -> {
+            task.stop();
+            System.out.println("Stopped.");
         }, (long) TimeUnit.MINUTE.getSeconds()).run();
         /////////////////////////////////////////////////////////////////////////
 

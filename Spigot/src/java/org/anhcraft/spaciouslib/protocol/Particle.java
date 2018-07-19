@@ -5,6 +5,7 @@ import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.awt.*;
 
@@ -12,7 +13,7 @@ import java.awt.*;
  * A class helps you to send particle packets
  */
 public class Particle {
-    public class Dust {
+    public static class Dust {
         private Color color;
         private float size;
 
@@ -31,64 +32,85 @@ public class Particle {
     }
 
     public enum Type{
-        EXPLOSION_NORMAL(0),
-        EXPLOSION_LARGE(1),
-        EXPLOSION_HUGE(2),
-        FIREWORKS_SPARK(3),
-        WATER_BUBBLE(4),
-        WATER_SPLASH(5),
-        WATER_WAKE(6),
-        SUSPENDED(7),
-        SUSPENDED_DEPTH(8),
-        CRIT(9),
-        CRIT_MAGIC(10),
-        SMOKE_NORMAL(11),
-        SMOKE_LARGE(12),
-        SPELL(13),
-        SPELL_INSTANT(14),
-        SPELL_MOB(15),
-        SPELL_MOB_AMBIENT(16),
-        SPELL_WITCH(17),
-        DRIP_WATER(18),
-        DRIP_LAVA(19),
-        VILLAGER_ANGRY(20),
-        VILLAGER_HAPPY(21),
-        TOWN_AURA(22),
-        NOTE(23),
-        PORTAL(24),
-        ENCHANTMENT_TABLE(25),
-        FLAME(26),
-        LAVA(27),
-        FOOTSTEP(28),
-        CLOUD(29),
-        REDSTONE(30),
-        SNOWBALL(31),
-        SNOW_SHOVEL(32),
-        SLIME(33),
-        HEART(34),
-        BARRIER(35),
-        ITEM_CRACK(36),
-        BLOCK_CRACK(37),
-        BLOCK_DUST(38),
-        WATER_DROP(39),
-        ITEM_TAKE(40),
-        MOB_APPEARANCE(41),
-        DRAGON_BREATH(42),
-        END_ROD(43),
-        DAMAGE_INDICATOR(44),
-        SWEEP_ATTACK(45),
-        FALLING_DUST(46),
-        TOTEM(47),
-        SPIT(48);
+        EXPLOSION_NORMAL("poof"),
+        EXPLOSION_LARGE("explosion"),
+        EXPLOSION_HUGE("explosion_emitter"),
+        FIREWORKS_SPARK("firework"),
+        WATER_BUBBLE("bubble"),
+        WATER_SPLASH("splash"),
+        WATER_WAKE("fishing"),
+        SUSPENDED("underwater"),
+        @Deprecated
+        SUSPENDED_DEPTH(null),
+        CRIT("crit"),
+        CRIT_MAGIC("enchanted_hit"),
+        SMOKE_NORMAL("smoke"),
+        SMOKE_LARGE("large_smoke"),
+        SPELL("effect"),
+        SPELL_INSTANT("instant_effect"),
+        SPELL_MOB("entity_effect", Dust.class),
+        SPELL_MOB_AMBIENT("ambient_entity_effect"),
+        SPELL_WITCH("witch"),
+        DRIP_WATER("dripping_water"),
+        DRIP_LAVA("dripping_lava"),
+        VILLAGER_ANGRY("angry_villager"),
+        VILLAGER_HAPPY("happy_villager"),
+        TOWN_AURA("mycelium"),
+        NOTE("note"),
+        PORTAL("portal"),
+        ENCHANTMENT_TABLE("enchant"),
+        FLAME("flame"),
+        LAVA("lava"),
+        @Deprecated
+        FOOTSTEP(null),
+        CLOUD("cloud"),
+        REDSTONE("dust", Dust.class),
+        SNOWBALL("item_snowball"),
+        @Deprecated
+        SNOW_SHOVEL(null),
+        SLIME("item_slime"),
+        HEART("heart"),
+        BARRIER("barrier"),
+        ITEM_CRACK("item", ItemStack.class),
+        BLOCK_CRACK("block", Material.class),
+        @Deprecated
+        BLOCK_DUST(null),
+        WATER_DROP("rain"),
+        @Deprecated
+        ITEM_TAKE(null),
+        MOB_APPEARANCE("elder_guardian"),
+        DRAGON_BREATH("dragon_breath"),
+        END_ROD("end_rod"),
+        DAMAGE_INDICATOR("damage_indicator"),
+        SWEEP_ATTACK("sweep_attack"),
+        FALLING_DUST("falling_dust", Material.class),
+        TOTEM("totem_of_undying"),
+        SPIT("spit"),
+        SQUID_INK("squid_ink"),
+        BUBBLE_POP("bubble_pop"),
+        CURRENT_DOWN("current_down"),
+        BUBBLE_COLUMN_UP("bubble_column_up"),
+        NAUTILUS("nautilus"),
+        DOLPHIN("dolphin");
 
-        private int id;
+        private String id;
+        private Class<?> clazz;
 
-        Type(int id){
+        Type(String id){
             this.id = id;
         }
 
-        public int getId(){
+        Type(String id, Class<?> clazz){
+            this.id = id;
+            this.clazz = clazz;
+        }
+
+        public String getId(){
             return id;
+        }
+
+        public Class<?> getDataClass() {
+            return clazz;
         }
     }
 
@@ -97,72 +119,110 @@ public class Particle {
     }
 
     public static PacketSender create(Type type, Location location, Color color){
-        float offsetX = (float) color.getRed() / 255;
-        float offsetY = (float) color.getGreen() / 255;
-        float offsetZ = (float) color.getBlue() / 255;
-
-        if (offsetX < 0) {
-            offsetX = 0;
-        }
-        if (offsetY < 0) {
-            offsetY = 0;
-        }
-        if (offsetZ < 0) {
-            offsetZ = 0;
-        }
-
-        return create(type, location, 0, offsetX, offsetY, offsetZ, false, 1, Material.AIR, 0);
+        return create(type, location, 0, 0, 0, 0, false, 1, new Dust(color, 1));
     }
 
     public static PacketSender create(Color color, Location location){
-        float offsetX = (float) color.getRed() / 255;
-        float offsetY = (float) color.getGreen() / 255;
-        float offsetZ = (float) color.getBlue() / 255;
+        return create(Type.REDSTONE, location, 0, 0, 0, 0, false, 1, new Dust(color, 1));
+    }
 
-        if (offsetX < 0) {
-            offsetX = 0;
-        }
-        if (offsetY < 0) {
-            offsetY = 0;
-        }
-        if (offsetZ < 0) {
-            offsetZ = 0;
-        }
+    public static PacketSender create(Type type, Location location, ItemStack item){
+        return create(type, location, 0, 0, 0, 0, false, 1, item);
+    }
 
-        return create(Type.SPELL_MOB, location, 0, offsetX, offsetY, offsetZ, false, 1, Material.AIR, 0);
+    public static PacketSender create(ItemStack item, Location location){
+        return create(Type.ITEM_CRACK, location, 0, 0, 0, 0, false, 1, item);
     }
 
     public static PacketSender create(Type type, Location location, int count, int speed){
-        return create(type, location, count, 0, 0, 0, false, speed, Material.AIR, 0);
+        return create(type, location, count, 0, 0, 0, false, speed, null);
     }
 
-    public static PacketSender create(Type type, Location location, int count, Material material, int data){
-        return create(type, location, count, 0, 0, 0, false, 0, material, data);
+    public static PacketSender create(Type type, Location location, int count, Material material,
+                                      @Deprecated int data){
+        return create(type, location, count, 0, 0, 0, false, 0, material);
     }
 
-    public static PacketSender create(Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed, Material material, int data){
-        // TO-DO: supports 1.13
-        String v = GameVersion.getVersion().toString();
+    public static PacketSender create(Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed, Material material, @Deprecated int data){
+        return create(type, location, count, offsetX, offsetY, offsetZ, longDistance, speed, material);
+    }
+
+    public static PacketSender create (Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed, Object data){
+        if(type.getId() == null){
+            return null;
+        }
+        if(type.getDataClass() != null && data.getClass().isAssignableFrom(type.getDataClass())){
+            return null;
+        }
         try {
-            Class<?> enumParticleClass = Class.forName("net.minecraft.server."+v+".EnumParticle");
-            Object enumParticle = ReflectionUtils.getEnum(type.toString(), enumParticleClass);
             Class<?> packetPlayOutWorldParticlesClass = Class.forName("net.minecraft.server."+v+".PacketPlayOutWorldParticles");
-            int[] i = new int[]{};
-            if(type.equals(Type.ITEM_CRACK)){
-                i = new int[]{material.getId(), data};
+            String v = GameVersion.getVersion().toString();
+            if(GameVersion.is1_13Above()){
+                Class<?> particleClass = Class.forName("net.minecraft.server."+v+".Particle");
+                Class<?> particleParamClass = Class.forName("net.minecraft.server."+v+".ParticleParam");
+                Class<?> registryMaterialClass = Class.forName("net.minecraft.server."+v+".RegistryMaterials");
+                Class<?> minecraftKeyClass = Class.forName("net.minecraft.server."+v+".MinecraftKey");
+                Class<?> particleParamRedstoneClass = Class.forName("net.minecraft.server."+v+".ParticleParamRedstone");
+                Object minecraftKey = ReflectionUtils.getConstructor(minecraftKeyClass, new Group<>(
+                        new Class<?>[]{String.class},
+                        new Object[]{type.getId()}
+                ));
+                Object particleRegistry = ReflectionUtils.getStaticField("REGISTRY", particleClass);
+                Object particle = ReflectionUtils.getMethod("get", registryMaterialClass,
+                        particleRegistry, new Group<>(
+                        new Class<?>[]{minecraftKeyClass},
+                        new Object[]{minecraftKey}
+                ));
+                Object particleParam = null;
+                if(type.getDataClass() == null){
+                    particleParam = ReflectionUtils.cast(particleParamClass, particle);
+                } else if(type.getDataClass().equals(ItemStack.class)){
+                    particleParam = ;
+                } else if(type.getDataClass().equals(Material.class)){
+                    particleParam = ;
+                } else if(type.getDataClass().equals(Dust.class)){
+                    Dust dust = (Dust) data;
+                    particleParam = ReflectionUtils.getConstructor(particleParamRedstoneClass, new Group<>(
+                            new Class<?>[]{float.class, float.class, float.class, float.size},
+                            new Object[]{dust.getColor().getRed(), dust.getColor().getGreen(), dust.getColor().getBlue(), dust.size}
+                    ));
+                }
+                return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutWorldParticlesClass, new Group<>(
+                        new Class<?>[]{particleParamClass, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class},
+                        new Object[]{particleParam, longDistance, (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count}
+                )));
+            } else {
+                    Class<?> enumParticleClass = Class.forName("net.minecraft.server."+v+".EnumParticle");
+                    Object enumParticle = ReflectionUtils.getEnum(type.toString(), enumParticleClass);
+                    int[] i = new int[]{};
+                    if(type.getDataClass().equals(Material.class)){
+                        i = new int[]{((Material) data).getId()};
+                    } else if(type.getDataClass().equals(ItemStack.class)){
+                        i = new int[]{((ItemStack) data).getType().getId()};
+                    } else if(type.getDataClass().equals(Dust.class)){
+                        Color color = ((Dust) data).color;
+                        offsetX = (float) color.getRed() / 255;
+                        offsetY = (float) color.getGreen() / 255;
+                        offsetZ = (float) color.getBlue() / 255;
+                        if (offsetX < 0) {
+                            offsetX = 0;
+                        }
+                        if (offsetY < 0) {
+                            offsetY = 0;
+                        }
+                        if (offsetZ < 0) {
+                            offsetZ = 0;
+                        }
+                    }
+                    return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutWorldParticlesClass, new Group<>(
+                            new Class<?>[]{enumParticleClass, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class, int[].class},
+                            new Object[]{enumParticle, longDistance,
+                                    (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count, i}
+                    )));
+                return null;
             }
-            else if(type.equals(Type.BLOCK_CRACK) || type.equals(Type.BLOCK_DUST) ||
-                    type.equals(Type.FALLING_DUST)){
-                i = new int[]{material.getId() + (data << 12)};
-            }
-            return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutWorldParticlesClass, new Group<>(
-                    new Class<?>[]{enumParticleClass, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class, int[].class},
-                    new Object[]{enumParticle, longDistance,
-                            (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count, i}
-            )));
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return null;
     }
 }
