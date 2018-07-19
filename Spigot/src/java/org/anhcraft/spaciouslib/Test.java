@@ -1,5 +1,7 @@
 package org.anhcraft.spaciouslib;
 
+import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
+import org.anhcraft.spaciouslib.annotations.PacketHandler;
 import org.anhcraft.spaciouslib.anvil.Anvil;
 import org.anhcraft.spaciouslib.attribute.Attribute;
 import org.anhcraft.spaciouslib.attribute.AttributeModifier;
@@ -20,9 +22,12 @@ import org.anhcraft.spaciouslib.entity.bossbar.BossBar;
 import org.anhcraft.spaciouslib.events.*;
 import org.anhcraft.spaciouslib.inventory.*;
 import org.anhcraft.spaciouslib.io.FileManager;
+import org.anhcraft.spaciouslib.listeners.PacketListener;
 import org.anhcraft.spaciouslib.mojang.GameProfileManager;
 import org.anhcraft.spaciouslib.mojang.MojangAPI;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
+import org.anhcraft.spaciouslib.nbt.NBTCompound;
+import org.anhcraft.spaciouslib.nbt.NBTLoader;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.anhcraft.spaciouslib.protocol.*;
 import org.anhcraft.spaciouslib.scheduler.TimerTask;
@@ -51,6 +56,7 @@ import org.spigotmc.SpigotConfig;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -72,7 +78,18 @@ public class Test implements Listener {
     private static ArmorStand armorstand;
     private static NPC npc;
 
+    @PacketHandler
+    public void packetHandler(PacketListener.Handler handler){
+        if(handler.getBound() == PacketListener.BoundType.CLIENT_BOUND
+                && handler.getPacket().getClass().getSimpleName().equals("PacketPlayOutChat")){
+            if(handler.getPlayer().getWorld().getName().equals("afk")) {
+                handler.setCancelled(true);
+            }
+        }
+    }
+
     public Test(){
+        AnnotationHandler.register(this.getClass(), this);
 
         try {
             // creates the database file
@@ -449,6 +466,28 @@ public class Test implements Listener {
                             npc.removeViewer(Bukkit.getServer().getPlayer(value).getUniqueId());
                         }
                     }, CommandArgument.Type.ONLINE_PLAYER, false))
+
+                    .addSubCommand(new SubCommandBuilder("nbt", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                NBTCompound nbt = NBTLoader.fromEntity((Player) sender);
+                                try {
+                                    new FileManager("entity.json").delete()
+                                            .initFile(nbt.toJSON().getBytes(StandardCharsets.UTF_8));
+                                } catch(IOException e) {
+                                    e.printStackTrace();
+                                }
+                                ItemStack item = new ItemManager("Hi!",
+                                        Material.DIAMOND_SWORD, 1).getItem();
+                                item = NBTLoader.fromItem(item).set("aaa", "aaa").setCompound("bbb", NBTLoader.create().setList("ccc", CommonUtils.toList(new String[]{"A", "B"}))).toItem(item);
+                                nbt = NBTLoader.fromItem(item);
+                                sender.sendMessage(nbt.getString("aaa"));
+                                sender.sendMessage(String.join(", ", nbt.getCompound("bbb")
+                                        .getList("ccc")));
+                            }
+                        }
+                    }))
 
                     .addSubCommand(new SubCommandBuilder("bossbar create", null, new CommandRunnable() {
                         @Override
