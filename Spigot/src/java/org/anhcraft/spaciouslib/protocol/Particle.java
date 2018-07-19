@@ -2,6 +2,7 @@ package org.anhcraft.spaciouslib.protocol;
 
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.Group;
+import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -85,7 +86,7 @@ public class Particle {
         SMOKE_LARGE("large_smoke"),
         SPELL("effect"),
         SPELL_INSTANT("instant_effect"),
-        SPELL_MOB("entity_effect", DustParam.class),
+        SPELL_MOB("entity_effect"),
         SPELL_MOB_AMBIENT("ambient_entity_effect"),
         SPELL_WITCH("witch"),
         DRIP_WATER("dripping_water"),
@@ -101,15 +102,15 @@ public class Particle {
         @Deprecated
         FOOTSTEP(null),
         CLOUD("cloud"),
-        REDSTONE("dust", DustParam.class),
+        REDSTONE("dust"),
         SNOWBALL("item_snowball"),
         @Deprecated
         SNOW_SHOVEL(null),
         SLIME("item_slime"),
         HEART("heart"),
         BARRIER("barrier"),
-        ITEM_CRACK("item", ItemParam.class),
-        BLOCK_CRACK("block", BlockDataParam.class),
+        ITEM_CRACK("item"),
+        BLOCK_CRACK("block"),
         @Deprecated
         BLOCK_DUST(null),
         WATER_DROP("rain"),
@@ -120,7 +121,7 @@ public class Particle {
         END_ROD("end_rod"),
         DAMAGE_INDICATOR("damage_indicator"),
         SWEEP_ATTACK("sweep_attack"),
-        FALLING_DUST("falling_dust", BlockDataParam.class),
+        FALLING_DUST("falling_dust"),
         TOTEM("totem_of_undying"),
         SPIT("spit"),
         SQUID_INK("squid_ink"),
@@ -131,23 +132,13 @@ public class Particle {
         DOLPHIN("dolphin");
 
         private String id;
-        private Class<?> clazz;
 
         Type(String id){
             this.id = id;
         }
 
-        Type(String id, Class<?> clazz){
-            this.id = id;
-            this.clazz = clazz;
-        }
-
         public String getId(){
             return id;
-        }
-
-        public Class<?> getParamClass() {
-            return clazz;
         }
     }
 
@@ -168,19 +159,32 @@ public class Particle {
     }
 
     public static PacketSender create(Type type, Location location, ItemStack item){
+        if(InventoryUtils.isNull(item)){
+            return create(new Param(type), location, 0, 0, 0, 0, false, 1);
+        }
         return create(new ItemParam(type, item), location, 0, 0, 0, 0, false, 1);
     }
 
     public static PacketSender create(ItemStack item, Location location){
+        if(InventoryUtils.isNull(item)){
+            return create(new Param(Type.ITEM_CRACK), location, 0, 0, 0, 0, false, 1);
+        }
         return create(new ItemParam(Type.ITEM_CRACK, item), location, 0, 0, 0, 0, false, 1);
     }
 
     public static PacketSender create(Type type, Location location, int count, Material material,
                                       @Deprecated int data){
+        if(InventoryUtils.isNull(material)){
+            return create(new Param(type), location, count, 0, 0, 0, false, 0);
+        }
         return create(new ItemParam(type, material), location, count, 0, 0, 0, false, 0);
     }
 
     public static PacketSender create(Type type, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed, Material material, @Deprecated int data){
+        if(InventoryUtils.isNull(material)){
+            return create(new Param(type), location, count, offsetX, offsetY, offsetZ,
+                    longDistance, speed);
+        }
         return create(new ItemParam(type, material), location, count, offsetX, offsetY, offsetZ,
                 longDistance, speed);
     }
@@ -188,14 +192,6 @@ public class Particle {
     public static PacketSender create (Param param, Location location, int count, float offsetX, float offsetY, float offsetZ, boolean longDistance, float speed){
         if(param.particle.getId() == null){
             return null;
-        }
-        if(param.particle.getParamClass() != null &&
-                param.getClass().isAssignableFrom(param.particle.getParamClass())){
-            try {
-                throw new Exception(param.particle.toString() + " must have a valid particle param!");
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
         }
         try {
             String v = GameVersion.getVersion().toString();
@@ -219,13 +215,11 @@ public class Particle {
                 Object particleRegistry = ReflectionUtils.getStaticField("REGISTRY", particleClass);
                 Object particle = ReflectionUtils.getMethod("get", registryMaterialClass,
                         particleRegistry, new Group<>(
-                        new Class<?>[]{minecraftKeyClass},
+                        new Class<?>[]{Object.class},
                         new Object[]{minecraftKey}
                 ));
-                Object particleParam = null;
-                if(param.particle.getParamClass() == null){
-                    particleParam = ReflectionUtils.cast(particleParamClass, particle);
-                } else if(param instanceof ItemParam){
+                Object particleParam;
+                if(param instanceof ItemParam){
                     particleParam = ReflectionUtils.getConstructor(particleParamItemClass, new Group<>(
                             new Class<?>[]{particleClass, nmsItemStackClass},
                             new Object[]{particle, ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{((ItemParam) param).item}))}
@@ -239,10 +233,12 @@ public class Particle {
                 } else if(param instanceof DustParam){
                     DustParam dust = (DustParam) param;
                     particleParam = ReflectionUtils.getConstructor(particleParamRedstoneClass, new Group<>(
-                            new Class<?>[]{particleClass, float.class, float.class, float.class, float.class},
-                            new Object[]{particle, dust.getColor().getRed(), dust.getColor().getGreen(),
+                            new Class<?>[]{float.class, float.class, float.class, float.class},
+                            new Object[]{dust.getColor().getRed(), dust.getColor().getGreen(),
                                     dust.getColor().getBlue(), dust.size}
                     ));
+                } else {
+                    particleParam = ReflectionUtils.cast(particleParamClass, particle);
                 }
                 return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutWorldParticlesClass, new Group<>(
                         new Class<?>[]{particleParamClass, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class},

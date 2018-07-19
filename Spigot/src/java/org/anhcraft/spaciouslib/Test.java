@@ -554,7 +554,7 @@ public class Test implements Listener {
                                 effect.addNearbyViewers(10);
                                 effect.setImageSize(0.5);
                                 effect.setParticleAmount(effect.getParticleAmount() * 20);
-                                new TimerTask(() -> effect.spawn(), 0, 1, 120).run();
+                                new TimerTask(effect::spawn, 0, 1, 120).run();
                             }
                         }
                     }))
@@ -576,6 +576,16 @@ public class Test implements Listener {
                                     effect.spawn();
                                     effectRotateAngle[1]++;
                                 }, 0, 0.05, 60).run();
+                            }
+                        }
+                    }))
+
+                    .addSubCommand(new SubCommandBuilder("particle", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player) {
+                                Player player = (Player) sender;
+                                Particle.create(Particle.Type.TOTEM, player.getLocation(), 1000).sendAll();
                             }
                         }
                     }))
