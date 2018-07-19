@@ -186,7 +186,8 @@ public class NPC extends PacketBuilder<NPC> {
     }
 
     /**
-     * Removes this NPC
+     * Removes this NPC.<br>
+     * Once you call this method, this instance can no longer be used
      */
     public void remove(){
         for(Iterator<UUID> it = getViewers().iterator(); it.hasNext(); ) {
