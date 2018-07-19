@@ -118,7 +118,7 @@ public class PacketListener implements Listener {
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    channel.pipeline().addBefore("legacy-kick", "SpaciousLib", new ChannelDuplexHandler(){
+                    channel.pipeline().addBefore("legacy-kick", PACKET_HANDLER, new ChannelDuplexHandler(){
                         public void write(ChannelHandlerContext c, Object o, ChannelPromise p)
                                 throws Exception {
                             Handler handler = new Handler(uuid, o, BoundType.CLIENT_BOUND);
