@@ -11,12 +11,21 @@ import java.util.List;
 public class InventoryUtils {
 
     /**
-     * Checks is the given item stack null
-     * @param item itemStack object
+     * Checks is the given item stack null or is air
+     * @param item an item stack
      * @return true if yes
      */
     public static boolean isNull(ItemStack item){
-        return item == null || item.getType() == Material.AIR;
+        return item == null || item.getType() == Material.AIR || item.getType().toString().endsWith("_AIR");
+    }
+
+    /**
+     * Checks is the given material null or is air
+     * @param material material
+     * @return true if yes
+     */
+    public static boolean isNull(Material material) {
+        return material == null || material == Material.AIR || material.toString().endsWith("_AIR");
     }
 
     /**
