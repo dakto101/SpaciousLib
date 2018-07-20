@@ -1,5 +1,11 @@
+# allows SpaciousLib collects your server's information
 stats: true
+# enables the development mode
 dev_mode: false
+# should SpaciousLib renew skins automatically?
 auto_renew_skin: true
+# the duration between cache-renewing times
 placeholder_cache_duration: 10
+# uses asynchronous tasks for cached placeholders
+# warning: it may causes issues!
 placeholder_cache_async: false

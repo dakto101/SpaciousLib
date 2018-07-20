@@ -16,6 +16,11 @@ public class CommonUtils {
         return Integer.parseInt(number.replaceAll("[^\\d\\-]", ""));
     }
 
+    @Deprecated
+    public static int toIntegerNumber(String number){
+        return toInteger(number);
+    }
+
     /**
      * Parses the given string as a real number safely.
      * @param number a number in string

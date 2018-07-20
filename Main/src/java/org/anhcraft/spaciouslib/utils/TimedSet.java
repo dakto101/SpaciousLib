@@ -3,12 +3,15 @@ package org.anhcraft.spaciouslib.utils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.NoSuchElementException;
 
 /**
  * A TimedSet is a set which removes any expired element automatically.
  */
-public class TimedSet<E> {
+public class TimedSet<E> implements Iterable<E> {
     private LinkedHashMap<E, Long> data = new LinkedHashMap<>();
 
     private void clean(){
@@ -101,5 +104,36 @@ public class TimedSet<E> {
     public int hashCode(){
         return new HashCodeBuilder(21, 17)
                 .append(this.data).toHashCode();
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new Itr();
+    }
+
+    private class Itr implements Iterator<E> {
+        private int next = 0;
+        private E current;
+
+        @Override
+        public boolean hasNext(){
+            return next < size();
+        }
+
+        @Override
+        public E next(){
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            current = new ArrayList<>(data.keySet()).get(next);
+            next++;
+            return current;
+        }
+
+        @Override
+        public void remove() {
+            next--;
+            data.remove(new ArrayList<>(data.keySet()).get(next));
+        }
     }
 }

@@ -1,6 +1,5 @@
 package org.anhcraft.spaciouslib;
 
-import com.comphenix.protocol.ProtocolLibrary;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.bungee.BungeeAPI;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
@@ -16,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -29,7 +29,6 @@ public final class SpaciousLib extends JavaPlugin {
     public static SpaciousLib instance;
     public static FileConfiguration config;
     public static Chat chat;
-    private static boolean protocolLib = false;
 
     @Override
     public void onEnable(){
@@ -78,14 +77,11 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerCleanerListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
+        getServer().getPluginManager().registerEvents(new PacketListener(), this);
         getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, new BungeeListener());
 
-        if(getServer().getPluginManager().isPluginEnabled("ProtocolLib")){
-            protocolLib = true;
-            new NPCInteractEventListener();
-        }
-
+        AnnotationHandler.register(NPCInteractEventListener.class, null);
         AnnotationHandler.register(AnvilListener.class, null);
         if(Bukkit.getServer().getPluginManager().isPluginEnabled("Vault")){
             VaultUtils.init();
@@ -102,8 +98,10 @@ public final class SpaciousLib extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if(protocolLib) {
-            ProtocolLibrary.getProtocolManager().removePacketListeners(this);
+        AnnotationHandler.unregister(NPCInteractEventListener.class, null);
+        AnnotationHandler.unregister(AnvilListener.class, null);
+        for(Player player : getServer().getOnlinePlayers()){
+            PacketListener.remove(player);
         }
     }
 }

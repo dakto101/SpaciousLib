@@ -19,6 +19,6 @@ Only works in Java 8+.<br><br>
 ✔ Camera<br>
 ✔ ActionBar<br>
 ✔ PlayerList<br>
-❌ NPC<br>
-❌ NBT<br>
-❌ Particle
+✔ NBT<br>
+✔ NPC<br>
+✔ Particle

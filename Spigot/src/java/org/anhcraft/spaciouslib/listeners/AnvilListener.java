@@ -1,9 +1,9 @@
 package org.anhcraft.spaciouslib.listeners;
 
 import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
-import org.anhcraft.spaciouslib.anvil.Anvil;
-import org.anhcraft.spaciouslib.anvil.Anvil.Handler;
 import org.anhcraft.spaciouslib.inventory.ItemManager;
+import org.anhcraft.spaciouslib.inventory.anvil.AnvilHandler;
+import org.anhcraft.spaciouslib.inventory.anvil.AnvilSlot;
 import org.anhcraft.spaciouslib.utils.CompatibilityUtils;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class AnvilListener implements Listener {
     @PlayerCleaner
-    public static LinkedHashMap<UUID, Group<Inventory, Handler>> data = new LinkedHashMap<>();
+    public static LinkedHashMap<UUID, Group<Inventory, AnvilHandler>> data = new LinkedHashMap<>();
 
     @EventHandler
     public void quit(PlayerQuitEvent event){
@@ -34,8 +34,8 @@ public class AnvilListener implements Listener {
             Inventory inv = CompatibilityUtils.getInventory(event);
             if (inv != null && data.containsKey(player.getUniqueId())){
                 ItemStack item = event.getCurrentItem();
-                Group<Inventory, Anvil.Handler> anvil = data.get(player.getUniqueId());
-                ItemStack output = event.getInventory().getItem(Anvil.Slot.OUTPUT.getID());
+                Group<Inventory, AnvilHandler> anvil = data.get(player.getUniqueId());
+                ItemStack output = event.getInventory().getItem(AnvilSlot.OUTPUT.getId());
                 if(anvil.getA().equals(inv)) {
                     event.setCancelled(true);
                     if(output != null) {
@@ -46,13 +46,13 @@ public class AnvilListener implements Listener {
                         }
                         switch(slot) {
                             case 0:
-                                anvil.getB().result(player, input, item, Anvil.Slot.INPUT_LEFT);
+                                anvil.getB().handle(player, input, item, AnvilSlot.INPUT_LEFT);
                                 break;
                             case 1:
-                                anvil.getB().result(player, input, item, Anvil.Slot.INPUT_RIGHT);
+                                anvil.getB().handle(player, input, item, AnvilSlot.INPUT_RIGHT);
                                 break;
                             case 2:
-                                anvil.getB().result(player, input, item, Anvil.Slot.OUTPUT);
+                                anvil.getB().handle(player, input, item, AnvilSlot.OUTPUT);
                                 break;
                         }
                     }
@@ -67,11 +67,11 @@ public class AnvilListener implements Listener {
             Player player = (Player) event.getPlayer();
             Inventory inv = event.getInventory();
             if (inv != null && data.containsKey(player.getUniqueId())){
-                Group<Inventory, Anvil.Handler> anvil = data.get(player.getUniqueId());
+                Group<Inventory, AnvilHandler> anvil = data.get(player.getUniqueId());
                 if(anvil.getA().equals(inv)) {
-                    inv.setItem(Anvil.Slot.INPUT_LEFT.getID(), null);
-                    inv.setItem(Anvil.Slot.INPUT_RIGHT.getID(), null);
-                    inv.setItem(Anvil.Slot.OUTPUT.getID(), null);
+                    for(AnvilSlot slot : AnvilSlot.values()){
+                        inv.setItem(slot.getId(), null);
+                    }
                     data.remove(player.getUniqueId());
                 }
             }
