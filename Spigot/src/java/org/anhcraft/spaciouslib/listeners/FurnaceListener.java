@@ -1,9 +1,8 @@
 package org.anhcraft.spaciouslib.listeners;
 
 import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
-import org.anhcraft.spaciouslib.inventory.ItemManager;
-import org.anhcraft.spaciouslib.inventory.anvil.AnvilHandler;
-import org.anhcraft.spaciouslib.inventory.anvil.AnvilSlot;
+import org.anhcraft.spaciouslib.inventory.furnace.FurnaceHandler;
+import org.anhcraft.spaciouslib.inventory.furnace.FurnaceSlot;
 import org.anhcraft.spaciouslib.utils.CompatibilityUtils;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.bukkit.entity.Player;
@@ -18,9 +17,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-public class AnvilListener implements Listener {
+public class FurnaceListener implements Listener {
     @PlayerCleaner
-    public static LinkedHashMap<UUID, Group<Inventory, AnvilHandler>> data = new LinkedHashMap<>();
+    public static LinkedHashMap<UUID, Group<Inventory, FurnaceHandler>> data = new LinkedHashMap<>();
 
     @EventHandler
     public void quit(PlayerQuitEvent event){
@@ -34,27 +33,20 @@ public class AnvilListener implements Listener {
             Inventory inv = CompatibilityUtils.getInventory(event);
             if (inv != null && data.containsKey(player.getUniqueId())){
                 ItemStack item = event.getCurrentItem();
-                Group<Inventory, AnvilHandler> anvil = data.get(player.getUniqueId());
-                ItemStack output = event.getInventory().getItem(AnvilSlot.OUTPUT.getId());
-                if(anvil.getA().equals(inv)) {
+                Group<Inventory, FurnaceHandler> furnace = data.get(player.getUniqueId());
+                if(furnace.getA().equals(inv)) {
                     event.setCancelled(true);
-                    if(output != null) {
-                        int slot = event.getRawSlot();
-                        String input = new ItemManager(output).getName();
-                        if(input == null) {
-                            input = "";
-                        }
-                        switch(slot) {
-                            case 0:
-                                anvil.getB().handle(player, input, item, AnvilSlot.INPUT_LEFT);
-                                break;
-                            case 1:
-                                anvil.getB().handle(player, input, item, AnvilSlot.INPUT_RIGHT);
-                                break;
-                            case 2:
-                                anvil.getB().handle(player, input, item, AnvilSlot.OUTPUT);
-                                break;
-                        }
+                    int slot = event.getRawSlot();
+                    switch(slot) {
+                        case 0:
+                            furnace.getB().handle(player, item, FurnaceSlot.INGREDIENT);
+                            break;
+                        case 1:
+                            furnace.getB().handle(player, item, FurnaceSlot.FUEL);
+                            break;
+                        case 2:
+                            furnace.getB().handle(player, item, FurnaceSlot.OUTPUT);
+                            break;
                     }
                 }
             }
@@ -67,11 +59,11 @@ public class AnvilListener implements Listener {
             Player player = (Player) event.getPlayer();
             Inventory inv = event.getInventory();
             if (inv != null && data.containsKey(player.getUniqueId())){
-                Group<Inventory, AnvilHandler> anvil = data.get(player.getUniqueId());
+                Group<Inventory, FurnaceHandler> anvil = data.get(player.getUniqueId());
                 if(anvil.getA().equals(inv)) {
-                    inv.setItem(AnvilSlot.INPUT_LEFT.getId(), null);
-                    inv.setItem(AnvilSlot.INPUT_RIGHT.getId(), null);
-                    inv.setItem(AnvilSlot.OUTPUT.getId(), null);
+                    inv.setItem(FurnaceSlot.INGREDIENT.getId(), null);
+                    inv.setItem(FurnaceSlot.FUEL.getId(), null);
+                    inv.setItem(FurnaceSlot.OUTPUT.getId(), null);
                     data.remove(player.getUniqueId());
                 }
             }
