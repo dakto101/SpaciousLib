@@ -1,14 +1,14 @@
-package org.anhcraft.spaciouslib.anvil;
+package org.anhcraft.spaciouslib.inventory.anvil;
 
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftInventoryView;
+import net.minecraft.server.v1_9_R2.*;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_9_R2.inventory.CraftInventoryView;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedHashMap;
 
-public class Anvil_1_8_R3 extends AnvilWrapper {
+public class Anvil_1_9_R2 extends AnvilWrapper {
    private class Container extends ContainerAnvil {
         Container(EntityHuman e) {
             super(e.inventory, e.world, new BlockPosition(0,0,0), e);
@@ -20,10 +20,10 @@ public class Anvil_1_8_R3 extends AnvilWrapper {
         }
     }
 
-    private LinkedHashMap<Anvil.Slot, ItemStack> items = new LinkedHashMap<>();
+    private LinkedHashMap<AnvilSlot, ItemStack> items = new LinkedHashMap<>();
     private EntityPlayer player;
 
-    public Anvil_1_8_R3(Player player) {
+    public Anvil_1_9_R2(Player player) {
         this.player = ((CraftPlayer) player).getHandle();
     }
 
@@ -32,7 +32,7 @@ public class Anvil_1_8_R3 extends AnvilWrapper {
         ContainerAnvil container = new Container(player);
         CraftInventoryView civ = container.getBukkitView();
         this.inv = civ.getTopInventory();
-        for (Anvil.Slot slot : this.items.keySet()) {
+        for (AnvilSlot slot : this.items.keySet()) {
             this.inv.setItem(slot.getID(), this.items.get(slot));
         }
         int id = this.player.nextContainerCounter();
@@ -44,7 +44,7 @@ public class Anvil_1_8_R3 extends AnvilWrapper {
     }
 
     @Override
-    public void setItem(Anvil.Slot slot, ItemStack item) {
+    public void setItem(AnvilSlot slot, ItemStack item) {
         this.items.put(slot, item);
     }
 }

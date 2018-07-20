@@ -1,4 +1,4 @@
-package org.anhcraft.spaciouslib.anvil;
+package org.anhcraft.spaciouslib.inventory.anvil;
 
 import net.minecraft.server.v1_11_R1.*;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
@@ -20,7 +20,7 @@ public class Anvil_1_11_R1 extends AnvilWrapper {
        }
     }
 
-    private LinkedHashMap<Anvil.Slot, ItemStack> items = new LinkedHashMap<>();
+    private LinkedHashMap<AnvilSlot, ItemStack> items = new LinkedHashMap<>();
     private EntityPlayer player;
 
     public Anvil_1_11_R1(Player player) {
@@ -32,7 +32,7 @@ public class Anvil_1_11_R1 extends AnvilWrapper {
         ContainerAnvil container = new Container(player);
         CraftInventoryView civ = container.getBukkitView();
         this.inv = civ.getTopInventory();
-        for (Anvil.Slot slot : this.items.keySet()) {
+        for (AnvilSlot slot : this.items.keySet()) {
             this.inv.setItem(slot.getID(), this.items.get(slot));
         }
         int id = this.player.nextContainerCounter();
@@ -44,7 +44,7 @@ public class Anvil_1_11_R1 extends AnvilWrapper {
     }
 
     @Override
-    public void setItem(Anvil.Slot slot, ItemStack item) {
+    public void setItem(AnvilSlot slot, ItemStack item) {
         this.items.put(slot, item);
     }
 }

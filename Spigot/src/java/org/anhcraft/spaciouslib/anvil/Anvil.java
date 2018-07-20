@@ -1,5 +1,8 @@
 package org.anhcraft.spaciouslib.anvil;
 
+import org.anhcraft.spaciouslib.inventory.anvil.AnvilHandler;
+import org.anhcraft.spaciouslib.inventory.anvil.AnvilSlot;
+import org.anhcraft.spaciouslib.inventory.anvil.AnvilWrapper;
 import org.anhcraft.spaciouslib.listeners.AnvilListener;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.Group;
@@ -10,7 +13,9 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Represents an anvil implementation.
  */
+@Deprecated
 public class Anvil {
+    @Deprecated
     public enum Slot {
         /**
          * The item on the left side, represents for the first input of an anvil
@@ -36,6 +41,7 @@ public class Anvil {
         }
     }
 
+    @Deprecated
     public abstract static class Handler {
         /**
          * This method will be called if a player clicks on an item of a specific anvil
@@ -75,7 +81,12 @@ public class Anvil {
      */
     public Anvil open() {
         this.wrapper.open();
-        AnvilListener.data.put(this.player.getUniqueId(), new Group<>(this.wrapper.inv, this.handler));
+        AnvilListener.data.put(this.player.getUniqueId(), new Group<>(this.wrapper.inv, new AnvilHandler() {
+            @Override
+            public void result(Player player, String input, ItemStack item, AnvilSlot slot) {
+                handler.result(player, input, item, Slot.valueOf(slot.toString()));
+            }
+        }));
         return this;
     }
 
@@ -86,7 +97,7 @@ public class Anvil {
      * @return this object
      */
     public Anvil setItem(Slot slot, ItemStack item) {
-        this.wrapper.setItem(slot, item);
+        this.wrapper.setItem(AnvilSlot.valueOf(slot.toString()), item);
         return this;
     }
 }

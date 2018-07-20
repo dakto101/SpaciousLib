@@ -1,10 +1,10 @@
-package org.anhcraft.spaciouslib.anvil;
+package org.anhcraft.spaciouslib.inventory.anvil;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class AnvilWrapper {
-    protected Inventory inv;
+    public Inventory inv;
     public abstract void open();
-    public abstract void setItem(Anvil.Slot slot, ItemStack item);
+    public abstract void setItem(AnvilSlot slot, ItemStack item);
 }
