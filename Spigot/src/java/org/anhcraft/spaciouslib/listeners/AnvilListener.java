@@ -69,9 +69,9 @@ public class AnvilListener implements Listener {
             if (inv != null && data.containsKey(player.getUniqueId())){
                 Group<Inventory, AnvilHandler> anvil = data.get(player.getUniqueId());
                 if(anvil.getA().equals(inv)) {
-                    inv.setItem(AnvilSlot.INPUT_LEFT.getId(), null);
-                    inv.setItem(AnvilSlot.INPUT_RIGHT.getId(), null);
-                    inv.setItem(AnvilSlot.OUTPUT.getId(), null);
+                    for(AnvilSlot slot : AnvilSlot.values()){
+                        inv.setItem(slot.getId(), null);
+                    }
                     data.remove(player.getUniqueId());
                 }
             }

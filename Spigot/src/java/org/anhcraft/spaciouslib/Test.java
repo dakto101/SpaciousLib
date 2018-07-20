@@ -2,7 +2,6 @@ package org.anhcraft.spaciouslib;
 
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.PacketHandler;
-import org.anhcraft.spaciouslib.anvil.Anvil;
 import org.anhcraft.spaciouslib.attribute.Attribute;
 import org.anhcraft.spaciouslib.attribute.AttributeModifier;
 import org.anhcraft.spaciouslib.bungee.BungeeAPI;
@@ -21,6 +20,9 @@ import org.anhcraft.spaciouslib.entity.PlayerManager;
 import org.anhcraft.spaciouslib.entity.bossbar.BossBar;
 import org.anhcraft.spaciouslib.events.*;
 import org.anhcraft.spaciouslib.inventory.*;
+import org.anhcraft.spaciouslib.inventory.anvil.Anvil;
+import org.anhcraft.spaciouslib.inventory.anvil.AnvilHandler;
+import org.anhcraft.spaciouslib.inventory.anvil.AnvilSlot;
 import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.listeners.PacketListener;
 import org.anhcraft.spaciouslib.mojang.GameProfileManager;
@@ -108,6 +110,18 @@ public class Test implements Listener {
 
             //======================================================================================
 
+            new CommandBuilder("this", new CommandRunnable() {
+                @Override
+                public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+
+                }
+            }).addSubCommand(new SubCommandBuilder("is a long command", "", new CommandRunnable() {
+                @Override
+                public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+
+                }
+            })).buildExecutor(SpaciousLib.instance);
+
             // the root command
             new CommandBuilder("sls", new CommandRunnable() {
                 @Override
@@ -123,12 +137,12 @@ public class Test implements Listener {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                             if(sender instanceof Player){
-                                new Anvil((Player) sender, new Anvil.Handler() {
+                                new Anvil((Player) sender, new AnvilHandler() {
                                     @Override
-                                    public void result(Player player, String input, ItemStack item, Anvil.Slot slot) {
+                                    public void handle(Player player, String input, ItemStack item, AnvilSlot slot) {
                                         player.sendMessage("You've typed " + input);
                                     }
-                                }).setItem(Anvil.Slot.INPUT_LEFT, new ItemStack(Material.DIAMOND, 1)).open();
+                                }).setItem(AnvilSlot.INPUT_LEFT, new ItemStack(Material.DIAMOND, 1)).open();
                             }
                         }
                     }))

@@ -97,7 +97,7 @@ public class Anvil {
      * @return this object
      */
     public Anvil setItem(Slot slot, ItemStack item) {
-        this.wrapper.setItem(AnvilSlot.valueOf(slot.toString()), item);
+        this.wrapper.put(AnvilSlot.valueOf(slot.toString()), item);
         return this;
     }
 }

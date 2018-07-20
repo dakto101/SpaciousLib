@@ -10,7 +10,7 @@ public abstract class AnvilWrapper<T> {
     public Inventory inv;
     public abstract T open();
 
-    protected void put(AnvilSlot slot, ItemStack item){
+    public void put(AnvilSlot slot, ItemStack item){
         items.put(slot, item);
     }
 }

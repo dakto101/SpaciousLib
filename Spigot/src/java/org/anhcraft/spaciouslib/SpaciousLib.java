@@ -75,7 +75,6 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BowArrowHitEventListener(), this);
         getServer().getPluginManager().registerEvents(new PlaceholderListener(), this);
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);
-        getServer().getPluginManager().registerEvents(new FurnaceListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerCleanerListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
         getServer().getPluginManager().registerEvents(new PacketListener(), this);
