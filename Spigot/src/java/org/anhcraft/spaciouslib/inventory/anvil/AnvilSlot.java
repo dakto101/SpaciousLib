@@ -20,7 +20,7 @@ public enum AnvilSlot {
         this.slot = slot;
     }
 
-    public int getID() {
+    public int getId() {
         return this.slot;
     }
 }

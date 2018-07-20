@@ -35,7 +35,7 @@ public class AnvilListener implements Listener {
             if (inv != null && data.containsKey(player.getUniqueId())){
                 ItemStack item = event.getCurrentItem();
                 Group<Inventory, AnvilHandler> anvil = data.get(player.getUniqueId());
-                ItemStack output = event.getInventory().getItem(AnvilSlot.OUTPUT.getID());
+                ItemStack output = event.getInventory().getItem(AnvilSlot.OUTPUT.getId());
                 if(anvil.getA().equals(inv)) {
                     event.setCancelled(true);
                     if(output != null) {
@@ -69,9 +69,9 @@ public class AnvilListener implements Listener {
             if (inv != null && data.containsKey(player.getUniqueId())){
                 Group<Inventory, AnvilHandler> anvil = data.get(player.getUniqueId());
                 if(anvil.getA().equals(inv)) {
-                    inv.setItem(AnvilSlot.INPUT_LEFT.getID(), null);
-                    inv.setItem(AnvilSlot.INPUT_RIGHT.getID(), null);
-                    inv.setItem(AnvilSlot.OUTPUT.getID(), null);
+                    inv.setItem(AnvilSlot.INPUT_LEFT.getId(), null);
+                    inv.setItem(AnvilSlot.INPUT_RIGHT.getId(), null);
+                    inv.setItem(AnvilSlot.OUTPUT.getId(), null);
                     data.remove(player.getUniqueId());
                 }
             }

@@ -33,7 +33,7 @@ public class Anvil_1_10_R1 extends AnvilWrapper {
         CraftInventoryView civ = container.getBukkitView();
         this.inv = civ.getTopInventory();
         for (AnvilSlot slot : this.items.keySet()) {
-            this.inv.setItem(slot.getID(), this.items.get(slot));
+            this.inv.setItem(slot.getId(), this.items.get(slot));
         }
         int id = this.player.nextContainerCounter();
         this.player.playerConnection.sendPacket(new PacketPlayOutOpenWindow(id,
