@@ -50,7 +50,7 @@ public class Anvil extends AnvilWrapper<Anvil> {
      * @return this object
      */
     public Anvil setItem(AnvilSlot slot, ItemStack item) {
-        this.wrapper.setItem(slot, item);
+        this.wrapper.put(slot, item);
         return this;
     }
 }

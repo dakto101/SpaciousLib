@@ -4,9 +4,6 @@ import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.LinkedHashMap;
 
 public class Anvil_1_8_R3 extends AnvilWrapper<Anvil_1_8_R3> {
    private class Container extends ContainerAnvil {
@@ -19,8 +16,6 @@ public class Anvil_1_8_R3 extends AnvilWrapper<Anvil_1_8_R3> {
             return true;
         }
     }
-
-    private LinkedHashMap<AnvilSlot, ItemStack> items = new LinkedHashMap<>();
     private EntityPlayer player;
 
     public Anvil_1_8_R3(Player player) {
@@ -41,12 +36,6 @@ public class Anvil_1_8_R3 extends AnvilWrapper<Anvil_1_8_R3> {
         this.player.activeContainer = container;
         this.player.activeContainer.windowId = id;
         this.player.activeContainer.addSlotListener(this.player);
-        return this;
-    }
-
-    @Override
-    public Anvil_1_8_R3 setItem(AnvilSlot slot, ItemStack item) {
-        this.items.put(slot, item);
         return this;
     }
 }
