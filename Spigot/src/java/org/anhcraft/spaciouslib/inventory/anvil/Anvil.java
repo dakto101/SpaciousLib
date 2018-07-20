@@ -22,7 +22,7 @@ public class Anvil extends AnvilWrapper<Anvil> {
      */
     public Anvil(Player player, AnvilHandler handler){
         try {
-            this.wrapper = (AnvilWrapper) ReflectionUtils.getConstructor(Class.forName("org.anhcraft.spaciouslib.anvil.Anvil_" + GameVersion.getVersion().toString().replace("v", "")), new Group<>(
+            this.wrapper = (AnvilWrapper) ReflectionUtils.getConstructor(Class.forName("org.anhcraft.spaciouslib.inventory.anvil.Anvil_" + GameVersion.getVersion().toString().replace("v", "")), new Group<>(
                     new Class<?>[]{Player.class},
                     new Object[]{player}
             ));
