@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Represents an anvil implementation.
  */
-public class Anvil {
+public class Anvil extends AnvilWrapper<Anvil> {
     private AnvilWrapper wrapper;
     private AnvilHandler handler;
     private Player player;
@@ -18,7 +18,7 @@ public class Anvil {
     /**
      * Creates a new Anvil instance
      * @param player a player
-     * @param handler an handler for this anvil
+     * @param handler the handler for this anvil
      */
     public Anvil(Player player, AnvilHandler handler){
         try {

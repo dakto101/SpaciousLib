@@ -83,7 +83,7 @@ public class Anvil {
         this.wrapper.open();
         AnvilListener.data.put(this.player.getUniqueId(), new Group<>(this.wrapper.inv, new AnvilHandler() {
             @Override
-            public void result(Player player, String input, ItemStack item, AnvilSlot slot) {
+            public void handle(Player player, String input, ItemStack item, AnvilSlot slot) {
                 handler.result(player, input, item, Slot.valueOf(slot.toString()));
             }
         }));

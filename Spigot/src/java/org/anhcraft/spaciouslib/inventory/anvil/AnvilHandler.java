@@ -11,5 +11,5 @@ public abstract class AnvilHandler {
      * @param item the clicked item
      * @param slot the slot which the clicked item was put on
      */
-    public abstract void result(Player player, String input, ItemStack item, AnvilSlot slot);
+    public abstract void handle(Player player, String input, ItemStack item, AnvilSlot slot);
 }

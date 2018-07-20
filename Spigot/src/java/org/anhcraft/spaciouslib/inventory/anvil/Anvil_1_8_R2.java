@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedHashMap;
 
-public class Anvil_1_8_R2 extends AnvilWrapper {
+public class Anvil_1_8_R2 extends AnvilWrapper<Anvil_1_8_R2> {
    private class Container extends ContainerAnvil {
         Container(EntityHuman e) {
             super(e.inventory, e.world, new BlockPosition(0,0,0), e);
@@ -28,7 +28,7 @@ public class Anvil_1_8_R2 extends AnvilWrapper {
     }
 
     @Override
-    public void open() {
+    public Anvil_1_8_R2 open() {
         ContainerAnvil container = new Container(player);
         CraftInventoryView civ = container.getBukkitView();
         this.inv = civ.getTopInventory();
@@ -41,10 +41,12 @@ public class Anvil_1_8_R2 extends AnvilWrapper {
         this.player.activeContainer = container;
         this.player.activeContainer.windowId = id;
         this.player.activeContainer.addSlotListener(this.player);
+        return this;
     }
 
     @Override
-    public void setItem(AnvilSlot slot, ItemStack item) {
+    public Anvil_1_8_R2 setItem(AnvilSlot slot, ItemStack item) {
         this.items.put(slot, item);
+        return this;
     }
 }
