@@ -14,17 +14,18 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class ClickableItemListener implements Listener {
-    private static LinkedHashMap<Inventory, LinkedHashMap<ItemStack, ClickableItemHandler>> data = new LinkedHashMap<>();
+    private static HashMap<Inventory, HashMap<Integer, ClickableItemHandler>> data = new HashMap<>();
 
-    public static void a(Inventory inv, ItemStack item, ClickableItemHandler run){
-        LinkedHashMap<ItemStack, ClickableItemHandler> items = new LinkedHashMap<>();
+    public static void a(Inventory inv, int slot, ClickableItemHandler run){
+        HashMap<Integer, ClickableItemHandler> items = new LinkedHashMap<>();
         if(data.containsKey(inv)){
             items = data.get(inv);
         }
-        items.put(item, run);
+        items.put(slot, run);
         data.put(inv, items);
     }
 
@@ -35,9 +36,10 @@ public class ClickableItemListener implements Listener {
         ClickType type = event.getClick();
         if (inventory != null && data.containsKey(inventory)){
             ItemStack item = event.getCurrentItem();
-            if(!InventoryUtils.isNull(item) && data.get(inventory).containsKey(item)){
-                LinkedHashMap<ItemStack, ClickableItemHandler> items = data.get(inventory);
-                items.get(item).run(player, item, type, event.getSlot(), event.getAction(), inventory);
+            if(!InventoryUtils.isNull(item) && data.get(inventory).containsKey(event.getSlot())){
+                HashMap<Integer, ClickableItemHandler> items = data.get(inventory);
+                items.get(event.getSlot())
+                        .run(player, item, type, event.getSlot(), event.getAction(), inventory);
                 data.put(inventory, items);
                 event.setCancelled(true);
                 event.setResult(Event.Result.DENY);
