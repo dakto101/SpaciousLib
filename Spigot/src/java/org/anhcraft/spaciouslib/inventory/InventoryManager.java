@@ -17,6 +17,7 @@ import java.util.UUID;
  */
 public class InventoryManager extends ClickableItemListener {
     private Inventory inv;
+    public ClickableItemHandler[] clickableSlots;
 
     /**
      * Creates a new InventoryManager instance
@@ -24,7 +25,11 @@ public class InventoryManager extends ClickableItemListener {
      * @param name the inventory name
      * */
     public InventoryManager(String name, int size){
+        if(size % 9 != 0){
+            size = size + (9 - size % 9);
+        }
         inv = Bukkit.getServer().createInventory(null, size, Chat.color(name));
+        clickableSlots = new ClickableItemHandler[size];
     }
 
     /**
@@ -55,17 +60,7 @@ public class InventoryManager extends ClickableItemListener {
      */
     public InventoryManager set(int index, ItemStack item, ClickableItemHandler run){
         this.inv.setItem(index, item);
-        a(inv, item, run);
-        return this;
-    }
-
-    /**
-     * Removes an item out of this inventory
-     * @param item the item
-     * @return this object
-     */
-    public InventoryManager remove(ItemStack item){
-        this.inv.remove(item);
+        clickableSlots[index] = run;
         return this;
     }
 
@@ -89,12 +84,40 @@ public class InventoryManager extends ClickableItemListener {
     }
 
     /**
+     * Removes an existed item
+     * @param index the index of the item
+     * @return this object
+     */
+    public InventoryManager remove(int index){
+        this.inv.setItem(index, null);
+        clickableSlots[index] = null;
+        return this;
+    }
+
+    /**
+     * Removes any existed item which are equal with the given item
+     * @param item the item which will be removed
+     * @return this object
+     */
+    public InventoryManager remove(ItemStack item){
+        for(int i = 0; i < this.inv.getSize(); i++) {
+            if(InventoryUtils.compare(item, get(i))){
+                remove(i);
+            }
+        }
+        return this;
+    }
+
+    /**
      * Adds an item into this inventory
      * @param item the item
      * @return this object
      */
     public InventoryManager addItem(ItemStack item) {
-        this.inv.addItem(item);
+        int emptySlot = this.inv.firstEmpty();
+        if(emptySlot != -1){
+            this.inv.setItem(emptySlot, item);
+        }
         return this;
     }
 
@@ -105,8 +128,11 @@ public class InventoryManager extends ClickableItemListener {
      * @return this object
      */
     public InventoryManager addItem(ItemStack item, ClickableItemHandler run) {
-        this.inv.addItem(item);
-        a(inv, item, run);
+        int emptySlot = this.inv.firstEmpty();
+        if(emptySlot != -1){
+            this.inv.setItem(emptySlot, item);
+            clickableSlots[emptySlot] = run;
+        }
         return this;
     }
 
@@ -144,8 +170,7 @@ public class InventoryManager extends ClickableItemListener {
             }
         }
         if(!has){
-            addItem(item);
-            a(inv, item, run);
+            addItem(item, run);
         }
         return this;
     }
@@ -159,7 +184,7 @@ public class InventoryManager extends ClickableItemListener {
         for(int i = 0; i < this.inv.getSize(); i++) {
             int empty = this.inv.firstEmpty();
             if(empty != -1) {
-                this.inv.setItem(i, item);
+                set(i, item);
             }
         }
         return this;
@@ -175,8 +200,7 @@ public class InventoryManager extends ClickableItemListener {
         for(int i = 0; i < this.inv.getSize(); i++) {
             int empty = this.inv.firstEmpty();
             if(empty != -1) {
-                this.inv.setItem(i, item);
-                a(inv, item, run);
+                set(i, item, run);
             }
         }
         return this;
@@ -188,6 +212,7 @@ public class InventoryManager extends ClickableItemListener {
      */
     public InventoryManager clear(){
         this.inv.clear();
+        clickableSlots = new ClickableItemHandler[inv.getSize()];
         return this;
     }
 
@@ -197,8 +222,13 @@ public class InventoryManager extends ClickableItemListener {
      * @param name the player name
      * @return this object
      */
-    @Deprecated
     public InventoryManager open(String name){
+        for(int i = 0; i < clickableSlots.length; i++){
+            ClickableItemHandler handler = clickableSlots[i];
+            if(handler != null) {
+                a(this.inv, i, handler);
+            }
+        }
         Bukkit.getServer().getPlayer(name).openInventory(this.inv);
         return this;
     }
@@ -209,6 +239,12 @@ public class InventoryManager extends ClickableItemListener {
      * @return this object
      */
     public InventoryManager open(UUID uuid){
+        for(int i = 0; i < clickableSlots.length; i++){
+            ClickableItemHandler handler = clickableSlots[i];
+            if(handler != null) {
+                a(this.inv, i, handler);
+            }
+        }
         Bukkit.getServer().getPlayer(uuid).openInventory(this.inv);
         return this;
     }
@@ -219,6 +255,12 @@ public class InventoryManager extends ClickableItemListener {
      * @return this object
      */
     public InventoryManager open(Player player){
+        for(int i = 0; i < clickableSlots.length; i++){
+            ClickableItemHandler handler = clickableSlots[i];
+            if(handler != null) {
+                a(this.inv, i, handler);
+            }
+        }
         player.openInventory(this.inv);
         return this;
     }
@@ -232,7 +274,7 @@ public class InventoryManager extends ClickableItemListener {
     }
 
     /**
-     * Applies this inventory as the inventory of a player
+     * Applies this inventory for the given player
      * @param player the player
      * @return this object
      */
@@ -244,7 +286,7 @@ public class InventoryManager extends ClickableItemListener {
 
     /**
      * Gets all non-null items in this inventory
-     * @return list of items
+     * @return list of item stacks
      */
     public List<ItemStack> getItems(){
         List<ItemStack> items = new ArrayList<>();

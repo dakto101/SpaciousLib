@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Bungeecord/Bungeecord.iml" filepath="$PROJECT_DIR$/Bungeecord/Bungeecord.iml" />
       <module fileurl="file://$PROJECT_DIR$/Main/Main.iml" filepath="$PROJECT_DIR$/Main/Main.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spigot/Spigot.iml" filepath="$PROJECT_DIR$/Spigot/Spigot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/javadoc/javadoc.iml" filepath="$PROJECT_DIR$/javadoc/javadoc.iml" />
     </modules>
   </component>
 </project>
