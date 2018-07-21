@@ -24,7 +24,7 @@ public class PlaceholderAPI {
      * Initializes PlaceholderAPI
      */
     public PlaceholderAPI(){
-        if(SpaciousLib.config.getBoolean("placeholder_cache_async", false)) {
+        if(SpaciousLib.config.getBoolean("placeholder_cache_async", true)) {
             new BukkitRunnable() {
                 @Override
                 public void run() {

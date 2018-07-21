@@ -50,6 +50,21 @@ public final class SpaciousLib extends JavaPlugin {
         }
 
         config = YamlConfiguration.loadConfiguration(CONFIG_FILE);
+        if(!config.isSet("config_version")){
+            try {
+                chat.sendSender("&cAttempting to upgrade the old configuration...");
+                new FileManager(CONFIG_FILE).delete();
+                chat.sendSender("&cDeleted the old config.yml file!");
+                chat.sendSender("&cCreating the new config.yml file...");
+                new FileManager(CONFIG_FILE).initFile(IOUtils.toByteArray(getClass().getResourceAsStream("/config.yml")));
+                config = YamlConfiguration.loadConfiguration(CONFIG_FILE);
+                chat.sendSender("&cReloaded the configuration! Enjoy <3");
+            } catch(IOException e) {
+                chat.sendSender("&cGot errors while trying to upgrade the configuration!");
+                e.printStackTrace();
+            }
+        }
+
         chat = new Chat("&f[&bSpaciousLib&f] ");
         ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,7 +80,7 @@ public final class SpaciousLib extends JavaPlugin {
 
         // uses synchronous task because this task will call the ArmorEquipEvent event
         new ArmorEquipEventTask().runTaskTimer(this, 0, 20);
-        if(getConfig().getBoolean("auto_renew_skin", true)) {
+        if(getConfig().getBoolean("auto_renew_skin", false)) {
             new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 1200);
         }
 

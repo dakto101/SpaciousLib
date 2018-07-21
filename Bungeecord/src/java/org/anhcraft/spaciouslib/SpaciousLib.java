@@ -47,6 +47,20 @@ public final class SpaciousLib extends Plugin {
         } catch(IOException e) {
             e.printStackTrace();
         }
+        if(!config.contains("config_version")){
+            try {
+                chat.sendSender("&cAttempting to upgrade the old configuration...");
+                new FileManager(CONFIG_FILE).delete();
+                chat.sendSender("&cDeleted the old config.yml file!");
+                chat.sendSender("&cCreating the new config.yml file...");
+                new FileManager(CONFIG_FILE).initFile(IOUtils.toByteArray(getClass().getResourceAsStream("/config.yml")));
+                config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(CONFIG_FILE);
+                chat.sendSender("&cReloaded the configuration! Enjoy <3");
+            } catch(IOException e) {
+                chat.sendSender("&cGot errors while trying to upgrade the configuration!");
+                e.printStackTrace();
+            }
+        }
         chat = new Chat("&f[&bSpaciousLib&f] ");
         ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +69,7 @@ public final class SpaciousLib extends Plugin {
         new SkinAPI();
 
         chat.sendSender("&eStarting the tasks...");
-        if(config.getBoolean("auto_renew_skin", true)) {
+        if(config.getBoolean("auto_renew_skin", false)) {
             getProxy().getScheduler().schedule(this, new CachedSkinTask(), 0, 60, TimeUnit.SECONDS);
         }
         if(config.getBoolean("stats", true)){
@@ -81,6 +95,9 @@ public final class SpaciousLib extends Plugin {
     public void onDisable() {
         for(ProxiedPlayer player : getProxy().getPlayers()){
             PacketListener.remove(player);
+        }
+        if(PlaceholderAPI.asyncTask != null){
+            PlaceholderAPI.asyncTask.stop();
         }
     }
 }
