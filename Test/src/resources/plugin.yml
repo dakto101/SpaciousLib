@@ -1,8 +1,0 @@
-name: SpaciousLibTest
-version: 1.0.4
-main: org.anhcraft.spaciouslibtest.SpaciousLibTestSpigot
-loadbefore: [SpaciousLib]
-depend: [SpaciousLib]
-authors: [anhcraft]
-description: A plugin which helps you to test SpaciousLib
-website: https://anhcraft.org/
