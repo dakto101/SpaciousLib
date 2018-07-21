@@ -50,6 +50,7 @@ public final class SpaciousLib extends JavaPlugin {
         }
 
         config = YamlConfiguration.loadConfiguration(CONFIG_FILE);
+        chat = new Chat("&f[&bSpaciousLib&f] ");
         if(!config.isSet("config_version")){
             try {
                 chat.sendSender("&cAttempting to upgrade the old configuration...");
@@ -65,7 +66,6 @@ public final class SpaciousLib extends JavaPlugin {
             }
         }
 
-        chat = new Chat("&f[&bSpaciousLib&f] ");
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         chat.sendSender("&eInitializing the APIs...");

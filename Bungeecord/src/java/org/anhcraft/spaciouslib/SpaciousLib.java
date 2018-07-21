@@ -47,6 +47,7 @@ public final class SpaciousLib extends Plugin {
         } catch(IOException e) {
             e.printStackTrace();
         }
+        chat = new Chat("&f[&bSpaciousLib&f] ");
         if(!config.contains("config_version")){
             try {
                 chat.sendSender("&cAttempting to upgrade the old configuration...");
@@ -61,7 +62,6 @@ public final class SpaciousLib extends Plugin {
                 e.printStackTrace();
             }
         }
-        chat = new Chat("&f[&bSpaciousLib&f] ");
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         chat.sendSender("&eInitializing the APIs...");
