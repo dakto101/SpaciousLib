@@ -9,6 +9,7 @@ import org.bukkit.inventory.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A class helps you to manage recipes
@@ -17,22 +18,22 @@ public class RecipeManager {
     private Recipe recipe;
 
     /**
-     * Creates new RecipeManager isntance
-     * @param recipe the recipe
+     * Creates new RecipeManager instance
+     * @param recipe a recipe
      */
     public RecipeManager(Recipe recipe){
         this.recipe = recipe;
     }
 
     /**
-     * Registers the specified recipe
+     * Registers that recipe
      */
     public void register(){
         Bukkit.getServer().addRecipe(recipe);
     }
 
     /**
-     * Unregisters the specified recipe
+     * Unregisters that recipe
      */
     public void unregister(){
         String v = GameVersion.getVersion().toString();
@@ -41,14 +42,34 @@ public class RecipeManager {
             Class<?> recipeClass = Class.forName("net.minecraft.server."+v+".IRecipe");
             Class<?> registryMaterialClass = Class.forName("net.minecraft.server."+v+".RegistryMaterials");
 
-            if(GameVersion.is1_12Above()) {
+            if(GameVersion.is1_13Above()) {
+                Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");
+                Class<?> minecraftServerClass = Class.forName("net.minecraft.server."+v+".MinecraftServer");
+                Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
+                Object nmsServer = ReflectionUtils.getMethod("getServer", craftServerClass, craftServer);
+                Object craftingManager = ReflectionUtils.getField("ag", minecraftServerClass, nmsServer);
+                Map<?, ?> recipes = (Map<?, ?>) ReflectionUtils
+                        .getField("recipes", craftingManagerClass, craftingManager);
+                Object k = null;
+                for(Object key : recipes.keySet()) {
+                    Object rcp = recipes.get(key);
+                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, rcp);
+                    if(compare(recipeBukkit)) {
+                        k = key;
+                        break;
+                    }
+                }
+                if(k != null){
+                    recipes.remove(k);
+                }
+            } else if(GameVersion.is1_12Above()) {
                 Object registryMaterials = ReflectionUtils.getStaticField("recipes", craftingManagerClass);
                 Iterator<Object> iterator = (Iterator<Object>) ReflectionUtils.getMethod("iterator", registryMaterialClass, registryMaterials);
-                for(Iterator<Object> it = iterator; it.hasNext(); ) {
-                    Object recipe = it.next();
-                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, recipe);
+                for(; iterator.hasNext(); ) {
+                    Object rcp = iterator.next();
+                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, rcp);
                     if(compare(recipeBukkit)) {
-                        it.remove();
+                        iterator.remove();
                     }
                 }
             } else {
@@ -70,7 +91,7 @@ public class RecipeManager {
     }
 
     /**
-     * Checks is the specified recipe registered
+     * Checks is that recipe registered
      * @return true if yes
      */
     public boolean isRegistered(){
@@ -80,12 +101,27 @@ public class RecipeManager {
             Class<?> recipeClass = Class.forName("net.minecraft.server."+v+".IRecipe");
             Class<?> registryMaterialClass = Class.forName("net.minecraft.server."+v+".RegistryMaterials");
 
-            if(GameVersion.is1_12Above()) {
+            if(GameVersion.is1_13Above()) {
+                Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");
+                Class<?> minecraftServerClass = Class.forName("net.minecraft.server."+v+".MinecraftServer");
+                Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
+                Object nmsServer = ReflectionUtils.getMethod("getServer", craftServerClass, craftServer);
+                Object craftingManager = ReflectionUtils.getField("ag", minecraftServerClass, nmsServer);
+                Map<?, ?> recipes = (Map<?, ?>) ReflectionUtils
+                        .getField("recipes", craftingManagerClass, craftingManager);
+                for(Object key : recipes.keySet()) {
+                    Object rcp = recipes.get(key);
+                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, rcp);
+                    if(compare(recipeBukkit)) {
+                        return true;
+                    }
+                }
+            } else if(GameVersion.is1_12Above()) {
                 Object registryMaterials = ReflectionUtils.getStaticField("recipes", craftingManagerClass);
                 Iterator<Object> iterator = (Iterator<Object>) ReflectionUtils.getMethod("iterator", registryMaterialClass, registryMaterials);
-                for(Iterator<Object> it = iterator; it.hasNext(); ) {
-                    Object recipe = it.next();
-                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, recipe);
+                for(; iterator.hasNext(); ) {
+                    Object rcp = iterator.next();
+                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, rcp);
                     if(compare(recipeBukkit)) {
                         return true;
                     }
@@ -107,7 +143,7 @@ public class RecipeManager {
     }
 
     /**
-     * Compares the specified recipe with another recipe
+     * Compares that recipe with another recipe
      * @param otherRecipe another recipe
      * @return true if these recipes are same
      */
