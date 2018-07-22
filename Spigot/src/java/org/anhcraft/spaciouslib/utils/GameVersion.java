@@ -13,6 +13,9 @@ public enum GameVersion {
     v1_12_R1(7),
     v1_13_R1(8);
 
+    private static final GameVersion version = GameVersion.valueOf(Bukkit.getServer().getClass().getPackage()
+            .getName().replace(".",  ",").split(",")[3]);
+
     private int id;
 
     GameVersion(int id){
@@ -27,8 +30,7 @@ public enum GameVersion {
      * Gets current Minecraft version of this server
      */
     public static GameVersion getVersion(){
-        return GameVersion.valueOf(Bukkit.getServer().getClass().getPackage()
-                .getName().replace(".",  ",").split(",")[3]);
+        return version;
     }
 
     public static boolean is1_8Above(){
