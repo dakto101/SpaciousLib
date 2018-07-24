@@ -80,7 +80,7 @@ public final class SpaciousLib extends Plugin {
         getProxy().getPluginManager().registerListener(this, new SpigotListener());
         getProxy().getPluginManager().registerListener(this, new PlaceholderListener());
         getProxy().getPluginManager().registerListener(this, new PlayerCleanerListener());
-        getProxy().getPluginManager().registerListener(this, new PacketListener());
+        //getProxy().getPluginManager().registerListener(this, new PacketListener());
 
         chat.sendSender("&eRegistering the messaging channel...");
         getProxy().registerChannel(CHANNEL);
