@@ -28,8 +28,8 @@ public class InventoryManager extends ClickableItemListener {
         if(size % 9 != 0){
             size = size + (9 - size % 9);
         }
-        inv = Bukkit.getServer().createInventory(null, size, Chat.color(name));
-        clickableSlots = new ClickableItemHandler[size];
+        this.inv = Bukkit.getServer().createInventory(null, size, Chat.color(name));
+        this.clickableSlots = new ClickableItemHandler[size];
     }
 
     /**
@@ -38,6 +38,7 @@ public class InventoryManager extends ClickableItemListener {
      */
     public InventoryManager(Inventory inv){
         this.inv = inv;
+        this.clickableSlots = new ClickableItemHandler[inv.getSize()];
     }
 
     /**

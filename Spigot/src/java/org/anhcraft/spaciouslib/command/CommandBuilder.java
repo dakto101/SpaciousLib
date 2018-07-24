@@ -129,103 +129,84 @@ public class CommandBuilder extends CommandString {
                     new Class<?>[]{String.class, Plugin.class},
                     new Object[]{this.name, plugin}
             ));
-            c.setTabCompleter(new TabCompleter() {
-                @Override
-                public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-                    return tabcomplete(args);
-                }
-            });
-            c.setExecutor(new CommandExecutor() {
-                @Override
-                public boolean onCommand(CommandSender s, Command command,
-                                         String l, String[] a) {
-                    execute(s, a);
-                    return false;
-                }
+            c.setTabCompleter((sender, command, alias, args) -> tabcomplete(args));
+            c.setExecutor((s, command, l, a) -> {
+                execute(s, a);
+                return false;
             });
             CommandUtils.register(plugin, c);
             this.command = c;
         } else if(getCommand() instanceof PluginCommand){
-            ((PluginCommand) getCommand()).setTabCompleter(new TabCompleter() {
-                @Override
-                public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-                    return tabcomplete(args);
-                }
-            });
-            ((PluginCommand) getCommand()).setExecutor(new CommandExecutor() {
-                @Override
-                public boolean onCommand(CommandSender s, Command command,
-                                         String l, String[] a) {
-                    execute(s, a);
-                    return false;
-                }
+            ((PluginCommand) getCommand()).setTabCompleter((sender, command, alias, args) -> tabcomplete(args));
+            ((PluginCommand) getCommand()).setExecutor((s, command, l, a) -> {
+                execute(s, a);
+                return false;
             });
         }
         return this;
     }
 
     private List<String> tabcomplete(String[] a) {
-        // [vi] CO CHE HOAT DONG
-        // [vi] tab complete la hinh thuc dua ra mot danh sach cac argument con thieu va chen truc tiep vao lenh ma nguoi choi da nhap bang cach an TAB
-        // [vi] no dong nghia voi viec ta khong the dua tat ca cac lenh, ma chi co the dua cac tham so con thieu duoi dang mot lenh
-        // [vi] vd /test a b c d la lenh chi dinh
-        // [vi] nguoi choi nhap /test a vay con thieu b c d
-        // [vi] tuy nhien co nhung truong hop con co cac tham so dong
-        // [vi] vd /test a b c e
-        // [vi] va /test a b c f deu duoc
-        // [vi] thi ta chi kiem tra phan /test a b c
+        // HOW DOES THIS WORK?
+        // Tab completion is a feature that automatically complete the missing arguments of a command
+        // It isn't easy to integrate that into SpaciousLib
+        // EXAMPLE COMMAND: /this is a long command [answer]
+        // In the above command, there are four sub-commands (static arguments) and a dynamic argument
+        // When use the tab completion, we only complete up to four sub commands, we can't complete a dynamic argument
 
-        // if only contains the root command
+        // if only contains the root command, we can't complete that command
         if(getSubCommands().size() == 1){
             return new ArrayList<>();
         }
 
-        // [vi] mot tree map se xep lenh co do dai tu cao -> thap (vi da lat lai)
+        // creates a tree map which was reversed the order
         TreeMap<Integer, String> s = new TreeMap<>(Collections.reverseOrder());
 
-        // [vi] day la lenh ma nguoi choi da nhap, khong co root command
+        // this is the command which was typed by the commander, without the root command
         StringBuilder cmdb = new StringBuilder();
         for(String t : a){
-            // [vi] bo cac tham so khong co gia tri
+            // removes all empty arguments
             if(t.replace(" ", "").length() == 0){
                 continue;
             }
             cmdb.append(" ").append(t);
         }
-        // [vi] chinh lai lenh moi voi dung format la: giua cac tham so co khoang cach
+        // format the command
         String cmd = cmdb.toString().replaceFirst(" ", "").trim().toLowerCase();
 
         for(SubCommandBuilder sc : getSubCommands()){
-            // [vi] kiem tra xem lenh do co bat dau boi mot lenh chi dinh (sub command) nao khong
+            // we know that the correct command is longer than the typed command
+            // we will check which is the full command that the player wants to
+            // if the typed command already contains dynamic arguments, this check won't work
             if(sc.getName().startsWith(cmd)) {
-                // [vi] tach ten sub command
+                // splits the sub-command to parts
                 String[] m = sc.getName().split(" ");
-                // [vi] tach lenh da nhap
+                // splits the typed command to parts
                 String[] j = cmd.split(" ");
-                // [vi] d9a6 la danh sach cac phan con thieu
+
+                // this array contains missing arguments
                 String[] n = m;
-                // [vi] kiem tra lenh da nhap phai dai hon 0, hai bien m va n phai co kich co lon hon 0
-                // [vi] phan cuoi cung cua sub command phai bat dau bang phan cuoi cung cua lenh cuoi cung da nhap
-                // [vi] lenh chi dinh phai co nhieu phan hon hoac bang phan lenh chi dinh lenh da nhap
-                // [vi] vd: /test a b c la lenh da nhap con /test a b c la lenh da dat
-                // [vi] vd: /test a b test la lenh da nhap con /test a b t la lenh da dat
+
+                // firstly, we check the typed command and the sub-command aren't empty
+                // the typed command must have less arguments than the sub-command (logic)
+                // finally, the last argument of the sub-command must contain the last argument of the full-command
                 if(0 < cmd.length() && 0 < j.length && 0 < m.length
                         && j.length <= m.length && m[m.length - 1].startsWith(j[j.length - 1])){
-                    // [vi] neu ca hai bien m va n bang nhau, nghia la trong lenh da nhap khong he co tham so nao khac
+                    // if the sub-command and the typed command both have a same amount of arguments, we can ensure that there aren't any unnecessary arguments
                     if(j.length == m.length){
                         n = new String[]{m[m.length - 1]};
                     }
-                    // [vi] con khong la chi lay phan ma lenh da nhap con thieu (vi dang tab complete)
+                    // if not, we will copy the missing arguments
                     else {
                         n = Arrays.copyOfRange(m, j.length, m.length);
                     }
                 }
-                // [vi] chuyen cac phan con thieu tu bien n sang mot lenh co format hoan chinh
+                // formats the missing command
                 StringBuilder x = new StringBuilder();
                 for(String t : n){
                     x.append(" ").append(t);
                 }
-                // [vi] dat vao tree map
+                // puts the missing command into the map
                 String v = x.toString().trim();
                 s.put(v.length(), v);
             }
@@ -234,7 +215,7 @@ public class CommandBuilder extends CommandString {
     }
 
     private void execute(CommandSender s, String[] a) {
-        // if only contains the root command
+        // if this command only contains the root
         if(getSubCommands().size() == 1){
             try {
                 getSubCommands().get(0).execute(this, s, a);
@@ -244,17 +225,17 @@ public class CommandBuilder extends CommandString {
             return;
         }
 
+        // formats the command
         StringBuilder cmdb = new StringBuilder();
         for(String t : a) {
             cmdb.append(" ").append(t);
-        }        // [vi] chuyen tham so thanh lenh
+        }
         String cmd = cmdb.toString().replaceFirst(" ", "").trim().toLowerCase();
 
         SubCommandBuilder found = null;
         boolean xt = false;
         for(SubCommandBuilder sc : this.subcmds){
-            // [vi] neu lenh da nhap khong co tham so => dang nhap root command
-            // [vi] vd /test
+            // if the typed command doesn't have any arguments, it means that the commander wanted to execute the root
             if(cmd.length() == 0 && sc.getName().length() == 0){
                 xt = true;
                 try {
@@ -264,7 +245,6 @@ public class CommandBuilder extends CommandString {
                 }
                 break;
             }
-            // [vi] neu co tham so thi ten sub command phai co do dai lon hon 0
             else if(0 < sc.getName().length() && validateSubCommandBuilder(sc.getName(), cmd)){
                 // [vi] neu sub command chua tim thay thi cho phep them thang, con khong phai thong qua kiem tra
                 // [vi] ten sub command da tim phai ngan hon ten sub command hien tai
