@@ -6,6 +6,8 @@ import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,30 +89,34 @@ public class HTTPRequestReader{
                     this.cookies.put(ckr[0], ckr[1]);
                 }
             } else {
-                for(HTTPRequestMethod method : HTTPRequestMethod.values()){
-                    if(line.startsWith(method.toString()+" ")){
-                        this.method = method;
-                        String[] ir = line.split(" ");
-                        if(3 <= ir.length) {
-                            this.httpVersion = ir[2];
-                        }
-                        if(2 <= ir.length) {
-                            String[] ur = ir[1].split("\\?");
-                            if(1 <= ur.length) {
-                                this.path = ur[0];
+                try {
+                    for(HTTPRequestMethod method : HTTPRequestMethod.values()) {
+                        if(line.startsWith(method.toString() + " ")) {
+                            this.method = method;
+                            String[] ir = line.split(" ");
+                            if(3 <= ir.length) {
+                                this.httpVersion = ir[2];
                             }
-                            if(2 <= ur.length) {
-                                String[] queries = ur[1].split("&");
-                                for(String query : queries) {
-                                    String[] qr = query.split("=");
-                                    if(2 <= qr.length) {
-                                        this.queries.put(qr[0], qr[1]);
+                            if(2 <= ir.length) {
+                                String[] ur = ir[1].split("\\?");
+                                if(1 <= ur.length) {
+                                    this.path = ur[0];
+                                }
+                                if(2 <= ur.length) {
+                                    String[] queries = URLDecoder.decode(ur[1], "UTF-8").split("&");
+                                    for(String query : queries) {
+                                        String[] qr = query.split("=");
+                                        if(2 <= qr.length) {
+                                            this.queries.put(qr[0], qr[1]);
+                                        }
                                     }
                                 }
                             }
+                            continue main;
                         }
-                        continue main;
                     }
+                } catch(UnsupportedEncodingException e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -121,12 +127,16 @@ public class HTTPRequestReader{
         }
         userAgentDetection = new UserAgentDetector().parseUserAgent(this.userAgent);
         if(method.equals(HTTPRequestMethod.POST)){
-            String[] queries = content.toString().split("&");
-            for(String query : queries) {
-                String[] qr = query.split("=");
-                if(2 <= qr.length) {
-                    this.queries.put(qr[0], qr[1]);
+            try {
+                String[] queries = URLDecoder.decode(content.toString(), "UTF-8").split("&");
+                for(String query : queries) {
+                    String[] qr = query.split("=");
+                    if(2 <= qr.length) {
+                        this.queries.put(qr[0], qr[1]);
+                    }
                 }
+            } catch(UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
         }
     }
