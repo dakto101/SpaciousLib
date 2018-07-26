@@ -120,6 +120,15 @@ public class HTTPRequestReader{
             }
         }
         userAgentDetection = new UserAgentDetector().parseUserAgent(this.userAgent);
+        if(method.equals(HTTPRequestMethod.POST)){
+            String[] queries = content.toString().split("&");
+            for(String query : queries) {
+                String[] qr = query.split("=");
+                if(2 <= qr.length) {
+                    this.queries.put(qr[0], qr[1]);
+                }
+            }
+        }
     }
 
     public String getUserAgent(){
