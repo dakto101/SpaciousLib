@@ -5,6 +5,7 @@ import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.listeners.NPCInteractEventListener;
 import org.anhcraft.spaciouslib.protocol.*;
+import org.anhcraft.spaciouslib.scheduler.DelayedTask;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
@@ -25,6 +26,7 @@ public class NPC extends PacketBuilder<NPC> {
     @PlayerCleaner
     private Set<UUID> viewers = new HashSet<>();
     private boolean tablist = false;
+    private Object tabListPacket;
 
     private void init() {
         NPCInteractEventListener.data.add(this);
@@ -182,6 +184,8 @@ public class NPC extends PacketBuilder<NPC> {
     private NPC add(UUID uuid){
         Player player = Bukkit.getServer().getPlayer(uuid);
         packetSender.sendPlayer(player);
+        DelayedTask task = new DelayedTask(() -> new PacketSender(tabListPacket).sendPlayer(player), 2);
+        task.run();
         return this;
     }
 
@@ -278,7 +282,7 @@ public class NPC extends PacketBuilder<NPC> {
             packets.add(PlayerInfo.create(PlayerInfo.Type.ADD_PLAYER, this.nmsEntityPlayer));
             packets.add(NamedEntitySpawn.create(this.nmsEntityPlayer));
             if(!this.tablist) {
-                packets.add(PlayerInfo.create(PlayerInfo.Type.REMOVE_PLAYER, nmsEntityPlayer));
+                tabListPacket = PlayerInfo.create(PlayerInfo.Type.REMOVE_PLAYER, nmsEntityPlayer);
             }
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
