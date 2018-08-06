@@ -10,6 +10,7 @@ import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.anhcraft.spaciouslib.tasks.ArmorEquipEventTask;
 import org.anhcraft.spaciouslib.tasks.CachedSkinTask;
 import org.anhcraft.spaciouslib.utils.Chat;
+import org.anhcraft.spaciouslib.utils.ProxyUtils;
 import org.anhcraft.spaciouslib.utils.VaultUtils;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
@@ -26,6 +27,7 @@ public final class SpaciousLib extends JavaPlugin {
     public final static File ROOT_FOLDER = new File("plugins/SpaciousLib/");
     public final static File SKINS_FOLDER = new File(ROOT_FOLDER, "skins/");
     public final static File CONFIG_FILE = new File(ROOT_FOLDER, "config.yml");
+    public final static File CONFIG_FILE_OLD = new File(ROOT_FOLDER, "config.old.yml");
     public static SpaciousLib instance;
     public static FileConfiguration config;
     public static Chat chat;
@@ -51,9 +53,11 @@ public final class SpaciousLib extends JavaPlugin {
 
         config = YamlConfiguration.loadConfiguration(CONFIG_FILE);
         chat = new Chat("&f[&bSpaciousLib&f] ");
-        if(!config.isSet("config_version")){
+        if(!config.isSet("config_version") || config.getInt("config_version") == 1){
             try {
                 chat.sendSender("&cAttempting to upgrade the old configuration...");
+                chat.sendSender("&cCreating a backup for the old configuration....");
+                new FileManager(CONFIG_FILE_OLD).delete().initFile(new FileManager(CONFIG_FILE).read());
                 new FileManager(CONFIG_FILE).delete();
                 chat.sendSender("&cDeleted the old config.yml file!");
                 chat.sendSender("&cCreating the new config.yml file...");
@@ -72,6 +76,10 @@ public final class SpaciousLib extends JavaPlugin {
         new PlaceholderAPI();
         new SkinAPI();
         new BungeeAPI();
+        for(String proxy : config.getStringList("proxies")){
+            String[] x = proxy.split(":");
+            ProxyUtils.put(x[0], Integer.parseInt(x[1]));
+        }
 
         chat.sendSender("&eStarting the tasks...");
         if(config.getBoolean("stats", true)){
@@ -101,7 +109,7 @@ public final class SpaciousLib extends JavaPlugin {
         if(Bukkit.getServer().getPluginManager().isPluginEnabled("Vault")){
             VaultUtils.init();
             if(VaultUtils.isInitialized()) {
-                chat.sendSender("&aHooked to Vault plugin...");
+                chat.sendSender("&aHooked to Vault!");
             }
         }
 

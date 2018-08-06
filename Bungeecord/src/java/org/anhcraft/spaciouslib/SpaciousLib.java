@@ -15,6 +15,7 @@ import org.anhcraft.spaciouslib.mojang.SkinAPI;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.anhcraft.spaciouslib.tasks.CachedSkinTask;
 import org.anhcraft.spaciouslib.utils.Chat;
+import org.anhcraft.spaciouslib.utils.ProxyUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -26,6 +27,7 @@ public final class SpaciousLib extends Plugin {
     public final static File ROOT_FOLDER = new File("plugins/SpaciousLib/");
     public final static File SKINS_FOLDER = new File(ROOT_FOLDER, "skins/");
     public final static File CONFIG_FILE = new File(ROOT_FOLDER, "config.yml");
+    public final static File CONFIG_FILE_OLD = new File(ROOT_FOLDER, "config.old.yml");
     public static SpaciousLib instance;
     public static Configuration config;
     public static Chat chat;
@@ -48,9 +50,11 @@ public final class SpaciousLib extends Plugin {
             e.printStackTrace();
         }
         chat = new Chat("&f[&bSpaciousLib&f] ");
-        if(!config.contains("config_version")){
+        if(!config.contains("config_version") || config.getInt("config_version") == 1){
             try {
                 chat.sendSender("&cAttempting to upgrade the old configuration...");
+                chat.sendSender("&cCreating a backup for the old configuration....");
+                new FileManager(CONFIG_FILE_OLD).delete().initFile(new FileManager(CONFIG_FILE).read());
                 new FileManager(CONFIG_FILE).delete();
                 chat.sendSender("&cDeleted the old config.yml file!");
                 chat.sendSender("&cCreating the new config.yml file...");
@@ -67,6 +71,10 @@ public final class SpaciousLib extends Plugin {
         chat.sendSender("&eInitializing the APIs...");
         new PlaceholderAPI();
         new SkinAPI();
+        for(String proxy : config.getStringList("proxies")){
+            String[] x = proxy.split(":");
+            ProxyUtils.put(x[0], Integer.parseInt(x[1]));
+        }
 
         chat.sendSender("&eStarting the tasks...");
         if(config.getBoolean("auto_renew_skin", false)) {
