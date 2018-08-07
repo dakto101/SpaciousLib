@@ -145,6 +145,15 @@ public class NPC extends PacketBuilder<NPC> {
         return this;
     }
 
+    public NPC rotate(byte yaw, byte pitch){
+        List<Player> receivers = new ArrayList<>();
+        for(UUID uuid : getViewers()){
+            receivers.add(Bukkit.getServer().getPlayer(uuid));
+        }
+        EntityLook.create(getEntityId(), yaw, pitch, false).sendPlayers(receivers);
+        return this;
+    }
+
     /**
      * Teleports this NPC to a new location
      * @return this object
@@ -177,7 +186,6 @@ public class NPC extends PacketBuilder<NPC> {
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
-
         return this;
     }
 

@@ -470,6 +470,21 @@ public class Test implements Listener {
                         }
                     }))
 
+                    .addSubCommand(new SubCommandBuilder("npc rotate", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }).addArgument("yaw", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                        }
+                    }, CommandArgument.Type.INTEGER, false).addArgument("pitch", new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            npc.rotate(Byte.parseByte(args[0]), Byte.parseByte(args[1]));
+                        }
+                    }, CommandArgument.Type.INTEGER, false))
+
                     .addSubCommand(new SubCommandBuilder("npc addviewer", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
