@@ -1,9 +1,13 @@
 package org.anhcraft.spaciouslib;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.PacketHandler;
 import org.anhcraft.spaciouslib.attribute.Attribute;
 import org.anhcraft.spaciouslib.attribute.AttributeModifier;
+import org.anhcraft.spaciouslib.builders.ChatComponentBuilder;
 import org.anhcraft.spaciouslib.bungee.BungeeAPI;
 import org.anhcraft.spaciouslib.bungee.BungeePlayerListResponse;
 import org.anhcraft.spaciouslib.bungee.BungeeServerListResponse;
@@ -129,6 +133,12 @@ public class Test implements Listener {
                     for(SubCommandBuilder s : cmd.getSubCommands()){
                         sender.sendMessage(cmd.getCommandAsString(s, true));
                     }
+                    new Chat("&a[Test]&f >> ").sendAllPlayers(
+                            new ChatComponentBuilder(TextComponent.class).text("menu: ")
+                                    .text("ANVIL", new ClickEvent(ClickEvent.Action.RUN_COMMAND, "sls anvil"), new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent("Click here to open the anvil")}))
+                                    .text("INVENTORY", new ClickEvent(ClickEvent.Action.RUN_COMMAND, "sls inv"))
+                                    .build()
+                    );
                 }
             })
 
