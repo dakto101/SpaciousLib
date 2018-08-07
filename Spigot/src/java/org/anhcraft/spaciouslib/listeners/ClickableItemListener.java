@@ -29,7 +29,7 @@ public class ClickableItemListener implements Listener {
         data.put(inv, items);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void click(InventoryClickEvent event){
         Player player = (Player) event.getWhoClicked();
         Inventory inventory = CompatibilityUtils.getInventory(event);
@@ -37,17 +37,17 @@ public class ClickableItemListener implements Listener {
         if (inventory != null && data.containsKey(inventory)){
             ItemStack item = event.getCurrentItem();
             if(!InventoryUtils.isNull(item) && data.get(inventory).containsKey(event.getSlot())){
+                event.setCancelled(true);
+                event.setResult(Event.Result.DENY);
                 HashMap<Integer, ClickableItemHandler> items = data.get(inventory);
                 items.get(event.getSlot())
                         .run(player, item, type, event.getSlot(), event.getAction(), inventory);
                 data.put(inventory, items);
-                event.setCancelled(true);
-                event.setResult(Event.Result.DENY);
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void close(InventoryCloseEvent event){
         data.remove(event.getInventory());
     }
