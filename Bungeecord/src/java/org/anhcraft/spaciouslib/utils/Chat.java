@@ -3,6 +3,7 @@ package org.anhcraft.spaciouslib.utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
@@ -20,34 +21,30 @@ public class Chat {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
-    /**
-     * Colors the given text component
-     * @param text a text component
-     * @return the colored text component
-     */
-    public static TextComponent color(TextComponent text){
-        return new TextComponent(ChatColor.translateAlternateColorCodes('&', text.getText()));
-    }
-
     private String prefix;
+    private BaseComponent prefixComponent;
     private boolean placeholder;
 
-    /**
-     * Creates Chat instance
-     * @param prefix chat prefix
-     */
     public Chat(String prefix){
         this.prefix = prefix;
+        this.prefixComponent = new TextComponent(TextComponent.fromLegacyText(Chat.color(prefix)));
         this.placeholder = false;
     }
 
-    /**
-     * Creates Chat instance
-     * @param prefix chat prefix
-     * @param placeholder true if you want to auto replace placeholders in messages
-     */
     public Chat(String prefix, boolean placeholder){
         this.prefix = prefix;
+        this.prefixComponent = new TextComponent(TextComponent.fromLegacyText(Chat.color(prefix)));
+        this.placeholder = placeholder;
+    }
+
+    public Chat(BaseComponent prefix){
+        this.prefix = prefix.toPlainText();
+        this.prefixComponent = prefix;
+    }
+
+    public Chat(BaseComponent prefix, boolean placeholder){
+        this.prefix = prefix.toPlainText();
+        this.prefixComponent = prefix;
         this.placeholder = placeholder;
     }
 
@@ -95,37 +92,29 @@ public class Chat {
         }
     }
 
-    public void sendPlayer(TextComponent text, ProxiedPlayer p) {
+    public void sendPlayer(BaseComponent text, ProxiedPlayer p) {
         p.sendMessage(replaceTC(buildChatPrefix(text), p));
     }
 
-    public void sendPlayerNoPrefix(TextComponent text, ProxiedPlayer p) {
+    public void sendPlayerNoPrefix(BaseComponent text, ProxiedPlayer p) {
         p.sendMessage(replaceTC(text, p));
     }
 
-    public void sendSender(TextComponent text, CommandSender s) {
-        if(s instanceof ProxiedPlayer){
-            ((ProxiedPlayer) s).sendMessage(replaceTC(buildChatPrefix(text), (ProxiedPlayer) s));
-        } else {
-            sendSender(text.toLegacyText());
-        }
+    public void sendSender(BaseComponent text, CommandSender s) {
+        s.sendMessage(replaceTC(buildChatPrefix(text), (ProxiedPlayer) s));
     }
 
-    public void sendSenderNoPrefix(TextComponent text, CommandSender s) {
-        if(s instanceof ProxiedPlayer) {
-            ((ProxiedPlayer) s).sendMessage(replaceTC(text, (ProxiedPlayer) s));
-        }else {
-            sendSenderNoPrefix(text.toLegacyText());
-        }
+    public void sendSenderNoPrefix(BaseComponent text, CommandSender s) {
+        s.sendMessage(replaceTC(text, (ProxiedPlayer) s));
     }
 
-    public void sendAllPlayers(TextComponent text) {
+    public void sendAllPlayers(BaseComponent text) {
         for(ProxiedPlayer p: ProxyServer.getInstance().getPlayers()) {
             p.sendMessage(replaceTC(buildChatPrefix(text), p));
         }
     }
 
-    public void sendAllPlayersNoPrefix(TextComponent text) {
+    public void sendAllPlayersNoPrefix(BaseComponent text) {
         for(ProxiedPlayer p: ProxyServer.getInstance().getPlayers()) {
             p.sendMessage(replaceTC(text, p));
         }
@@ -143,21 +132,17 @@ public class Chat {
         }
     }
 
-    private TextComponent replaceTC(TextComponent s) {
-        return color(s);
-    }
-
-    private TextComponent replaceTC(TextComponent text, ProxiedPlayer player) {
+    private BaseComponent replaceTC(BaseComponent text, ProxiedPlayer player) {
         if(this.placeholder){
-            return new TextComponent(color(PlaceholderAPI.replace(text.toString(), player)));
+            return new TextComponent(PlaceholderAPI.replace(text.toPlainText(), player));
         } else {
-            return color(text);
+            return text;
         }
     }
 
-    private TextComponent buildChatPrefix(TextComponent text) {
-        TextComponent str = new TextComponent(prefix);
-        str.addExtra(text);
-        return str;
+    private BaseComponent buildChatPrefix(BaseComponent text) {
+        BaseComponent x = prefixComponent.duplicate();
+        x.addExtra(text);
+        return x;
     }
 }

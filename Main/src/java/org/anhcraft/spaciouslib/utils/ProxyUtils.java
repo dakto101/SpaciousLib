@@ -7,14 +7,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ProxyUtils {
-    private static boolean initialized = false;
     private static Set<Group<String, Integer>> list = new HashSet<>();
 
-    private static void init(){
-        if(initialized){
-            return;
-        }
-        initialized = true;
+    public static void init(){
         put("194.126.183.141",53281);
         put("177.204.85.203",80);
         put("80.211.189.165",3128);
@@ -30,32 +25,20 @@ public class ProxyUtils {
     }
 
     public static Set<Group<String, Integer>> getAll(){
-        if(!initialized){
-            init();
-        }
         return list;
     }
 
     public static void remove(String address, int port){
-        if(!initialized){
-            init();
-        }
         Group<String, Integer> group = new Group<>(address, port);
         list.remove(group);
     }
 
     public static void put(String address, int port){
-        if(!initialized){
-            init();
-        }
         Group<String, Integer> group = new Group<>(address, port);
         list.add(group);
     }
 
     public static Proxy getRandom(Proxy.Type type){
-        if(!initialized){
-            init();
-        }
         if(list.size() == 0){
             return null;
         }

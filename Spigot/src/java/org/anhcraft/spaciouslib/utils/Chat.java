@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.utils;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -21,25 +22,30 @@ public class Chat {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
-    /**
-     * Colors the given text component
-     * @param text a text component
-     * @return the colored text component
-     */
-    public static TextComponent color(TextComponent text){
-        return new TextComponent(ChatColor.translateAlternateColorCodes('&', text.getText()));
-    }
-
     private String prefix;
+    private BaseComponent prefixComponent;
     private boolean placeholder;
 
     public Chat(String prefix){
         this.prefix = prefix;
+        this.prefixComponent = new TextComponent(TextComponent.fromLegacyText(Chat.color(prefix)));
         this.placeholder = false;
     }
 
     public Chat(String prefix, boolean placeholder){
         this.prefix = prefix;
+        this.prefixComponent = new TextComponent(TextComponent.fromLegacyText(Chat.color(prefix)));
+        this.placeholder = placeholder;
+    }
+
+    public Chat(BaseComponent prefix){
+        this.prefix = prefix.toPlainText();
+        this.prefixComponent = prefix;
+    }
+
+    public Chat(BaseComponent prefix, boolean placeholder){
+        this.prefix = prefix.toPlainText();
+        this.prefixComponent = prefix;
         this.placeholder = placeholder;
     }
 
@@ -107,15 +113,15 @@ public class Chat {
         }
     }
 
-    public void sendPlayer(TextComponent text, Player p) {
+    public void sendPlayer(BaseComponent text, Player p) {
         p.spigot().sendMessage(replaceTC(buildChatPrefix(text), p));
     }
 
-    public void sendPlayerNoPrefix(TextComponent text, Player p) {
+    public void sendPlayerNoPrefix(BaseComponent text, Player p) {
         p.spigot().sendMessage(replaceTC(text, p));
     }
 
-    public void sendSender(TextComponent text, CommandSender s) {
+    public void sendSender(BaseComponent text, CommandSender s) {
         if(s instanceof Player){
             ((Player) s).spigot().sendMessage(replaceTC(buildChatPrefix(text), (Player) s));
         } else {
@@ -123,7 +129,7 @@ public class Chat {
         }
     }
 
-    public void sendSenderNoPrefix(TextComponent text, CommandSender s) {
+    public void sendSenderNoPrefix(BaseComponent text, CommandSender s) {
         if(s instanceof Player) {
             ((Player) s).spigot().sendMessage(replaceTC(text, (Player) s));
         }else {
@@ -131,25 +137,25 @@ public class Chat {
         }
     }
 
-    public void sendAllPlayers(TextComponent text) {
+    public void sendAllPlayers(BaseComponent text) {
         for(Player p: Bukkit.getServer().getOnlinePlayers()) {
             p.spigot().sendMessage(replaceTC(buildChatPrefix(text), p));
         }
     }
 
-    public void sendAllPlayersNoPrefix(TextComponent text) {
+    public void sendAllPlayersNoPrefix(BaseComponent text) {
         for(Player p: Bukkit.getServer().getOnlinePlayers()) {
             p.spigot().sendMessage(replaceTC(text, p));
         }
     }
 
-    public void sendGlobal(TextComponent text, World w){
+    public void sendGlobal(BaseComponent text, World w){
         for(Player p: w.getPlayers()){
             sendPlayer(text, p);
         }
     }
 
-    public void sendGlobalNoPrefix(TextComponent text, World w) {
+    public void sendGlobalNoPrefix(BaseComponent text, World w) {
         for(Player p: w.getPlayers()){
             sendPlayerNoPrefix(text, p);
         }
@@ -167,21 +173,17 @@ public class Chat {
         }
     }
 
-    private TextComponent replaceTC(TextComponent s) {
-        return color(s);
-    }
-
-    private TextComponent replaceTC(TextComponent text, Player player) {
+    private BaseComponent replaceTC(BaseComponent text, Player player) {
         if(this.placeholder){
-            return new TextComponent(color(PlaceholderAPI.replace(text.toString(), player)));
+            return new TextComponent(PlaceholderAPI.replace(text.toPlainText(), player));
         } else {
-            return color(text);
+            return text;
         }
     }
 
-    private TextComponent buildChatPrefix(TextComponent text) {
-        TextComponent str = new TextComponent(prefix);
-        str.addExtra(text);
-        return str;
+    private BaseComponent buildChatPrefix(BaseComponent text) {
+        BaseComponent x = prefixComponent.duplicate();
+        x.addExtra(text);
+        return x;
     }
 }
