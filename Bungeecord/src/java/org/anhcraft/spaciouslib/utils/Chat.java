@@ -27,19 +27,23 @@ public class Chat {
 
     public Chat(String prefix){
         this.prefix = prefix;
+        this.prefixComponent = new TextComponent(TextComponent.fromLegacyText(Chat.color(prefix)));
         this.placeholder = false;
     }
 
     public Chat(String prefix, boolean placeholder){
         this.prefix = prefix;
+        this.prefixComponent = new TextComponent(TextComponent.fromLegacyText(Chat.color(prefix)));
         this.placeholder = placeholder;
     }
 
     public Chat(BaseComponent prefix){
+        this.prefix = prefix.toPlainText();
         this.prefixComponent = prefix;
     }
 
     public Chat(BaseComponent prefix, boolean placeholder){
+        this.prefix = prefix.toPlainText();
         this.prefixComponent = prefix;
         this.placeholder = placeholder;
     }

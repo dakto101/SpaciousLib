@@ -134,9 +134,10 @@ public class Test implements Listener {
                         sender.sendMessage(cmd.getCommandAsString(s, true));
                     }
                     new Chat("&a[Test]&f >> ").sendAllPlayers(
-                            new ChatComponentBuilder(TextComponent.class).text("menu: ")
-                                    .text("ANVIL", new ClickEvent(ClickEvent.Action.RUN_COMMAND, "sls anvil"), new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent("Click here to open the anvil")}))
-                                    .text("INVENTORY", new ClickEvent(ClickEvent.Action.RUN_COMMAND, "sls inv"))
+                            new ChatComponentBuilder(TextComponent.class).text("menu:       ")
+                                    .text("ANVIL", new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/sls anvil"), new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent("Click here to open the anvil")}))
+                                    .text(" ")
+                                    .text("INVENTORY", new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/sls inv"))
                                     .build()
                     );
                 }

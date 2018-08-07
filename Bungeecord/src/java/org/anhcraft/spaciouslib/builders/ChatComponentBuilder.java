@@ -3,7 +3,7 @@ package org.anhcraft.spaciouslib.builders;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ChatComponentBuilder {
@@ -11,7 +11,7 @@ public class ChatComponentBuilder {
     private ClickEvent clickEvent;
     private HoverEvent hoverEvent;
     private String insertion;
-    private HashMap<Object, Object[]> extra = new HashMap<>();
+    private LinkedHashMap<Object, Object[]> extra = new LinkedHashMap<>();
     private ChatColor color = ChatColor.WHITE;
     private boolean bold = false;
     private boolean obfuscate = false;
