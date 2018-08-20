@@ -126,7 +126,7 @@ public class HTTPRequestReader{
             }
         }
         userAgentDetection = new UserAgentDetector().parseUserAgent(this.userAgent);
-        if(method.equals(HTTPRequestMethod.POST)){
+        if(method != null && method.equals(HTTPRequestMethod.POST)){
             try {
                 String[] queries = URLDecoder.decode(content.toString(), "UTF-8").split("&");
                 for(String query : queries) {
