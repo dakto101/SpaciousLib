@@ -214,7 +214,7 @@ public class Test implements Listener {
                     .addSubCommand(new SubCommandBuilder("tps", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
-                            sender.sendMessage(Double.toString(ServerUtils.getTPS()));
+                            sender.sendMessage(Double.toString(ServerUtils.getTPS()[0]));
                         }
                     }))
 
