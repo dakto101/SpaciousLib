@@ -12,6 +12,7 @@ import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.netty.ChannelWrapper;
+import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.PacketHandler;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class PacketListener implements Listener {
-    private static HashMap<UUID, Thread> threads = new HashMap<>();
+    private static final HashMap<UUID, Integer> tasks = new HashMap<>();
 
     public enum BoundType{
         CLIENT_BOUND,
@@ -93,12 +94,14 @@ public class PacketListener implements Listener {
     }
 
     public static void remove(ProxiedPlayer player) {
-        Channel channel = getChannel(player);
-        threads.get(player.getUniqueId()).interrupt();
-        if (channel.pipeline().get(PACKET_HANDLER) != null) {
-            channel.pipeline().remove(PACKET_HANDLER);
+        synchronized(tasks) {
+            Channel channel = getChannel(player);
+            BungeeCord.getInstance().getScheduler().cancel(tasks.get(player.getUniqueId()));
+            if(channel.pipeline().get(PACKET_HANDLER) != null) {
+                channel.pipeline().remove(PACKET_HANDLER);
+            }
+            tasks.remove(player.getUniqueId());
         }
-        threads.remove(player.getUniqueId());
     }
 
     @EventHandler
@@ -115,56 +118,57 @@ public class PacketListener implements Listener {
         UUID uuid = player.getUniqueId();
         Channel channel = getChannel(player);
         if (channel.pipeline().get(PACKET_HANDLER) == null) {
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    channel.pipeline().addBefore("legacy-kick", PACKET_HANDLER, new ChannelDuplexHandler(){
-                        public void write(ChannelHandlerContext c, Object o, ChannelPromise p)
-                                throws Exception {
-                            Handler handler = new Handler(uuid, o, BoundType.CLIENT_BOUND);
-                            for(Class clazz : AnnotationHandler.getClasses().keySet()) {
-                                for(Method method : clazz.getDeclaredMethods()) {
-                                    method.setAccessible(true);
-                                    if(method.isAnnotationPresent(PacketHandler.class) &&
-                                            method.getParameterTypes().length == 1 &&
-                                            Handler.class.isAssignableFrom(method.getParameterTypes()[0])) {
-                                        List<Object> x = AnnotationHandler.getClasses().get(clazz);
-                                        for(Object obj : x) {
-                                            method.invoke(obj, handler);
+            synchronized(tasks) {
+                int t = BungeeCord.getInstance().getScheduler().runAsync(SpaciousLib.instance, new Runnable() {
+                    @Override
+                    public void run() {
+                        channel.pipeline().addBefore("legacy-kick", PACKET_HANDLER, new ChannelDuplexHandler() {
+                            public void write(ChannelHandlerContext c, Object o, ChannelPromise p)
+                                    throws Exception {
+                                Handler handler = new Handler(uuid, o, BoundType.CLIENT_BOUND);
+                                for(Class clazz : AnnotationHandler.getClasses().keySet()) {
+                                    for(Method method : clazz.getDeclaredMethods()) {
+                                        method.setAccessible(true);
+                                        if(method.isAnnotationPresent(PacketHandler.class) &&
+                                                method.getParameterTypes().length == 1 &&
+                                                Handler.class.isAssignableFrom(method.getParameterTypes()[0])) {
+                                            List<Object> x = AnnotationHandler.getClasses().get(clazz);
+                                            for(Object obj : x) {
+                                                method.invoke(obj, handler);
+                                            }
                                         }
                                     }
                                 }
+                                if(!handler.isCancelled()) {
+                                    super.write(c, handler.getPacket(), p);
+                                }
                             }
-                            if(!handler.isCancelled()) {
-                                super.write(c, handler.getPacket(), p);
-                            }
-                        }
 
-                        public void channelRead(ChannelHandlerContext c, Object o)
-                                throws Exception {
-                            Handler handler = new Handler(uuid, o, BoundType.SERVER_BOUND);
-                            for(Class clazz : AnnotationHandler.getClasses().keySet()) {
-                                for(Method method : clazz.getDeclaredMethods()) {
-                                    method.setAccessible(true);
-                                    if(method.isAnnotationPresent(PacketHandler.class) &&
-                                            method.getParameterTypes().length == 1 &&
-                                            Handler.class.isAssignableFrom(method.getParameterTypes()[0])) {
-                                        List<Object> x = AnnotationHandler.getClasses().get(clazz);
-                                        for(Object obj : x) {
-                                            method.invoke(obj, handler);
+                            public void channelRead(ChannelHandlerContext c, Object o)
+                                    throws Exception {
+                                Handler handler = new Handler(uuid, o, BoundType.SERVER_BOUND);
+                                for(Class clazz : AnnotationHandler.getClasses().keySet()) {
+                                    for(Method method : clazz.getDeclaredMethods()) {
+                                        method.setAccessible(true);
+                                        if(method.isAnnotationPresent(PacketHandler.class) &&
+                                                method.getParameterTypes().length == 1 &&
+                                                Handler.class.isAssignableFrom(method.getParameterTypes()[0])) {
+                                            List<Object> x = AnnotationHandler.getClasses().get(clazz);
+                                            for(Object obj : x) {
+                                                method.invoke(obj, handler);
+                                            }
                                         }
                                     }
                                 }
+                                if(!handler.isCancelled()) {
+                                    super.channelRead(c, handler.getPacket());
+                                }
                             }
-                            if(!handler.isCancelled()) {
-                                super.channelRead(c, handler.getPacket());
-                            }
-                        }
-                    });
-                }
-            });
-            t.start();
-            threads.put(uuid, t);
+                        });
+                    }
+                }).getId();
+                tasks.put(uuid, t);
+            }
         }
     }
 }

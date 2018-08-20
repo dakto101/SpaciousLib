@@ -35,21 +35,21 @@ public class EntityManager {
         NBTCompound attr = NBTLoader.create();
         if(attrs != null){
             for(NBTCompound a : attrs){
-                if(!a.getString("Name").equals(attribute.getType().getID())){
+                if(!a.getString("Name").equals(attribute.getType().getId())){
                     newAttrs.add(a);
                 }
             }
         }
-        attr = attr.setString("Name", attribute.getType().getID())
+        attr = attr.setString("Name", attribute.getType().getId())
                 .setDouble("Base", attribute.getType().getBaseValue());
         List<NBTCompound> modifiers = new ArrayList<>();
         for(AttributeModifier modifier : attribute.getModifiers()){
             modifiers.add(NBTLoader.create()
                     .set("Name", modifier.getName())
             .set("Amount", modifier.getAmount())
-            .set("Operation", modifier.getOperation().getID())
-            .set("UUIDMost", modifier.getUniqueID().getMostSignificantBits())
-            .set("UUIDLeast", modifier.getUniqueID().getLeastSignificantBits()));
+            .set("Operation", modifier.getOperation().getId())
+            .set("UUIDMost", modifier.getUniqueId().getMostSignificantBits())
+            .set("UUIDLeast", modifier.getUniqueId().getLeastSignificantBits()));
         }
         attr = attr.setList("Modifiers", modifiers);
         newAttrs.add(attr);
@@ -67,11 +67,11 @@ public class EntityManager {
             return attrs;
         }
         for(NBTCompound a : nbtattrs){
-            Attribute attr = new Attribute(Attribute.Type.getByID(a.getString("Name")));
+            Attribute attr = new Attribute(Attribute.Type.getById(a.getString("Name")));
             List<NBTCompound> nbtmodifiers = a.getList("Modifiers");
             if(nbtmodifiers != null) {
                 for(NBTCompound modifier : nbtmodifiers) {
-                    attr.addModifier(new AttributeModifier(new UUID(modifier.getLong("UUIDMost"), modifier.getLong("UUIDLeast")), modifier.getString("Name"), modifier.getDouble("Amount"), AttributeModifier.Operation.getByID(modifier.getInt("Operation"))));
+                    attr.addModifier(new AttributeModifier(new UUID(modifier.getLong("UUIDMost"), modifier.getLong("UUIDLeast")), modifier.getString("Name"), modifier.getDouble("Amount"), AttributeModifier.Operation.getById(modifier.getInt("Operation"))));
                 }
             }
             attrs.add(attr);

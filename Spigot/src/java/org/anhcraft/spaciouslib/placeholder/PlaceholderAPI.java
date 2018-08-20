@@ -18,7 +18,7 @@ import java.util.List;
  * A class helps you to manage placeholders
  */
 public class PlaceholderAPI {
-    private static LinkedHashMap<String, Placeholder> data = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Placeholder> data = new LinkedHashMap<>();
 
     /**
      * Initializes PlaceholderAPI
@@ -416,7 +416,7 @@ public class PlaceholderAPI {
 
             @Override
             public String getValue(Player player) {
-                return Double.toString(MathUtils.round(ServerUtils.getTPS()));
+                return Double.toString(MathUtils.round(ServerUtils.getTPS()[0]));
             }
         });
 

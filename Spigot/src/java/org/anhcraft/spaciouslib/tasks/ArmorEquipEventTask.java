@@ -11,11 +11,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class ArmorEquipEventTask extends BukkitRunnable implements Listener {
-    private static LinkedHashMap<Player,
-            LinkedHashMap<EquipSlot, ItemStack>> data = new LinkedHashMap<>();
+    private static final HashMap<Player,
+            HashMap<EquipSlot, ItemStack>> data = new HashMap<>();
 
     @EventHandler
     public void quit(PlayerQuitEvent e){
@@ -29,7 +30,7 @@ public class ArmorEquipEventTask extends BukkitRunnable implements Listener {
             ItemStack c = InventoryUtils.clone(p.getInventory().getChestplate());
             ItemStack l = InventoryUtils.clone(p.getInventory().getLeggings());
             ItemStack b = InventoryUtils.clone(p.getInventory().getBoots());
-            LinkedHashMap<EquipSlot, ItemStack> x = new LinkedHashMap<>();
+            HashMap<EquipSlot, ItemStack> x = new LinkedHashMap<>();
             if(data.containsKey(p)){
                 x = data.get(p);
                 ItemStack oh = x.get(EquipSlot.HEAD);

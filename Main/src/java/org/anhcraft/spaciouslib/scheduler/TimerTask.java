@@ -5,6 +5,7 @@ public class TimerTask extends TaskScheduler {
     private double delay;
     private double duration;
     private double endTime;
+    private double current;
 
     /**
      * Creates a timer scheduler
@@ -17,6 +18,7 @@ public class TimerTask extends TaskScheduler {
         this.period = period;
         this.delay = delay;
         this.duration = -1;
+        this.current = 0;
     }
 
     /**
@@ -31,6 +33,7 @@ public class TimerTask extends TaskScheduler {
         this.period = period;
         this.delay = delay;
         this.duration = duration < 0 ? 0 : duration;
+        this.current = 0;
     }
 
     @Override
@@ -44,6 +47,7 @@ public class TimerTask extends TaskScheduler {
                         thread.interrupt();
                         break;
                     }
+                    current++;
                     runnable.run();
                     Thread.sleep((long) (period*1000));
                 }
@@ -52,5 +56,9 @@ public class TimerTask extends TaskScheduler {
             }
         });
         this.thread.start();
+    }
+
+    public double getCurrent() {
+        return current;
     }
 }

@@ -50,7 +50,7 @@ public final class SpaciousLib extends Plugin {
             e.printStackTrace();
         }
         chat = new Chat("&f[&bSpaciousLib&f] ");
-        if(!config.contains("config_version") || config.getInt("config_version") == 1){
+        if(!config.contains("config_version") || config.getInt("config_version") < 3){
             try {
                 chat.sendSender("&cAttempting to upgrade the old configuration...");
                 chat.sendSender("&cCreating a backup for the old configuration....");
@@ -88,7 +88,9 @@ public final class SpaciousLib extends Plugin {
         getProxy().getPluginManager().registerListener(this, new SpigotListener());
         getProxy().getPluginManager().registerListener(this, new PlaceholderListener());
         getProxy().getPluginManager().registerListener(this, new PlayerCleanerListener());
-        //getProxy().getPluginManager().registerListener(this, new PacketListener());
+        if(config.getBoolean("packet_handler", false)){
+            getProxy().getPluginManager().registerListener(this, new PacketListener());
+        }
 
         chat.sendSender("&eRegistering the messaging channel...");
         getProxy().registerChannel(CHANNEL);

@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.PacketHandler;
 import org.anhcraft.spaciouslib.utils.GameVersion;
@@ -11,9 +12,11 @@ import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -21,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class PacketListener implements Listener{
-    private static HashMap<UUID, Thread> threads = new HashMap<>();
+    private static final HashMap<UUID, Integer> tasks = new HashMap<>();
 
     public enum BoundType{
         CLIENT_BOUND,
@@ -105,20 +108,22 @@ public class PacketListener implements Listener{
     }
 
     public static void remove(Player player) {
-        Channel channel = getChannel(player);
-        threads.get(player.getUniqueId()).interrupt();
-        if (channel.pipeline().get(PACKET_HANDLER) != null) {
-            channel.pipeline().remove(PACKET_HANDLER);
+        synchronized(tasks) {
+            Channel channel = getChannel(player);
+            Bukkit.getServer().getScheduler().cancelTask(tasks.get(player.getUniqueId()));
+            if(channel.pipeline().get(PACKET_HANDLER) != null) {
+                channel.pipeline().remove(PACKET_HANDLER);
+            }
+            tasks.remove(player.getUniqueId());
         }
-        threads.remove(player.getUniqueId());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void quit(PlayerQuitEvent event) {
         remove(event.getPlayer());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void join(PlayerJoinEvent event) {
         init(event.getPlayer());
     }
@@ -127,56 +132,57 @@ public class PacketListener implements Listener{
         UUID uuid = player.getUniqueId();
         Channel channel = getChannel(player);
         if (channel.pipeline().get(PACKET_HANDLER) == null) {
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    channel.pipeline().addBefore("packet_handler", PACKET_HANDLER, new ChannelDuplexHandler() {
-                        public void write(ChannelHandlerContext c, Object o, ChannelPromise p)
-                                throws Exception {
-                            Handler handler = new Handler(uuid, o, BoundType.CLIENT_BOUND);
-                            for(Class clazz : AnnotationHandler.getClasses().keySet()) {
-                                for(Method method : clazz.getDeclaredMethods()) {
-                                    method.setAccessible(true);
-                                    if(method.isAnnotationPresent(PacketHandler.class) &&
-                                            method.getParameterTypes().length == 1 &&
-                                            Handler.class.isAssignableFrom(method.getParameterTypes()[0])) {
-                                        List<Object> x = AnnotationHandler.getClasses().get(clazz);
-                                        for(Object obj : x) {
-                                            method.invoke(obj, handler);
+            synchronized(tasks) {
+                int id = new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        channel.pipeline().addBefore("packet_handler", PACKET_HANDLER, new ChannelDuplexHandler() {
+                            public void write(ChannelHandlerContext c, Object o, ChannelPromise p)
+                                    throws Exception {
+                                Handler handler = new Handler(uuid, o, BoundType.CLIENT_BOUND);
+                                for(Class clazz : AnnotationHandler.getClasses().keySet()) {
+                                    for(Method method : clazz.getDeclaredMethods()) {
+                                        method.setAccessible(true);
+                                        if(method.isAnnotationPresent(PacketHandler.class) &&
+                                                method.getParameterTypes().length == 1 &&
+                                                Handler.class.isAssignableFrom(method.getParameterTypes()[0])) {
+                                            List<Object> x = AnnotationHandler.getClasses().get(clazz);
+                                            for(Object obj : x) {
+                                                method.invoke(obj, handler);
+                                            }
                                         }
                                     }
                                 }
+                                if(!handler.isCancelled()) {
+                                    super.write(c, handler.getPacket(), p);
+                                }
                             }
-                            if(!handler.isCancelled()) {
-                                super.write(c, handler.getPacket(), p);
-                            }
-                        }
 
-                        public void channelRead(ChannelHandlerContext c, Object o)
-                                throws Exception {
-                            Handler handler = new Handler(uuid, o, BoundType.SERVER_BOUND);
-                            for(Class clazz : AnnotationHandler.getClasses().keySet()) {
-                                for(Method method : clazz.getDeclaredMethods()) {
-                                    method.setAccessible(true);
-                                    if(method.isAnnotationPresent(PacketHandler.class) &&
-                                            method.getParameterTypes().length == 1 &&
-                                            Handler.class.isAssignableFrom(method.getParameterTypes()[0])) {
-                                        List<Object> x = AnnotationHandler.getClasses().get(clazz);
-                                        for(Object obj : x) {
-                                            method.invoke(obj, handler);
+                            public void channelRead(ChannelHandlerContext c, Object o)
+                                    throws Exception {
+                                Handler handler = new Handler(uuid, o, BoundType.SERVER_BOUND);
+                                for(Class clazz : AnnotationHandler.getClasses().keySet()) {
+                                    for(Method method : clazz.getDeclaredMethods()) {
+                                        method.setAccessible(true);
+                                        if(method.isAnnotationPresent(PacketHandler.class) &&
+                                                method.getParameterTypes().length == 1 &&
+                                                Handler.class.isAssignableFrom(method.getParameterTypes()[0])) {
+                                            List<Object> x = AnnotationHandler.getClasses().get(clazz);
+                                            for(Object obj : x) {
+                                                method.invoke(obj, handler);
+                                            }
                                         }
                                     }
                                 }
+                                if(!handler.isCancelled()) {
+                                    super.channelRead(c, handler.getPacket());
+                                }
                             }
-                            if(!handler.isCancelled()) {
-                                super.channelRead(c, handler.getPacket());
-                            }
-                        }
-                    });
-                }
-            });
-            t.start();
-            threads.put(uuid, t);
+                        });
+                    }
+                }.runTaskAsynchronously(SpaciousLib.instance).getTaskId();
+                tasks.put(uuid, id);
+            }
         }
     }
 }

@@ -1,14 +1,15 @@
-# allows SpaciousLib collects your server's information
+# allows SpaciousLib collects a little info of your server
 stats: true
 # enables the development mode
+# secret command: /slb
 dev_mode: false
-# should SpaciousLib renew skins automatically?
+# should SpaciousLib renew outdated skins automatically?
 auto_renew_skin: false
-# the duration between cache-renewing times
+# duration between cache-renewing times
 placeholder_cache_duration: 15
 # uses asynchronous tasks for cached placeholders
 placeholder_cache_async: true
-# this is a list of proxies. They can be used for download skins from Mojang's server
+# this is a list of proxies. They are used to download skins from Mojang's server
 # format: <address>:<port>
 proxies:
 - 194.126.183.141:53281
@@ -23,7 +24,10 @@ proxies:
 - 5.197.183.222:8080
 - 152.231.81.122:53281
 - 94.130.14.146:31288
+# enables packet handler feature?
+# unfortunately, at the moment this can cause some issues with your server
+packet_handler: false
 
 # ==================================
 # pls don't change this
-config_version: 2
+config_version: 3

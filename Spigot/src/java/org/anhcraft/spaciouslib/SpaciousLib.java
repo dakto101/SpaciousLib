@@ -53,7 +53,7 @@ public final class SpaciousLib extends JavaPlugin {
 
         config = YamlConfiguration.loadConfiguration(CONFIG_FILE);
         chat = new Chat("&f[&bSpaciousLib&f] ");
-        if(!config.isSet("config_version") || config.getInt("config_version") == 1){
+        if(!config.isSet("config_version") || config.getInt("config_version") < 3){
             try {
                 chat.sendSender("&cAttempting to upgrade the old configuration...");
                 chat.sendSender("&cCreating a backup for the old configuration....");
@@ -100,7 +100,9 @@ public final class SpaciousLib extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerCleanerListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
-        getServer().getPluginManager().registerEvents(new PacketListener(), this);
+        if(config.getBoolean("packet_handler", true)) {
+            getServer().getPluginManager().registerEvents(new PacketListener(), this);
+        }
         getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, new BungeeListener());
 

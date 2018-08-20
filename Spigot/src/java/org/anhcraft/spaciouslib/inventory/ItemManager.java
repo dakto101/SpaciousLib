@@ -345,12 +345,12 @@ public class ItemManager {
             l = new ArrayList<>();
         }
         NBTCompound c = NBTLoader.create()
-                .set("AttributeName", type.getID())
+                .set("AttributeName", type.getId())
                 .set("Name", modifier.getName())
                 .set("Amount", modifier.getAmount())
-                .set("Operation", modifier.getOperation().getID())
-                .set("UUIDLeast", modifier.getUniqueID().getLeastSignificantBits())
-                .set("UUIDMost", modifier.getUniqueID().getMostSignificantBits())
+                .set("Operation", modifier.getOperation().getId())
+                .set("UUIDLeast", modifier.getUniqueId().getLeastSignificantBits())
+                .set("UUIDMost", modifier.getUniqueId().getMostSignificantBits())
                 .set("Slot", slot.toString().toLowerCase());
         l.add(c);
         item = NBTLoader.fromItem(item).setList("AttributeModifiers", l).toItem(item);
@@ -389,7 +389,7 @@ public class ItemManager {
         }
         List<NBTCompound> nl = new ArrayList<>();
         for(NBTCompound m : l){
-            if(!m.getString("AttributeName").equals(type.getID().toLowerCase())){
+            if(!m.getString("AttributeName").equals(type.getId().toLowerCase())){
                 nl.add(m);
             }
         }
@@ -439,9 +439,9 @@ public class ItemManager {
             return modifiers;
         }
         for(NBTCompound modifier : l){
-            modifiers.put(new AttributeModifier(new UUID(modifier.getLong("UUIDMost"), modifier.getLong("UUIDLeast")), modifier.getString("Name"), modifier.getDouble("Amount"), AttributeModifier.Operation.getByID(modifier.getInt("Operation"))),
+            modifiers.put(new AttributeModifier(new UUID(modifier.getLong("UUIDMost"), modifier.getLong("UUIDLeast")), modifier.getString("Name"), modifier.getDouble("Amount"), AttributeModifier.Operation.getById(modifier.getInt("Operation"))),
                     new Group<>(EquipSlot.valueOf(modifier.getString("Slot").toUpperCase()),
-                            Attribute.Type.getByID(modifier.getString("AttributeName"))));
+                            Attribute.Type.getById(modifier.getString("AttributeName"))));
         }
         return modifiers;
     }

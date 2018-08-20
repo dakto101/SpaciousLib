@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.LinkedHashMap;
 
 public class BowArrowHitEventListener implements Listener{
-    public static LinkedHashMap<Entity, Group<LivingEntity, ItemStack>> data = new LinkedHashMap<>();
+    public static final LinkedHashMap<Entity, Group<LivingEntity, ItemStack>> data = new LinkedHashMap<>();
 
     @EventHandler
     public void shoot(EntityShootBowEvent e){
