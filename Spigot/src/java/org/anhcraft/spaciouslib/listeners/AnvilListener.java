@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class AnvilListener implements Listener {
     @PlayerCleaner
-    public static LinkedHashMap<UUID, Group<Inventory, AnvilHandler>> data = new LinkedHashMap<>();
+    public static final LinkedHashMap<UUID, Group<Inventory, AnvilHandler>> data = new LinkedHashMap<>();
 
     @EventHandler
     public void quit(PlayerQuitEvent event){

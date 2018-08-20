@@ -1,8 +1,10 @@
 package org.anhcraft.spaciouslib.listeners;
 
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.utils.TimedList;
@@ -21,17 +23,19 @@ import java.util.UUID;
 public class PlayerCleanerListener implements Listener {
     @EventHandler
     public void disconnect(PlayerDisconnectEvent event){
-        for(Class clazz : AnnotationHandler.getClasses().keySet()) {
-            for(Field field : clazz.getDeclaredFields()) {
-                field.setAccessible(true);
-                if(field.isAnnotationPresent(PlayerCleaner.class)) {
-                    List<Object> x = AnnotationHandler.getClasses().get(clazz);
-                    for(Object obj : x) {
-                        a(field, obj, event.getPlayer().getUniqueId());
+        BungeeCord.getInstance().getScheduler().runAsync(SpaciousLib.instance, () -> {
+            for(Class clazz : AnnotationHandler.getClasses().keySet()) {
+                for(Field field : clazz.getDeclaredFields()) {
+                    field.setAccessible(true);
+                    if(field.isAnnotationPresent(PlayerCleaner.class)) {
+                        List<Object> x = AnnotationHandler.getClasses().get(clazz);
+                        for(Object obj : x) {
+                            a(field, obj, event.getPlayer().getUniqueId());
+                        }
                     }
                 }
             }
-        }
+        });
     }
 
     private void a(Field field, Object obj, UUID uniqueId) {

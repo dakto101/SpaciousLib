@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.listeners;
 
+import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.utils.TimedList;
@@ -8,6 +9,7 @@ import org.anhcraft.spaciouslib.utils.TimedSet;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -18,17 +20,22 @@ import java.util.*;
 public class PlayerCleanerListener implements Listener {
     @EventHandler
     public void quit(PlayerQuitEvent event){
-        for(Class clazz : AnnotationHandler.getClasses().keySet()) {
-            for(Field field : clazz.getDeclaredFields()) {
-                field.setAccessible(true);
-                if(field.isAnnotationPresent(PlayerCleaner.class)) {
-                    List<Object> x = AnnotationHandler.getClasses().get(clazz);
-                    for(Object obj : x) {
-                        a(field, obj, event.getPlayer().getUniqueId());
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for(Class clazz : AnnotationHandler.getClasses().keySet()) {
+                    for(Field field : clazz.getDeclaredFields()) {
+                        field.setAccessible(true);
+                        if(field.isAnnotationPresent(PlayerCleaner.class)) {
+                            List<Object> x = AnnotationHandler.getClasses().get(clazz);
+                            for(Object obj : x) {
+                                a(field, obj, event.getPlayer().getUniqueId());
+                            }
+                        }
                     }
                 }
             }
-        }
+        }.runTaskAsynchronously(SpaciousLib.instance);
     }
 
     private void a(Field field, Object obj, UUID uniqueId) {

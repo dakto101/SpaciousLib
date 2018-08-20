@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * A class helps you to manage placeholders
  */
 public class PlaceholderAPI {
-    private static LinkedHashMap<String, Placeholder> data = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Placeholder> data = new LinkedHashMap<>();
     public static TimerTask asyncTask;
 
     /**
