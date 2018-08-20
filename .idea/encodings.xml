@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
-    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Bungeecord" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Main" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Spigot" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Spigot/src/java/org/anhcraft/spaciouslib/command/CommandBuilder.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Test" charset="UTF-8" />
+  <component name="Encoding">
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
