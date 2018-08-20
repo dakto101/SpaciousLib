@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class ClickableItemListener implements Listener {
-    private static HashMap<Inventory, HashMap<Integer, ClickableItemHandler>> data = new HashMap<>();
+    private static final HashMap<Inventory, HashMap<Integer, ClickableItemHandler>> data = new HashMap<>();
 
     public static void a(Inventory inv, int slot, ClickableItemHandler run){
         HashMap<Integer, ClickableItemHandler> items = new LinkedHashMap<>();
@@ -36,12 +36,12 @@ public class ClickableItemListener implements Listener {
         ClickType type = event.getClick();
         if (inventory != null && data.containsKey(inventory)){
             ItemStack item = event.getCurrentItem();
-            if(!InventoryUtils.isNull(item) && data.get(inventory).containsKey(event.getSlot())){
+            if(!InventoryUtils.isNull(item) && data.get(inventory).containsKey(event.getRawSlot())){
                 event.setCancelled(true);
                 event.setResult(Event.Result.DENY);
                 HashMap<Integer, ClickableItemHandler> items = data.get(inventory);
-                items.get(event.getSlot())
-                        .run(player, item, type, event.getSlot(), event.getAction(), inventory);
+                items.get(event.getRawSlot())
+                        .run(player, item, type, event.getRawSlot(), event.getAction(), inventory);
                 data.put(inventory, items);
             }
         }
