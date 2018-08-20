@@ -53,13 +53,13 @@ public class Attribute {
             this.base = base;
         }
 
-        public String getID(){
+        public String getId(){
             return this.id;
         }
 
-        public static Type getByID(String id){
+        public static Type getById(String id){
             for(Type attr : values()){
-                if(id.equals(attr.getID())){
+                if(id.equals(attr.getId())){
                     return attr;
                 }
             }
