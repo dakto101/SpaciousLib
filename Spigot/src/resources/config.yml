@@ -25,7 +25,7 @@ proxies:
 - 152.231.81.122:53281
 - 94.130.14.146:31288
 # enables packet handler feature?
-packet_handler: false
+packet_handler: true
 
 # ==================================
 # pls don't change this

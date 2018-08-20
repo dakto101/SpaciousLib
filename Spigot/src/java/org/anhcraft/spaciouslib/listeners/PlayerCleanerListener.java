@@ -43,23 +43,18 @@ public class PlayerCleanerListener implements Listener {
             if(Collection.class.isAssignableFrom(field.getType())) {
                 Collection v = (Collection) field.get(obj);
                 v.remove(uniqueId);
-                field.set(obj, v);
             } else if(Map.class.isAssignableFrom(field.getType())) {
                 Map<UUID, Object> v = (Map<UUID, Object>) field.get(obj);
                 v.remove(uniqueId);
-                field.set(obj, v);
             } else if(TimedMap.class.isAssignableFrom(field.getType())) {
                 TimedMap<UUID, Object> v = (TimedMap<UUID, Object>) field.get(obj);
                 v.remove(uniqueId);
-                field.set(obj, v);
             } else if(TimedSet.class.isAssignableFrom(field.getType())) {
                 TimedSet<UUID> v = (TimedSet<UUID>) field.get(obj);
                 v.remove(uniqueId);
-                field.set(obj, v);
             } else if(TimedList.class.isAssignableFrom(field.getType())) {
                 TimedList<UUID> v = (TimedList<UUID>) field.get(obj);
                 v.remove(uniqueId);
-                field.set(obj, v);
             } else if(UUID.class.isAssignableFrom(field.getType())) {
                 field.set(obj, null);
             }
