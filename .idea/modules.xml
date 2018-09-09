@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Bungeecord/Bungeecord.iml" filepath="$PROJECT_DIR$/Bungeecord/Bungeecord.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Main/Main.iml" filepath="$PROJECT_DIR$/Main/Main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Spigot/Spigot.iml" filepath="$PROJECT_DIR$/Spigot/Spigot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpaciousLib.iml" filepath="$PROJECT_DIR$/SpaciousLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpaciousLibBungeecord/SpaciousLibBungeecord.iml" filepath="$PROJECT_DIR$/SpaciousLibBungeecord/SpaciousLibBungeecord.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpaciousLibMain/SpaciousLibMain.iml" filepath="$PROJECT_DIR$/SpaciousLibMain/SpaciousLibMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpaciousLibSpigot/SpaciousLibSpigot.iml" filepath="$PROJECT_DIR$/SpaciousLibSpigot/SpaciousLibSpigot.iml" />
       <module fileurl="file://$PROJECT_DIR$/javadoc/javadoc.iml" filepath="$PROJECT_DIR$/javadoc/javadoc.iml" />
     </modules>
   </component>
