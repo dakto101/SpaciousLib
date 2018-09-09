@@ -6,18 +6,18 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Bungeecord" />
-        <module name="SpaciousLib" />
-        <module name="Spigot" />
+        <module name="SpaciousLibBungeecord" />
+        <module name="SpaciousLibMain" />
+        <module name="SpaciousLibSpigot" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Bungeecord" target="1.8" />
       <module name="Glowstone" target="1.8" />
-      <module name="Main" target="1.8" />
       <module name="SpaciousLib" target="1.8" />
+      <module name="SpaciousLibBungeecord" target="1.8" />
       <module name="SpaciousLibDebug" target="1.8" />
-      <module name="Spigot" target="1.8" />
+      <module name="SpaciousLibMain" target="1.8" />
+      <module name="SpaciousLibSpigot" target="1.8" />
       <module name="Test" target="1.8" />
     </bytecodeTargetLevel>
   </component>

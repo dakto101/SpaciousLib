@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="user-agent-detector">
-    <CLASSES>
-      <root url="jar://$USER_HOME$/LIBRARY/user-agent-detector.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
