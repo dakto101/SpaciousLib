@@ -17,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NPC extends PacketBuilder<NPC> {
     private Object nmsEntityPlayer;
@@ -146,11 +147,7 @@ public class NPC extends PacketBuilder<NPC> {
     }
 
     public NPC rotate(byte yaw, byte pitch){
-        List<Player> receivers = new ArrayList<>();
-        for(UUID uuid : getViewers()){
-            receivers.add(Bukkit.getServer().getPlayer(uuid));
-        }
-        EntityLook.create(getEntityId(), yaw, pitch, false).sendPlayers(receivers);
+        EntityLook.create(getEntityId(), yaw, pitch, false).sendPlayers(viewers.stream().map(uuid -> Bukkit.getServer().getPlayer(uuid)).collect(Collectors.toList()));
         return this;
     }
 
@@ -178,11 +175,7 @@ public class NPC extends PacketBuilder<NPC> {
                     location.getPitch(),
             }
             ));
-            List<Player> receivers = new ArrayList<>();
-            for(UUID uuid : getViewers()){
-                receivers.add(Bukkit.getServer().getPlayer(uuid));
-            }
-            EntityTeleport.create(this.nmsEntityPlayer).sendPlayers(receivers);
+            EntityTeleport.create(this.nmsEntityPlayer).sendPlayers(viewers.stream().map(uuid -> Bukkit.getServer().getPlayer(uuid)).collect(Collectors.toList()));
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }

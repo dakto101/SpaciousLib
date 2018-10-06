@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>SpaciousLibBungeecord</artifactId>
-    <version>1.7.2</version>
+    <version>1.7.3</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.anhcraft</groupId>
         <artifactId>SpaciousLib</artifactId>
-        <version>1.7.2</version>
+        <version>1.7.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -20,12 +20,35 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <finalName>SpaciousLib</finalName>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                     <descriptors>
-                        <descriptor>assembly.xml</descriptor>
+                        <descriptor>../assembly.xml</descriptor>
                     </descriptors>
-                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.11</version>
+                <configuration>
+                    <message>${project.version}</message>
+                    <noJekyll>true</noJekyll>
+                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+                    <branch>refs/heads/mvn-repo</branch>
+                    <includes><include>**/*</include></includes>
+                    <repositoryName>SpaciousLib</repositoryName>
+                    <repositoryOwner>anhcraft</repositoryOwner>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -34,7 +57,7 @@
         <dependency>
             <groupId>org.anhcraft</groupId>
             <artifactId>SpaciousLibMain</artifactId>
-            <version>1.7.2</version>
+            <version>1.7.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

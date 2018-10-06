@@ -2,6 +2,8 @@ package org.anhcraft.spaciouslib.utils;
 
 import org.anhcraft.spaciouslib.builders.EqualsBuilder;
 import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
+import org.anhcraft.spaciouslib.serialization.DataField;
+import org.anhcraft.spaciouslib.serialization.Serializable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,7 +13,9 @@ import java.util.NoSuchElementException;
 /**
  * A TimedSet is a set which removes any expired element automatically.
  */
+@Serializable
 public class TimedSet<E> implements Iterable<E> {
+    @DataField
     private LinkedHashMap<E, Long> data = new LinkedHashMap<>();
 
     private void clean(){
@@ -19,7 +23,7 @@ public class TimedSet<E> implements Iterable<E> {
     }
 
     /**
-     * Checks did the given element expire<br>
+     * Checks was the given element expired<br>
      * By default, all elements which were expired will be removed automatically, so you don't need to use this method.
      * @param elem an element
      * @return true if it expired

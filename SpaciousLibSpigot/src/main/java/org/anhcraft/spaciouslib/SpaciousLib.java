@@ -7,6 +7,10 @@ import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.listeners.*;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
+import org.anhcraft.spaciouslib.serialization.serializers.ItemMetaSerializer;
+import org.anhcraft.spaciouslib.serialization.serializers.ItemStackSerializer;
+import org.anhcraft.spaciouslib.serialization.serializers.LocationSerializer;
+import org.anhcraft.spaciouslib.serialization.serializers.VectorSerializer;
 import org.anhcraft.spaciouslib.tasks.ArmorEquipEventTask;
 import org.anhcraft.spaciouslib.tasks.CachedSkinTask;
 import org.anhcraft.spaciouslib.utils.Chat;
@@ -72,7 +76,7 @@ public final class SpaciousLib extends JavaPlugin {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        chat.sendSender("&eInitializing the APIs...");
+        chat.sendSender("&eInitializing APIs...");
         new PlaceholderAPI();
         new SkinAPI();
         new BungeeAPI();
@@ -80,6 +84,10 @@ public final class SpaciousLib extends JavaPlugin {
             String[] x = proxy.split(":");
             ProxyUtils.put(x[0], Integer.parseInt(x[1]));
         }
+        new ItemStackSerializer((byte) 30);
+        new ItemMetaSerializer((byte) 31);
+        new LocationSerializer((byte) 32);
+        new VectorSerializer((byte) 33);
 
         chat.sendSender("&eStarting the tasks...");
         if(config.getBoolean("stats", true)){

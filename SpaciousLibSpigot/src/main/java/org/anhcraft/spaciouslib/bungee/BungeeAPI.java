@@ -14,20 +14,17 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * A class helps you to manage Bungeecord message channel
  */
 public class BungeeAPI implements PluginMessageListener {
     public static final String CHANNEL = "BungeeCord";
-    private static List<BungeeResponse> queue = new ArrayList<>();
+    private static final LinkedBlockingQueue<BungeeResponse> queue = new LinkedBlockingQueue<>();
 
     public BungeeAPI(){
-        queue = new ArrayList<>();
-
         Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(SpaciousLib.instance, CHANNEL);
         Bukkit.getServer().getMessenger().registerIncomingPluginChannel(SpaciousLib.instance, CHANNEL, this);
     }
@@ -395,46 +392,32 @@ public class BungeeAPI implements PluginMessageListener {
         if (channel.equals(CHANNEL)) {
             String sc = i.readUTF();
             boolean b = false;
-            for(BungeeResponse br : queue) {
+            BungeeResponse br = queue.poll();
+            if(br != null) {
                 if(sc.equals("IP") && br instanceof BungeePlayerIPResponse) {
                     ((BungeePlayerIPResponse) br).result(i.readUTF(), i.readInt());
-                    b = true;
                 }
                 if(sc.equals("PlayerCount") && br instanceof BungeePlayerAmountResponse) {
                     ((BungeePlayerAmountResponse) br).result(i.readUTF(), i.readInt());
-                    b = true;
                 }
                 if(sc.equals("PlayerList") && br instanceof BungeePlayerListResponse) {
                     ((BungeePlayerListResponse) br).result(i.readUTF(), CommonUtils.toList(i.readUTF().split(", ")));
-                    b = true;
                 }
                 if(sc.equals("GetServers") && br instanceof BungeeServerListResponse) {
                     ((BungeeServerListResponse) br).result(CommonUtils.toList(i.readUTF().split(", ")));
-                    b = true;
                 }
                 if(sc.equals("GetServer") && br instanceof BungeeServerNameResponse) {
                     ((BungeeServerNameResponse) br).result(i.readUTF());
-                    b = true;
                 }
                 if(sc.equals("UUID") && br instanceof BungeePlayerUUIDResponse) {
                     ((BungeePlayerUUIDResponse) br).result(UUID.fromString(i.readUTF()));
-                    b = true;
                 }
                 if(sc.equals("UUIDOther") && br instanceof BungeeOtherPlayerUUIDResponse) {
                     ((BungeeOtherPlayerUUIDResponse) br).result(i.readUTF(), UUID.fromString(i.readUTF()));
-                    b = true;
                 }
                 if(sc.equals("ServerIP") && br instanceof BungeeServerIPResponse) {
                     ((BungeeServerIPResponse) br).result(i.readUTF(), i.readUTF(), i.readUnsignedShort());
-                    b = true;
                 }
-
-                if(b) {
-                    break;
-                }
-            }
-            if(b) {
-                queue.remove(0);
             } else {
                 byte[] bytedata = new byte[i.readShort()];
                 i.readFully(bytedata);

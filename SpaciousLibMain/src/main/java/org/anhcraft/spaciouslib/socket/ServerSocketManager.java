@@ -60,15 +60,15 @@ public class ServerSocketManager extends Thread {
     @Override
     public void run() {
         try {
-            while(!this.isStopped && !this.socket.isClosed()) {
+            while(this.isAlive() && !this.isStopped && !this.socket.isClosed()) {
                 Socket client = socket.accept();
-                if(client != null) {
-                    ServerSocketClientManager c = new ServerSocketClientManager(this, client, requestHandler);
-                    requestHandler.connect(c);
-                    clients.add(c);
-                }
+                ServerSocketClientManager c = new ServerSocketClientManager(this, client, requestHandler);
+                requestHandler.connect(c);
+                clients.add(c);
             }
-        } catch(Exception ignored){ }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -86,5 +86,9 @@ public class ServerSocketManager extends Thread {
     public int hashCode(){
         return new HashCodeBuilder(35, 51)
                 .append(this.clients).build();
+    }
+
+    public boolean isStopped() {
+        return isStopped;
     }
 }

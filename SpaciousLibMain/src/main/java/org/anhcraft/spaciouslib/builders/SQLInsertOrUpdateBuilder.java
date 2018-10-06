@@ -16,8 +16,7 @@ public class SQLInsertOrUpdateBuilder {
     }
 
     public SQLInsertOrUpdateBuilder add(String name, String value){
-        ExceptionThrower.ifNull(value, new Exception("Value must not null"));
-        data.put(name, value);
+        data.put(name, value == null ? "null" : value);
         return this;
     }
 
@@ -52,8 +51,7 @@ public class SQLInsertOrUpdateBuilder {
     }
 
     public SQLInsertOrUpdateBuilder add(String name, Enum<?> value) {
-        ExceptionThrower.ifNull(value, new Exception("Value must not null"));
-        data.put(name, value.toString());
+        data.put(name, value == null ? "null" : value.toString());
         return this;
     }
 

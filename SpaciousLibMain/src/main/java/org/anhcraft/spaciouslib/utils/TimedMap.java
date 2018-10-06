@@ -2,6 +2,8 @@ package org.anhcraft.spaciouslib.utils;
 
 import org.anhcraft.spaciouslib.builders.EqualsBuilder;
 import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
+import org.anhcraft.spaciouslib.serialization.DataField;
+import org.anhcraft.spaciouslib.serialization.Serializable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -10,8 +12,11 @@ import java.util.Set;
 /**
  * A TimedMap is a map which removes any expired key automatically.
  */
+@Serializable
 public class TimedMap<K, V> {
+    @DataField
     private LinkedHashMap<K, V> a = new LinkedHashMap<>();
+    @DataField
     private LinkedHashMap<K, Long> b = new LinkedHashMap<>();
 
     private void clean(){
@@ -24,7 +29,7 @@ public class TimedMap<K, V> {
     }
 
     /**
-     * Checks did the given key expire<br>
+     * Checks was the given key expired<br>
      * By default, all keys and values which were expired will be removed automatically, so you don't need to use this method.
      * @param key a key
      * @return true if it expired

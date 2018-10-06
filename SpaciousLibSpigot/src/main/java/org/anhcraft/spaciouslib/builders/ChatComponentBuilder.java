@@ -3,7 +3,6 @@ package org.anhcraft.spaciouslib.builders;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import org.anhcraft.spaciouslib.utils.Chat;
-import org.anhcraft.spaciouslib.utils.GameVersion;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,14 +30,6 @@ public class ChatComponentBuilder {
             component = new TextComponent(TextComponent.fromLegacyText(text));
         }else if(clazz.equals(TranslatableComponent.class)){
             component = new TranslatableComponent(text);
-        }else if(GameVersion.is1_12Above()) {
-            if(clazz.equals(KeybindComponent.class)){
-                component = new KeybindComponent(text);
-            }else if(clazz.equals(ScoreComponent.class)){
-                component = new ScoreComponent(text, "");
-            }else if(clazz.equals(SelectorComponent.class)){
-                component = new SelectorComponent(text);
-            }
         }
     }
 
@@ -47,14 +38,6 @@ public class ChatComponentBuilder {
             component = new TextComponent();
         }else if(clazz.equals(TranslatableComponent.class)){
             component = new TranslatableComponent();
-        }else if(GameVersion.is1_12Above()) {
-            if(clazz.equals(KeybindComponent.class)) {
-                component = new KeybindComponent();
-            } else if(clazz.equals(ScoreComponent.class)) {
-                component = new ScoreComponent("", "");
-            } else if(clazz.equals(SelectorComponent.class)) {
-                component = new SelectorComponent("");
-            }
         }
     }
 

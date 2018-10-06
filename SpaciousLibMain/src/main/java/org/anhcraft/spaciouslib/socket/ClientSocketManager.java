@@ -3,6 +3,8 @@ package org.anhcraft.spaciouslib.socket;
 import org.anhcraft.spaciouslib.builders.EqualsBuilder;
 import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -32,8 +34,8 @@ public class ClientSocketManager extends SocketHandler {
         }
         this.data = new ArrayList<>();
         try {
-            this.in = server.getInputStream();
-            this.out = server.getOutputStream();
+            this.in = new BufferedInputStream(server.getInputStream());
+            this.out = new BufferedOutputStream(server.getOutputStream());
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -65,7 +67,7 @@ public class ClientSocketManager extends SocketHandler {
     @Override
     public void run() {
         try {
-            while(!this.isStopped){
+            while(this.isAlive() && !server.isClosed() && !this.isStopped){
                 if(0 < this.in.available()) {
                     byte[] data = new byte[1024];
                     this.in.read(data);

@@ -1,21 +1,19 @@
 package org.anhcraft.spaciouslib.socket;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public abstract class SocketHandler extends Thread {
     protected boolean isStopped;
-    protected InputStream in;
-    protected OutputStream out;
+    protected BufferedInputStream in;
+    protected BufferedOutputStream out;
     public abstract void close() throws IOException;
 
-    public OutputStream getOutput(){
+    public BufferedOutputStream getOutput(){
         return this.out;
     }
 
-    public InputStream getInput(){
+    public BufferedInputStream getInput(){
         return this.in;
     }
 

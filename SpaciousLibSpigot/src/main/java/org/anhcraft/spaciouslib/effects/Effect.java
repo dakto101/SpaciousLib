@@ -149,9 +149,7 @@ public abstract class Effect {
      * @param radius the radius
      */
     public void addNearbyViewers(double radius) {
-        for(Entity entity : location.getWorld().getNearbyEntities(location, radius, radius, radius).stream().filter(entity -> entity instanceof Player).collect(Collectors.toList())){
-            addViewer(entity.getUniqueId());
-        }
+        this.viewers.addAll(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream().filter(entity -> entity instanceof Player).map(Entity::getUniqueId).collect(Collectors.toList()));
     }
 
     /**
@@ -368,19 +366,11 @@ public abstract class Effect {
     }
 
     protected void spawnParticle(Location loc){
-        List<Player> players = new ArrayList<>();
-        for(UUID uuid : viewers){
-            players.add(Bukkit.getServer().getPlayer(uuid));
-        }
-        Particle.create(particleType, loc, particleCount, particleOffsetX, particleOffsetY, particleOffsetZ, particleLongDistance, particleSpeed, particleMaterial, particleData).sendPlayers(players);
+        Particle.create(particleType, loc, particleCount, particleOffsetX, particleOffsetY, particleOffsetZ, particleLongDistance, particleSpeed, particleMaterial, particleData).sendPlayers(viewers.stream().map(uuid -> Bukkit.getServer().getPlayer(uuid)).collect(Collectors.toList()));
     }
 
     protected void spawnParticle(Location loc, Color color){
-        List<Player> players = new ArrayList<>();
-        for(UUID uuid : viewers){
-            players.add(Bukkit.getServer().getPlayer(uuid));
-        }
-        Particle.create(particleType, loc, color).sendPlayers(players);
+        Particle.create(particleType, loc, color).sendPlayers(viewers.stream().map(uuid -> Bukkit.getServer().getPlayer(uuid)).collect(Collectors.toList()));
     }
 
     protected Vector rotate(Vector vec){

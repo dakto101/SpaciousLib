@@ -1,5 +1,5 @@
 name: SpaciousLib
-version: 1.7.2
+version: 1.7.4
 main: org.anhcraft.spaciouslib.SpaciousLib
 author: anhcraft
 description: A useful library for your Spigot/Bungeecord plugins and Java programs

@@ -2,16 +2,23 @@ package org.anhcraft.spaciouslib.utils;
 
 import org.anhcraft.spaciouslib.builders.EqualsBuilder;
 import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
+import org.anhcraft.spaciouslib.serialization.DataField;
+import org.anhcraft.spaciouslib.serialization.Serializable;
 
 /**
  * A group is a group of two objects (A and B).<br>
  * With a group, it is possible to store a group in another group.
- * @param <A> the first object, called "A"
- * @param <B> the second object, called "B"
+ * @param <A> the first object
+ * @param <B> the second object
  */
+@Serializable
 public class Group<A, B> {
+    @DataField
     private A a;
+    @DataField
     private B b;
+
+    public Group(){}
 
     /**
      * Creates a new Group instance

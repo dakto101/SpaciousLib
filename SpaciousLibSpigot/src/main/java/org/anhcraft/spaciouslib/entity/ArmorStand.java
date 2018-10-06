@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ArmorStand extends PacketBuilder<ArmorStand> {
     private Object entity;
@@ -126,10 +127,6 @@ public class ArmorStand extends PacketBuilder<ArmorStand> {
     public ArmorStand teleport(Location location){
         this.location = location;
         String v = GameVersion.getVersion().toString();
-        List<Player> receivers = new ArrayList<>();
-        for(UUID uuid : getViewers()){
-            receivers.add(Bukkit.getServer().getPlayer(uuid));
-        }
         try {
             Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
             ReflectionUtils.getMethod("setLocation", nmsEntityClass, entity, new Group<>(
@@ -147,7 +144,7 @@ public class ArmorStand extends PacketBuilder<ArmorStand> {
                     location.getPitch(),
             }
             ));
-            EntityTeleport.create(entity).sendPlayers(receivers);
+            EntityTeleport.create(entity).sendPlayers(viewers.stream().map(uuid -> Bukkit.getServer().getPlayer(uuid)).collect(Collectors.toList()));
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
