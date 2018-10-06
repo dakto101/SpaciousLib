@@ -54,7 +54,7 @@ public class ReflectionUtils {
             Field f = clazz.getDeclaredField(field);
             f.setAccessible(true);
             f.set(null, value);
-        } catch(NoSuchFieldException | IllegalAccessException e) {
+        } catch(IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
     }
@@ -64,7 +64,9 @@ public class ReflectionUtils {
             Method f = clazz.getDeclaredMethod(method, args.getA());
             f.setAccessible(true);
             return f.invoke(null, args.getB());
-        } catch( IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch(InvocationTargetException e) {
+            e.getTargetException().printStackTrace();
+        } catch(IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;
@@ -75,7 +77,9 @@ public class ReflectionUtils {
             Method f = clazz.getDeclaredMethod(method, args.getA());
             f.setAccessible(true);
             return f.invoke(obj, args.getB());
-        } catch( IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch(InvocationTargetException e) {
+            e.getTargetException().printStackTrace();
+        } catch(IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;
@@ -86,7 +90,9 @@ public class ReflectionUtils {
             Method f = clazz.getDeclaredMethod(method);
             f.setAccessible(true);
             return f.invoke(null);
-        } catch( IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch(InvocationTargetException e) {
+            e.getTargetException().printStackTrace();
+        } catch(IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;
@@ -97,7 +103,9 @@ public class ReflectionUtils {
             Method f = clazz.getDeclaredMethod(method);
             f.setAccessible(true);
             return f.invoke(obj);
-        } catch( IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch(InvocationTargetException e) {
+            e.getTargetException().printStackTrace();
+        } catch(IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;
@@ -108,7 +116,9 @@ public class ReflectionUtils {
             Constructor<?> f = clazz.getDeclaredConstructor(args.getA());
             f.setAccessible(true);
             return f.newInstance(args.getB());
-        } catch( IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
+        } catch(InvocationTargetException e) {
+            e.getTargetException().printStackTrace();
+        } catch(IllegalAccessException | NoSuchMethodException | InstantiationException e) {
             e.printStackTrace();
         }
         return null;
@@ -119,7 +129,9 @@ public class ReflectionUtils {
             Constructor<?> f = clazz.getDeclaredConstructor();
             f.setAccessible(true);
             return f.newInstance();
-        } catch( IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
+        } catch(InvocationTargetException e) {
+            e.getTargetException().printStackTrace();
+        } catch(IllegalAccessException | NoSuchMethodException | InstantiationException e) {
             e.printStackTrace();
         }
         return null;

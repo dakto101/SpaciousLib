@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a hologram implementation.
@@ -191,10 +192,6 @@ public class Hologram extends PacketBuilder<Hologram> {
         this.location = location;
         LinkedHashMap<Integer, Object> a = new LinkedHashMap<>();
         String v = GameVersion.getVersion().toString();
-        List<Player> receivers = new ArrayList<>();
-        for(UUID uuid : getViewers()){
-            receivers.add(Bukkit.getServer().getPlayer(uuid));
-        }
         try {
             int i = 0;
             for(int id : this.entities.keySet()) {
@@ -217,7 +214,7 @@ public class Hologram extends PacketBuilder<Hologram> {
                         location.getPitch(),
                 }
                 ));
-                EntityTeleport.create(nmsArmorStand).sendPlayers(receivers);
+                EntityTeleport.create(nmsArmorStand).sendPlayers(viewers.stream().map(uuid -> Bukkit.getServer().getPlayer(uuid)).collect(Collectors.toList()));
                 a.put(id, nmsArmorStand);
                 i++;
             }

@@ -1,13 +1,11 @@
 package org.anhcraft.spaciouslib;
 
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.anhcraft.spaciouslib.io.DirectoryManager;
 import org.anhcraft.spaciouslib.io.FileManager;
-import org.anhcraft.spaciouslib.listeners.PacketListener;
 import org.anhcraft.spaciouslib.listeners.PlaceholderListener;
 import org.anhcraft.spaciouslib.listeners.PlayerCleanerListener;
 import org.anhcraft.spaciouslib.listeners.SpigotListener;
@@ -50,7 +48,7 @@ public final class SpaciousLib extends Plugin {
             e.printStackTrace();
         }
         chat = new Chat("&f[&bSpaciousLib&f] ");
-        if(!config.contains("config_version") || config.getInt("config_version") < 3){
+        if(!config.contains("config_version") || config.getInt("config_version") < 4){
             try {
                 chat.sendSender("&cAttempting to upgrade the old configuration...");
                 chat.sendSender("&cCreating a backup for the old configuration....");
@@ -88,9 +86,6 @@ public final class SpaciousLib extends Plugin {
         getProxy().getPluginManager().registerListener(this, new SpigotListener());
         getProxy().getPluginManager().registerListener(this, new PlaceholderListener());
         getProxy().getPluginManager().registerListener(this, new PlayerCleanerListener());
-        if(config.getBoolean("packet_handler", false)){
-            getProxy().getPluginManager().registerListener(this, new PacketListener());
-        }
 
         chat.sendSender("&eRegistering the messaging channel...");
         getProxy().registerChannel(CHANNEL);
@@ -103,9 +98,6 @@ public final class SpaciousLib extends Plugin {
 
     @Override
     public void onDisable() {
-        for(ProxiedPlayer player : getProxy().getPlayers()){
-            PacketListener.remove(player);
-        }
         if(PlaceholderAPI.asyncTask != null){
             PlaceholderAPI.asyncTask.stop();
         }

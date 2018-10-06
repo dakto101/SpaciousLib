@@ -196,17 +196,17 @@ public class Particle {
         try {
             String v = GameVersion.getVersion().toString();
             Class<?> packetPlayOutWorldParticlesClass = Class.forName("net.minecraft.server."+v+".PacketPlayOutWorldParticles");
-            Class<?> particleClass = Class.forName("net.minecraft.server." + v + ".Particle");
-            Class<?> particleParamClass = Class.forName("net.minecraft.server." + v + ".ParticleParam");
-            Class<?> registryMaterialClass = Class.forName("net.minecraft.server." + v + ".RegistryMaterials");
-            Class<?> particleParamRedstoneClass = Class.forName("net.minecraft.server." + v + ".ParticleParamRedstone");
-            Class<?> particleParamItemClass = Class.forName("net.minecraft.server." + v + ".ParticleParamItem");
-            Class<?> particleParamBlockClass = Class.forName("net.minecraft.server." + v + ".ParticleParamBlock");
-            Class<?> craftItemStackClass = Class.forName("org.bukkit.craftbukkit." + v + ".inventory.CraftItemStack");
-            Class<?> craftBlockDataClass = Class.forName("org.bukkit.craftbukkit." + v + ".block.data.CraftBlockData");
-            Class<?> IBlockData = Class.forName("net.minecraft.server." + v + ".IBlockData");
-            Class<?> nmsItemStackClass = Class.forName("net.minecraft.server." + v + ".ItemStack");
             if(GameVersion.is1_13Above()){
+                Class<?> particleClass = Class.forName("net.minecraft.server." + v + ".Particle");
+                Class<?> particleParamClass = Class.forName("net.minecraft.server." + v + ".ParticleParam");
+                Class<?> registryMaterialClass = Class.forName("net.minecraft.server." + v + ".RegistryMaterials");
+                Class<?> particleParamRedstoneClass = Class.forName("net.minecraft.server." + v + ".ParticleParamRedstone");
+                Class<?> particleParamItemClass = Class.forName("net.minecraft.server." + v + ".ParticleParamItem");
+                Class<?> particleParamBlockClass = Class.forName("net.minecraft.server." + v + ".ParticleParamBlock");
+                Class<?> craftItemStackClass = Class.forName("org.bukkit.craftbukkit." + v + ".inventory.CraftItemStack");
+                Class<?> craftBlockDataClass = Class.forName("org.bukkit.craftbukkit." + v + ".block.data.CraftBlockData");
+                Class<?> IBlockData = Class.forName("net.minecraft.server." + v + ".IBlockData");
+                Class<?> nmsItemStackClass = Class.forName("net.minecraft.server." + v + ".ItemStack");
                 Class<?> minecraftKeyClass = Class.forName("net.minecraft.server." + v + ".MinecraftKey");
                 Object minecraftKey = ReflectionUtils.getConstructor(minecraftKeyClass, new Group<>(
                         new Class<?>[]{String.class},
@@ -255,31 +255,31 @@ public class Particle {
                         new Object[]{particleParam, longDistance, (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count}
                 )));
             } else {
-                    Class<?> enumParticleClass = Class.forName("net.minecraft.server."+v+".EnumParticle");
-                    Object enumParticle = ReflectionUtils.getEnum(param.particle.toString(), enumParticleClass);
-                    int[] i = new int[]{};
-                    if(param instanceof ItemParam){
-                        i = new int[]{((ItemParam) param).item.getType().getId()};
-                    } else if(param instanceof DustParam){
-                        DustParam dust = (DustParam) param;
-                        offsetX = (float) dust.color.getRed() / 255;
-                        offsetY = (float) dust.color.getGreen() / 255;
-                        offsetZ = (float) dust.color.getBlue() / 255;
-                        if (offsetX < 0) {
-                            offsetX = 0;
-                        }
-                        if (offsetY < 0) {
-                            offsetY = 0;
-                        }
-                        if (offsetZ < 0) {
-                            offsetZ = 0;
-                        }
+                Class<?> enumParticleClass = Class.forName("net.minecraft.server."+v+".EnumParticle");
+                Object enumParticle = ReflectionUtils.getEnum(param.particle.toString(), enumParticleClass);
+                int[] i = new int[]{};
+                if(param instanceof ItemParam){
+                    i = new int[]{((ItemParam) param).item.getType().getId()};
+                } else if(param instanceof DustParam){
+                    DustParam dust = (DustParam) param;
+                    offsetX = (float) dust.color.getRed() / 255;
+                    offsetY = (float) dust.color.getGreen() / 255;
+                    offsetZ = (float) dust.color.getBlue() / 255;
+                    if (offsetX < 0) {
+                        offsetX = 0;
                     }
-                    return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutWorldParticlesClass, new Group<>(
-                            new Class<?>[]{enumParticleClass, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class, int[].class},
-                            new Object[]{enumParticle, longDistance,
-                                    (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count, i}
-                    )));
+                    if (offsetY < 0) {
+                        offsetY = 0;
+                    }
+                    if (offsetZ < 0) {
+                        offsetZ = 0;
+                    }
+                }
+                return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutWorldParticlesClass, new Group<>(
+                        new Class<?>[]{enumParticleClass, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class, int[].class},
+                        new Object[]{enumParticle, longDistance,
+                                (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count, i}
+                )));
             }
         } catch(ClassNotFoundException e) {
             e.printStackTrace();

@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>SpaciousLibSpigot</artifactId>
-    <version>1.7.2</version>
+    <version>1.7.3</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.anhcraft</groupId>
         <artifactId>SpaciousLib</artifactId>
-        <version>1.7.2</version>
+        <version>1.7.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -20,9 +20,35 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <finalName>SpaciousLib</finalName>
-                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <descriptors>
+                        <descriptor>../assembly.xml</descriptor>
+                    </descriptors>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.11</version>
+                <configuration>
+                    <message>${project.version}</message>
+                    <noJekyll>true</noJekyll>
+                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+                    <branch>refs/heads/mvn-repo</branch>
+                    <includes><include>**/*</include></includes>
+                    <repositoryName>SpaciousLib</repositoryName>
+                    <repositoryOwner>anhcraft</repositoryOwner>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -36,13 +62,21 @@
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>SpaciousLib-mvn-repo</id>
+            <url>https://raw.github.com/anhcraft/SpaciousLib/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>org.anhcraft</groupId>
             <artifactId>SpaciousLibMain</artifactId>
-            <version>1.7.2</version>
+            <version>1.7.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

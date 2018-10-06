@@ -37,6 +37,9 @@ import org.anhcraft.spaciouslib.nbt.NBTLoader;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
 import org.anhcraft.spaciouslib.protocol.*;
 import org.anhcraft.spaciouslib.scheduler.TimerTask;
+import org.anhcraft.spaciouslib.serialization.DataField;
+import org.anhcraft.spaciouslib.serialization.DataSerialization;
+import org.anhcraft.spaciouslib.serialization.Serializable;
 import org.anhcraft.spaciouslib.socket.ClientSocketHandler;
 import org.anhcraft.spaciouslib.socket.ClientSocketManager;
 import org.anhcraft.spaciouslib.utils.*;
@@ -68,6 +71,14 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SLDev implements Listener {
+    @Serializable
+    public class a{
+        @DataField
+        private Location loc;
+        @DataField
+        private ItemStack item;
+    }
+
     private static final File DB_FILE = new File("test.db");
     private static ClientSocketManager client;
     private static double[] effectRotateAngle = new double[3];
@@ -144,6 +155,19 @@ public class SLDev implements Listener {
             })
 
                     // a sub command
+                    .addSubCommand(new SubCommandBuilder("serialize", null, new CommandRunnable() {
+                        @Override
+                        public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
+                            if(sender instanceof Player){
+                                Player p = ((Player) sender);
+                                a a = new a();
+                                a.item = p.getItemInHand();
+                                a.loc = p.getLocation();
+                                p.sendMessage(DataSerialization.serialize(a.class, a).getB());
+                            }
+                        }
+                    }))
+
                     .addSubCommand(new SubCommandBuilder("anvil", null, new CommandRunnable() {
                         @Override
                         public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
@@ -687,14 +711,14 @@ public class SLDev implements Listener {
 
         try{
             // initializes the client socket
-            client = new ClientSocketManager("localhost", 25568, new ClientSocketHandler() {
-                @Override
-                public void response(ClientSocketManager manager, byte[] data){
-                    // prints the sent message
-                    System.out.println("Server >> " + new String(data));
-                }
+            client = new ClientSocketManager("localhost", 25568, (manager, data) -> {
+                // prints the sent message
+                System.out.println("Server >> " + new String(data));
             });
         } catch(Exception ignored) {}
+
+        //////////////////////////////////////////////////////////////////
+        new SLDev2();
     }
 
 

@@ -1,5 +1,3 @@
-package org.anhcraft.spaciouslib;
-
 import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.scheduler.DelayedTask;
 import org.anhcraft.spaciouslib.scheduler.TimerTask;
@@ -20,7 +18,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Test {
+public class Test1 {
     private static TimerTask task;
 
     public static void main(String[] args){

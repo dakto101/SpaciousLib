@@ -2,6 +2,8 @@ package org.anhcraft.spaciouslib.utils;
 
 import org.anhcraft.spaciouslib.builders.EqualsBuilder;
 import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
+import org.anhcraft.spaciouslib.serialization.DataField;
+import org.anhcraft.spaciouslib.serialization.Serializable;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -10,8 +12,11 @@ import java.util.NoSuchElementException;
 /**
  * A TimedList is a list which removes any expired element automatically.
  */
+@Serializable
 public class TimedList<E> implements Iterable<E> {
+    @DataField
     private LinkedList<E> a = new LinkedList<>();
+    @DataField
     private LinkedList<Long> b = new LinkedList<>();
 
     private Long getValue(E key){
@@ -35,7 +40,7 @@ public class TimedList<E> implements Iterable<E> {
     }
 
     /**
-     * Checks did the given element expire<br>
+     * Checks was the given element expired<br>
      * By default, all elements which were expired will be removed automatically, so you don't need to use this method.
      * @param elem an element
      * @return true if it expired

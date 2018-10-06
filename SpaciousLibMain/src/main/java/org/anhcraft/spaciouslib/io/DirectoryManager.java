@@ -79,36 +79,23 @@ public class DirectoryManager {
     }
 
     /**
-     * Copies this directory its child directories into another directory.<br>
-     * That will also affect all files of them
+     * Copies this directory and its child directories into another directory.<br>
      * @param output an output directory
      * @return this object
      */
     public DirectoryManager copy(File output) throws IOException {
-        handleCopy(this.directory, output, new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return true;
-            }
-        });
+        handleCopy(this.directory, output, pathname -> true);
         return this;
     }
 
     /**
-     * Copies this directory its child directories into another directory.<br>
-     * That will also affect all files of them
+     * Copies this directory and its child directories into another directory.<br>
      * @param output an output directory
      * @param filter a file filter
      * @return this object
      */
     public DirectoryManager copy(File output, FileFilter filter) throws IOException {
-        if(output.exists() && !output.isDirectory()){
-            try {
-                throw new Exception("The output file object doesn't represents for a directory");
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
+        ExceptionThrower.ifTrue(output.exists() && !output.isDirectory(), new Exception("The output file object doesn't represents for a directory"));
         mkdir();
         new DirectoryManager(output).mkdir();
         handleCopy(this.directory, output, filter);

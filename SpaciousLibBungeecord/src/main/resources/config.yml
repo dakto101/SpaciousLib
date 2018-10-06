@@ -24,10 +24,7 @@ proxies:
 - 5.197.183.222:8080
 - 152.231.81.122:53281
 - 94.130.14.146:31288
-# enables packet handler feature?
-# unfortunately, at the moment this can cause some issues with your server
-packet_handler: false
 
 # ==================================
 # pls don't change this
-config_version: 3
+config_version: 4
