@@ -1,9 +1,10 @@
-org.anhcraft.spaciouslib
 org.anhcraft.spaciouslib.annotations
+org.anhcraft.spaciouslib.builders
 org.anhcraft.spaciouslib.database
 org.anhcraft.spaciouslib.io
 org.anhcraft.spaciouslib.mojang
 org.anhcraft.spaciouslib.scheduler
+org.anhcraft.spaciouslib.serialization
 org.anhcraft.spaciouslib.socket
 org.anhcraft.spaciouslib.socket.web
 org.anhcraft.spaciouslib.utils

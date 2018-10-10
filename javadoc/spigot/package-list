@@ -1,5 +1,7 @@
 org.anhcraft.spaciouslib.annotations
 org.anhcraft.spaciouslib.attribute
+org.anhcraft.spaciouslib.builders
+org.anhcraft.spaciouslib.builders.command
 org.anhcraft.spaciouslib.bungee
 org.anhcraft.spaciouslib.command
 org.anhcraft.spaciouslib.database
@@ -15,6 +17,7 @@ org.anhcraft.spaciouslib.nbt
 org.anhcraft.spaciouslib.placeholder
 org.anhcraft.spaciouslib.protocol
 org.anhcraft.spaciouslib.scheduler
+org.anhcraft.spaciouslib.serialization
 org.anhcraft.spaciouslib.socket
 org.anhcraft.spaciouslib.socket.web
 org.anhcraft.spaciouslib.utils
