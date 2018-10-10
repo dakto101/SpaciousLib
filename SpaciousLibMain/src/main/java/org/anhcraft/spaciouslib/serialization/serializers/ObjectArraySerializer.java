@@ -23,15 +23,12 @@ public class ObjectArraySerializer extends DataType<Object[]> {
         int length = in.readInt();
         if(length > 0){
             try {
-                Class<?> clazz = Class.forName(in.readUTF());
-                Object[] array = (Object[]) Array.newInstance(clazz, length);
-                DataType type = DataSerialization.lookupType(clazz);
-                if(type instanceof ObjectSerializer) {
-                    for(int i = 0; i < length; i++) {
-                        array[i] = DataSerialization.deserialize(clazz, in);
-                    }
-                } else {
-                    for(int i = 0; i < length; i++) {
+                Object[] array = (Object[]) Array.newInstance(Class.forName(in.readUTF()), length);
+                for(int i = 0; i < length; i++) {
+                    DataType<Object> type = DataSerialization.lookupType(in.readByte());
+                    if(type instanceof ObjectSerializer) {
+                        array[i] = DataSerialization.deserialize(Class.forName(in.readUTF()), in);
+                    } else {
                         array[i] = type.read(in);
                     }
                 }
@@ -49,7 +46,12 @@ public class ObjectArraySerializer extends DataType<Object[]> {
         if(data.length > 0) {
             out.writeUTF(data.getClass().getComponentType().getCanonicalName());
             for(Object d : data) {
-                DataSerialization.lookupType(data.getClass().getComponentType()).write(out, d);
+                DataType type = DataSerialization.lookupType(d.getClass());
+                out.writeByte(type.getIdentifier());
+                if(type instanceof ObjectSerializer){
+                    out.writeUTF(d.getClass().getCanonicalName());
+                }
+                type.write(out, d);
             }
         }
     }

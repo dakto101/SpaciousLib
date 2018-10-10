@@ -12,7 +12,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="distribution" target="1.8" />
+      <module name="distribution" target="1.5" />
       <module name="Glowstone" target="1.8" />
       <module name="SpaciousLib" target="1.8" />
       <module name="SpaciousLibBungeecord" target="1.8" />

@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>SpaciousLibBungeecord</artifactId>
-    <version>1.7.3</version>
+    <version>1.7.5</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.anhcraft</groupId>
         <artifactId>SpaciousLib</artifactId>
-        <version>1.7.3</version>
+        <version>1.7.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -66,6 +66,12 @@
             <version>1.13</version>
             <scope>system</scope>
             <systemPath>E:/test/bungee/BungeeCord.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.anhcraft</groupId>
+            <artifactId>SpaciousLibMain</artifactId>
+            <version>1.7.5</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

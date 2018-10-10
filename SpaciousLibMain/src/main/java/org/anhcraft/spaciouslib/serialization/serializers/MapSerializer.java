@@ -25,9 +25,29 @@ public class MapSerializer extends DataType<Map<Object, Object>> {
         if(size > 0) {
             HashMap<Object, Object> map = new HashMap<>(size);
             for(int i = 0; i < size; i++) {
+                Object k = null;
+                Object v = null;
                 DataType<Object> typeKey = DataSerialization.lookupType(in.readByte());
+                if(typeKey instanceof ObjectSerializer) {
+                    try {
+                        k = DataSerialization.deserialize(Class.forName(in.readUTF()), in);
+                    } catch(ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    k = typeKey.read(in);
+                }
                 DataType<Object> typeValue = DataSerialization.lookupType(in.readByte());
-                map.put(typeKey.read(in), typeValue.read(in));
+                if(typeValue instanceof ObjectSerializer) {
+                    try {
+                        k = DataSerialization.deserialize(Class.forName(in.readUTF()), in);
+                    } catch(ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    k = typeValue.read(in);
+                }
+                map.put(k, v);
             }
             return map;
         } else {
@@ -43,8 +63,14 @@ public class MapSerializer extends DataType<Map<Object, Object>> {
                 DataType<Object> typeKey = DataSerialization.lookupType(obj.getKey().getClass());
                 DataType<Object> typeValue = DataSerialization.lookupType(obj.getValue().getClass());
                 out.writeByte(typeKey.getIdentifier());
-                out.writeByte(typeValue.getIdentifier());
+                if(typeKey instanceof ObjectSerializer){
+                    out.writeUTF(obj.getKey().getClass().getCanonicalName());
+                }
                 typeKey.write(out, obj.getKey());
+                out.writeByte(typeValue.getIdentifier());
+                if(typeValue instanceof ObjectSerializer){
+                    out.writeUTF(obj.getValue().getClass().getCanonicalName());
+                }
                 typeValue.write(out, obj.getValue());
             }
         }

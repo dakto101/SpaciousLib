@@ -27,8 +27,9 @@ public class PrimitiveArraySerializer<I> extends DataType<I> {
         int length = in.readInt();
         if(length > 0){
             I array = (I) Array.newInstance(primitiveClass, length);
+            DataType type = DataSerialization.lookupType(primitiveClass);
             for(int i = 0; i < length; i++) {
-                Array.set(array, i, DataSerialization.lookupType(primitiveClass).read(in));
+                Array.set(array, i, type.read(in));
             }
             return array;
         }
@@ -40,8 +41,9 @@ public class PrimitiveArraySerializer<I> extends DataType<I> {
         int sz = Collections.singletonList(data).size();
         out.writeInt(sz);
         if(sz > 0) {
+            DataType type = DataSerialization.lookupType(primitiveClass);
             for(int i = 0; i < sz; i++) {
-                DataSerialization.lookupType(primitiveClass).write(out, Array.get(data, i));
+                type.write(out, Array.get(data, i));
             }
         }
     }
