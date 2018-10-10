@@ -6,7 +6,7 @@
 
     <groupId>org.anhcraft</groupId>
     <artifactId>SpaciousLib</artifactId>
-    <version>1.7.3</version>
+    <version>1.7.5</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -55,7 +55,8 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.1</version>
                 <configuration>
-                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+                    <url>http://anhcraft.org:8081/</url>
+                    <groupId>org.anhcraft</groupId>
                 </configuration>
             </plugin>
         </plugins>
@@ -69,6 +70,16 @@
 
     <repositories>
         <repository>
+            <id>anhcraft</id>
+            <url>http://anhcraft.org:8081/repository/maven-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
@@ -76,9 +87,21 @@
 
     <distributionManagement>
         <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${project.build.directory}/mvn-repo</url>
+            <id>anhcraft</id>
+            <url>http://anhcraft.org:8081/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>anhcraft-release</id>
+            <url>http://anhcraft.org:8081/repository/maven-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

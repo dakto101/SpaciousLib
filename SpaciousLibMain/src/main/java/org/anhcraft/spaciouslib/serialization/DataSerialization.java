@@ -13,6 +13,7 @@ import java.util.*;
 
 @SuppressWarnings(value = "unchecked")
 public abstract class DataSerialization extends DataType {
+    private static final int VERSION = 1;
     private static final HashMap<Class<?>, DataType> arraySerializersa = new HashMap<>();
 
     static {
@@ -98,6 +99,7 @@ public abstract class DataSerialization extends DataType {
         T obj = null;
         try {
             DataInputStream in = new DataInputStream(inputStream);
+            in.readInt(); // version
             if(clazz.isAnnotationPresent(Serializable.class)) {
                 Constructor<T> cons = clazz.getConstructor();
                 cons.setAccessible(true);
@@ -185,6 +187,7 @@ public abstract class DataSerialization extends DataType {
      */
     public static DataSerializerStream serialize(Class<?> clazz, Object obj, DataSerializerStream out) {
         try {
+            out.writeInt(VERSION);
             if(clazz.isAnnotationPresent(Serializable.class)) {
                 Field[] fields = clazz.getDeclaredFields();
                 out.writeInt(fields.length);
