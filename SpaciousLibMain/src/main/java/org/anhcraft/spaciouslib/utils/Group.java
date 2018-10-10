@@ -2,8 +2,8 @@ package org.anhcraft.spaciouslib.utils;
 
 import org.anhcraft.spaciouslib.builders.EqualsBuilder;
 import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
-import org.anhcraft.spaciouslib.serialization.DataField;
-import org.anhcraft.spaciouslib.serialization.Serializable;
+import org.anhcraft.spaciouslib.annotations.DataField;
+import org.anhcraft.spaciouslib.annotations.Serializable;
 
 /**
  * A group is a group of two objects (A and B).<br>

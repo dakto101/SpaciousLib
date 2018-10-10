@@ -1,5 +1,7 @@
 package org.anhcraft.spaciouslib.serialization;
 
+import org.anhcraft.spaciouslib.annotations.DataField;
+import org.anhcraft.spaciouslib.annotations.Serializable;
 import org.anhcraft.spaciouslib.serialization.serializers.*;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
@@ -100,7 +102,7 @@ public abstract class DataSerialization extends DataType {
         try {
             DataInputStream in = new DataInputStream(inputStream);
             in.readInt(); // version
-            if(clazz.isAnnotationPresent(Serializable.class)) {
+            if(clazz.isAnnotationPresent(org.anhcraft.spaciouslib.annotations.Serializable.class)) {
                 Constructor<T> cons = clazz.getConstructor();
                 cons.setAccessible(true);
                 obj = cons.newInstance();

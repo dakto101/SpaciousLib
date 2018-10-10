@@ -1,6 +1,6 @@
-import org.anhcraft.spaciouslib.serialization.DataField;
+import org.anhcraft.spaciouslib.annotations.DataField;
 import org.anhcraft.spaciouslib.serialization.DataSerialization;
-import org.anhcraft.spaciouslib.serialization.Serializable;
+import org.anhcraft.spaciouslib.annotations.Serializable;
 import org.anhcraft.spaciouslib.utils.*;
 
 import java.util.*;

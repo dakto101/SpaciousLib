@@ -3,7 +3,7 @@ package org.anhcraft.spaciouslib.serialization.serializers;
 import org.anhcraft.spaciouslib.serialization.DataSerialization;
 import org.anhcraft.spaciouslib.serialization.DataSerializerStream;
 import org.anhcraft.spaciouslib.serialization.DataType;
-import org.anhcraft.spaciouslib.serialization.Serializable;
+import org.anhcraft.spaciouslib.annotations.Serializable;
 import org.anhcraft.spaciouslib.utils.ExceptionThrower;
 
 import java.io.DataInputStream;
