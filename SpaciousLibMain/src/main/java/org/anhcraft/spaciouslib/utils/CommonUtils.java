@@ -247,4 +247,36 @@ public class CommonUtils {
     public static <E> Set<E> shuffle(Set<E> set) {
         return new HashSet<>(shuffle(new ArrayList<>(set)));
     }
+
+    /**
+     * Reverses the order of elements in a list
+     * @param list a list
+     * @return the reversed list
+     */
+    public static <E> List<E> reverse(List<E> list) {
+        Collections.reverse(list);
+        return list;
+    }
+
+    /**
+     * Reverses the order of elements in a set
+     * @param set a set
+     * @return the reversed set
+     */
+    public static <E> Set<E> reverse(Set<E> set) {
+        return new HashSet<>(reverse(new ArrayList<>(set)));
+    }
+
+    /**
+     * Reverses the order of elements in an array
+     * @param array an array
+     * @return the reversed array
+     */
+    public static <E> E[] reverse(E[] array) {
+        E[] narray = (E[]) Array.newInstance(array.getClass().getComponentType(), array.length);
+        for(int i = 0; i < array.length; i++){
+            narray[i] = array[array.length-i-1];
+        }
+        return narray;
+    }
 }

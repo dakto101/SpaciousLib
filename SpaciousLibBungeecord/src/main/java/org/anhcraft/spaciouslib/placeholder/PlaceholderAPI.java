@@ -90,6 +90,12 @@ public class PlaceholderAPI {
 
             @Override
             public String getValue(ProxiedPlayer player) {
+                if(player.getServer() == null){
+                    return "";
+                }
+                if(player.getServer().getInfo() == null){
+                    return "";
+                }
                 return player.getServer().getInfo().getName();
             }
         });

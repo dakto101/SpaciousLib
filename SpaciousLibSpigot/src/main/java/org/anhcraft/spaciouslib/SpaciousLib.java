@@ -14,6 +14,7 @@ import org.anhcraft.spaciouslib.serialization.serializers.VectorSerializer;
 import org.anhcraft.spaciouslib.tasks.ArmorEquipEventTask;
 import org.anhcraft.spaciouslib.tasks.CachedSkinTask;
 import org.anhcraft.spaciouslib.utils.Chat;
+import org.anhcraft.spaciouslib.utils.PlayerPointsUtils;
 import org.anhcraft.spaciouslib.utils.ProxyUtils;
 import org.anhcraft.spaciouslib.utils.VaultUtils;
 import org.apache.commons.io.IOUtils;
@@ -120,6 +121,12 @@ public final class SpaciousLib extends JavaPlugin {
             VaultUtils.init();
             if(VaultUtils.isInitialized()) {
                 chat.sendSender("&aHooked to Vault!");
+            }
+        }
+        if(Bukkit.getServer().getPluginManager().isPluginEnabled("PlayerPoints")){
+            PlayerPointsUtils.init();
+            if(PlayerPointsUtils.isInitialized()) {
+                chat.sendSender("&aHooked to PlayerPoints!");
             }
         }
 

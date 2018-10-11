@@ -125,5 +125,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="PlayerPoints" level="project" />
   </component>
 </module>
