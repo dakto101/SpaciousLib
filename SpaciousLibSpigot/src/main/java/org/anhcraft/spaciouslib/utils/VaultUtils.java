@@ -33,9 +33,21 @@ public class VaultUtils {
     }
 
     /**
-     * Checks a player is having enough money
+     * Reset money from a player
      * @param player a player
-     * @param amount the amount
+     * @return true if yes
+     */
+    public static boolean reset(OfflinePlayer player) {
+        if(eco == null || !eco.isEnabled()){
+            return false;
+        }
+        return eco.withdrawPlayer(player, eco.getBalance(player)).transactionSuccess();
+    }
+
+    /**
+     * Checks a player is having enough money
+     * @param player player
+     * @param amount amount
      * @return true if yes
      */
     public static boolean enough(OfflinePlayer player, double amount) {
@@ -49,8 +61,8 @@ public class VaultUtils {
 
     /**
      * Withdraws a specific amount from the balance of a player
-     * @param player a player
-     * @param amount the amount
+     * @param player player
+     * @param amount amount
      * @return true if success
      */
     public static boolean withdraw(OfflinePlayer player, double amount) {
@@ -64,8 +76,8 @@ public class VaultUtils {
 
     /**
      * Deposits a specific amount into the balance of a player
-     * @param player a player
-     * @param amount the amount
+     * @param player player
+     * @param amount amount
      * @return true if success
      */
     public static boolean deposit(OfflinePlayer player, double amount) {

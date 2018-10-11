@@ -17,7 +17,7 @@ public abstract class CachedPlaceholder extends Placeholder {
     protected LinkedHashMap<UUID, String> cache = new LinkedHashMap<>();
 
     protected void updateCache(){
-        this.cache = new LinkedHashMap<>();
+        this.cache.clear();
         for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()){
             updateCache(player);
         }

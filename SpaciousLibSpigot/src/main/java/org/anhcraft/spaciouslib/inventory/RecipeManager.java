@@ -1,13 +1,15 @@
 package org.anhcraft.spaciouslib.inventory;
 
 import org.anhcraft.spaciouslib.utils.GameVersion;
-import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A class helps you to manage recipes
@@ -66,10 +68,6 @@ public class RecipeManager {
                 Iterator<Object> iterator = (Iterator<Object>) ReflectionUtils.getMethod("iterator", registryMaterialClass, registryMaterials);
                 for(; iterator.hasNext(); ) {
                     Object rcp = iterator.next();
-                    Object key = ReflectionUtils.getMethod("b", registryMaterialClass, registryMaterials, new Group<>(
-                            new Class<?>[]{Object.class},
-                            new Object[]{rcp}
-                    ));
                     Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, rcp);
                     if(!compare(recipeBukkit)) {
                         recipes.add(recipeBukkit);

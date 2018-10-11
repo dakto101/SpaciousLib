@@ -19,6 +19,7 @@ import java.util.*;
  */
 public class ItemManager {
     protected ItemStack item;
+    private NBTCompound nbt;
 
     /**
      * Creates ItemManager instance
@@ -27,32 +28,46 @@ public class ItemManager {
      */
     public ItemManager(ItemStack item) {
         this.item = item;
+        nbt = NBTLoader.fromItem(item);
     }
 
     /**
      * Creates ItemManager instance
      *
-     * @param name the name of the item stack
-     * @param type the type of the item stack
-     * @param amount the amount of the item stack
+     * @param type the type of the item
+     * @param amount the amount of stack
+     */
+    public ItemManager(Material type, int amount) {
+        this.item = new ItemStack(type, amount);
+        nbt = NBTLoader.fromItem(item);
+    }
+
+    /**
+     * Creates ItemManager instance
+     *
+     * @param name the name of the item
+     * @param type the type of the item
+     * @param amount the amount of stack
      */
     public ItemManager(String name, Material type, int amount) {
         this.item = new ItemStack(type, amount);
         setName(name);
+        nbt = NBTLoader.fromItem(item);
     }
 
     /**
      * Creates ItemManager instance
      *
-     * @param name the name of the item stack
-     * @param type the type of the item stack
-     * @param amount the amount of the item stack
-     * @param durability the durability of the item stack
+     * @param name the name of the item
+     * @param type the type of the item
+     * @param amount the amount of stack
+     * @param durability the durability of the item
      */
     public ItemManager(String name, Material type, int amount, short durability) {
         this.item = new ItemStack(type, amount);
         setName(name);
         setDurability(durability);
+        nbt = NBTLoader.fromItem(item);
     }
 
     /**
@@ -164,12 +179,51 @@ public class ItemManager {
     }
 
     /**
+     * Adds new lores into this item stack
+     *
+     * @param texts array of lores
+     * @return this object
+     */
+    public ItemManager addLores(String... texts) {
+        ItemMeta a = this.item.getItemMeta();
+        List<String> lores;
+        if(a.hasLore()) {
+            lores = a.getLore();
+        } else {
+            lores = new ArrayList<>();
+        }
+        for(String b : texts) {
+            lores.add(Chat.color(b));
+        }
+        a.setLore(lores);
+        this.item.setItemMeta(a);
+        return this;
+    }
+
+    /**
      * Sets the lores of this item stack
      *
      * @param texts list of lores
      * @return this object
      */
     public ItemManager setLores(List<String> texts) {
+        ItemMeta a = this.item.getItemMeta();
+        List<String> lores = new ArrayList<>();
+        for(String b : texts) {
+            lores.add(Chat.color(b));
+        }
+        a.setLore(lores);
+        this.item.setItemMeta(a);
+        return this;
+    }
+
+    /**
+     * Sets the lores of this item stack
+     *
+     * @param texts array of lores
+     * @return this object
+     */
+    public ItemManager setLores(String... texts) {
         ItemMeta a = this.item.getItemMeta();
         List<String> lores = new ArrayList<>();
         for(String b : texts) {
@@ -316,9 +370,9 @@ public class ItemManager {
      */
     public ItemManager setUnbreakable(Boolean unbreakable) {
         if(unbreakable) {
-            item = NBTLoader.fromItem(item).setBoolean("Unbreakable", true).toItem(item);
+            item = nbt.setBoolean("Unbreakable", true).toItem(item);
         } else {
-            item = NBTLoader.fromItem(item).remove("Unbreakable").toItem(item);
+            item = nbt.remove("Unbreakable").toItem(item);
         }
         return this;
     }
@@ -329,7 +383,7 @@ public class ItemManager {
      * @return true if yes
      */
     public Boolean isUnbreakable() {
-        return NBTLoader.fromItem(item).hasKey("Unbreakable");
+        return nbt.hasKey("Unbreakable");
     }
 
     /**
@@ -340,7 +394,7 @@ public class ItemManager {
      * @return this object
      */
     public ItemManager addAttributeModifier(Attribute.Type type, AttributeModifier modifier, EquipSlot slot) {
-        List<NBTCompound> l = NBTLoader.fromItem(item).getList("AttributeModifiers");
+        List<NBTCompound> l = nbt.getList("AttributeModifiers");
         if(l == null){
             l = new ArrayList<>();
         }
@@ -353,7 +407,7 @@ public class ItemManager {
                 .set("UUIDMost", modifier.getUniqueId().getMostSignificantBits())
                 .set("Slot", slot.toString().toLowerCase());
         l.add(c);
-        item = NBTLoader.fromItem(item).setList("AttributeModifiers", l).toItem(item);
+        item = nbt.setList("AttributeModifiers", l).toItem(item);
         return this;
     }
 
@@ -363,7 +417,7 @@ public class ItemManager {
      * @return this object
      */
     public ItemManager removeAttributeModifiers(String name) {
-        List<NBTCompound> l = NBTLoader.fromItem(item).getList("AttributeModifiers");
+        List<NBTCompound> l = nbt.getList("AttributeModifiers");
         if(l == null){
             return this;
         }
@@ -373,7 +427,7 @@ public class ItemManager {
                 nl.add(m);
             }
         }
-        item = NBTLoader.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
+        item = nbt.setList("AttributeModifiers", nl).toItem(item);
         return this;
     }
 
@@ -383,7 +437,7 @@ public class ItemManager {
      * @return this object
      */
     public ItemManager removeAttributeModifiers(Attribute.Type type) {
-        List<NBTCompound> l = NBTLoader.fromItem(item).getList("AttributeModifiers");
+        List<NBTCompound> l = nbt.getList("AttributeModifiers");
         if(l == null){
             return this;
         }
@@ -393,7 +447,7 @@ public class ItemManager {
                 nl.add(m);
             }
         }
-        item = NBTLoader.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
+        item = nbt.setList("AttributeModifiers", nl).toItem(item);
         return this;
     }
 
@@ -402,7 +456,7 @@ public class ItemManager {
      * @return this object
      */
     public ItemManager removeAttributeModifiers() {
-        item = NBTLoader.fromItem(item).setList("AttributeModifiers", new ArrayList<NBTCompound>()).toItem(item);
+        item = nbt.setList("AttributeModifiers", new ArrayList<NBTCompound>()).toItem(item);
         return this;
     }
 
@@ -412,7 +466,7 @@ public class ItemManager {
      * @return this object
      */
     public ItemManager removeAttributeModifiers(EquipSlot slot) {
-        List<NBTCompound> l = NBTLoader.fromItem(item).getList("AttributeModifiers");
+        List<NBTCompound> l = nbt.getList("AttributeModifiers");
         if(l == null){
             return this;
         }
@@ -422,7 +476,7 @@ public class ItemManager {
                 nl.add(m);
             }
         }
-        item = NBTLoader.fromItem(item).setList("AttributeModifiers", nl).toItem(item);
+        item = nbt.setList("AttributeModifiers", nl).toItem(item);
         return this;
     }
 
@@ -434,7 +488,7 @@ public class ItemManager {
             Group<EquipSlot, Attribute.Type>> getAttributeModifiers(){
         LinkedHashMap<AttributeModifier,
                Group<EquipSlot, Attribute.Type>> modifiers = new LinkedHashMap<>();
-        List<NBTCompound> l = NBTLoader.fromItem(item).getList("AttributeModifiers");
+        List<NBTCompound> l = nbt.getList("AttributeModifiers");
         if(l == null){
             return modifiers;
         }
