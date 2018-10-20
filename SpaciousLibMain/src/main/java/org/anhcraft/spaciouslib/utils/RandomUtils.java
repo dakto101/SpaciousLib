@@ -46,6 +46,102 @@ public class RandomUtils {
     }
 
     /**
+     * Picks a random element from the given array
+     * @param array the array
+     * @return a random element
+     */
+    public static int pickRandom(int[] array) {
+        if(array.length == 0){
+            return 0;
+        }
+        return array[new Random().nextInt(array.length)];
+    }
+
+    /**
+     * Picks a random element from the given array
+     * @param array the array
+     * @return a random element
+     */
+    public static char pickRandom(char[] array) {
+        if(array.length == 0){
+            return 0;
+        }
+        return array[new Random().nextInt(array.length)];
+    }
+
+    /**
+     * Picks a random element from the given array
+     * @param array the array
+     * @return a random element
+     */
+    public static boolean pickRandom(boolean[] array) {
+        if(array.length == 0){
+            return false;
+        }
+        return array[new Random().nextInt(array.length)];
+    }
+
+    /**
+     * Picks a random element from the given array
+     * @param array the array
+     * @return a random element
+     */
+    public static short pickRandom(short[] array) {
+        if(array.length == 0){
+            return 0;
+        }
+        return array[new Random().nextInt(array.length)];
+    }
+
+    /**
+     * Picks a random element from the given array
+     * @param array the array
+     * @return a random element
+     */
+    public static long pickRandom(long[] array) {
+        if(array.length == 0){
+            return 0;
+        }
+        return array[new Random().nextInt(array.length)];
+    }
+
+    /**
+     * Picks a random element from the given array
+     * @param array the array
+     * @return a random element
+     */
+    public static double pickRandom(double[] array) {
+        if(array.length == 0){
+            return 0;
+        }
+        return array[new Random().nextInt(array.length)];
+    }
+
+    /**
+     * Picks a random element from the given array
+     * @param array the array
+     * @return a random element
+     */
+    public static float pickRandom(float[] array) {
+        if(array.length == 0){
+            return 0;
+        }
+        return array[new Random().nextInt(array.length)];
+    }
+
+    /**
+     * Picks a random element from the given array
+     * @param array the array
+     * @return a random element
+     */
+    public static byte pickRandom(byte[] array) {
+        if(array.length == 0){
+            return 0;
+        }
+        return array[new Random().nextInt(array.length)];
+    }
+
+    /**
      * Generates a random integer in specific range
      * @param min the minimum number
      * @param max the maximum number

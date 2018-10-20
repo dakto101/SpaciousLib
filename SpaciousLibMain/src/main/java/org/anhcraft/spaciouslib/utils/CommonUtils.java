@@ -120,6 +120,182 @@ public class CommonUtils {
     }
 
     /**
+     * Divides the given array of objects to each "page" based on the index
+     *
+     * @param all array of objects
+     * @param index the index of "page" (start from 0)
+     * @param max maximum amount of objects in each "page"
+     * @return all objects in that "page"
+     */
+    public static int[] getPageItems(int[] all, int index, int max){
+        int first = max * index;
+        int end = max * index + (max - 1);
+        int[] filter = (int[]) Array.newInstance(int.class, end-first+1);
+        int i = 0;
+        for(int v : all){
+            if(first <= i && i <= end){
+                filter[i] = v;
+            }
+            i++;
+        }
+        return filter;
+    }
+
+    /**
+     * Divides the given array of objects to each "page" based on the index
+     *
+     * @param all array of objects
+     * @param index the index of "page" (start from 0)
+     * @param max maximum amount of objects in each "page"
+     * @return all objects in that "page"
+     */
+    public static char[] getPageItems(char[] all, int index, int max){
+        int first = max * index;
+        int end = max * index + (max - 1);
+        char[] filter = (char[]) Array.newInstance(char.class, end-first+1);
+        int i = 0;
+        for(char v : all){
+            if(first <= i && i <= end){
+                filter[i] = v;
+            }
+            i++;
+        }
+        return filter;
+    }
+
+    /**
+     * Divides the given array of objects to each "page" based on the index
+     *
+     * @param all array of objects
+     * @param index the index of "page" (start from 0)
+     * @param max maximum amount of objects in each "page"
+     * @return all objects in that "page"
+     */
+    public static boolean[] getPageItems(boolean[] all, int index, int max){
+        int first = max * index;
+        int end = max * index + (max - 1);
+        boolean[] filter = (boolean[]) Array.newInstance(boolean.class, end-first+1);
+        int i = 0;
+        for(boolean v : all){
+            if(first <= i && i <= end){
+                filter[i] = v;
+            }
+            i++;
+        }
+        return filter;
+    }
+
+    /**
+     * Divides the given array of objects to each "page" based on the index
+     *
+     * @param all array of objects
+     * @param index the index of "page" (start from 0)
+     * @param max maximum amount of objects in each "page"
+     * @return all objects in that "page"
+     */
+    public static short[] getPageItems(short[] all, int index, int max){
+        int first = max * index;
+        int end = max * index + (max - 1);
+        short[] filter = (short[]) Array.newInstance(short.class, end-first+1);
+        int i = 0;
+        for(short v : all){
+            if(first <= i && i <= end){
+                filter[i] = v;
+            }
+            i++;
+        }
+        return filter;
+    }
+
+    /**
+     * Divides the given array of objects to each "page" based on the index
+     *
+     * @param all array of objects
+     * @param index the index of "page" (start from 0)
+     * @param max maximum amount of objects in each "page"
+     * @return all objects in that "page"
+     */
+    public static long[] getPageItems(long[] all, int index, int max){
+        int first = max * index;
+        int end = max * index + (max - 1);
+        long[] filter = (long[]) Array.newInstance(long.class, end-first+1);
+        int i = 0;
+        for(long v : all){
+            if(first <= i && i <= end){
+                filter[i] = v;
+            }
+            i++;
+        }
+        return filter;
+    }
+
+    /**
+     * Divides the given array of objects to each "page" based on the index
+     *
+     * @param all array of objects
+     * @param index the index of "page" (start from 0)
+     * @param max maximum amount of objects in each "page"
+     * @return all objects in that "page"
+     */
+    public static double[] getPageItems(double[] all, int index, int max){
+        int first = max * index;
+        int end = max * index + (max - 1);
+        double[] filter = (double[]) Array.newInstance(double.class, end-first+1);
+        int i = 0;
+        for(double v : all){
+            if(first <= i && i <= end){
+                filter[i] = v;
+            }
+            i++;
+        }
+        return filter;
+    }
+
+    /**
+     * Divides the given array of objects to each "page" based on the index
+     *
+     * @param all array of objects
+     * @param index the index of "page" (start from 0)
+     * @param max maximum amount of objects in each "page"
+     * @return all objects in that "page"
+     */
+    public static float[] getPageItems(float[] all, int index, int max){
+        int first = max * index;
+        int end = max * index + (max - 1);
+        float[] filter = (float[]) Array.newInstance(float.class, end-first+1);
+        int i = 0;
+        for(float v : all){
+            if(first <= i && i <= end){
+                filter[i] = v;
+            }
+            i++;
+        }
+        return filter;
+    }
+
+    /**
+     * Divides the given array of objects to each "page" based on the index
+     *
+     * @param all array of objects
+     * @param index the index of "page" (start from 0)
+     * @param max maximum amount of objects in each "page"
+     * @return all objects in that "page"
+     */
+    public static byte[] getPageItems(byte[] all, int index, int max){
+        int first = max * index;
+        int end = max * index + (max - 1);
+        byte[] filter = (byte[]) Array.newInstance(byte.class, end-first+1);
+        int i = 0;
+        for(byte v : all){
+            if(first <= i && i <= end){
+                filter[i] = v;
+            }
+            i++;
+        }
+        return filter;
+    }
+
+    /**
      * Divides the given list of objects to each "page" based on the index
      *
      * @param all list of objects
@@ -229,6 +405,134 @@ public class CommonUtils {
     }
 
     /**
+     * Shuffles the order of elements in an array
+     * @param array an array
+     * @return an ordered array
+     */
+    public static int[] shuffle(int[] array) {
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = array.length - 1; i > 0; i--){
+            int index = rnd.nextInt(i + 1);
+            int temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    /**
+     * Shuffles the order of elements in an array
+     * @param array an array
+     * @return an ordered array
+     */
+    public static char[] shuffle(char[] array) {
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = array.length - 1; i > 0; i--){
+            int index = rnd.nextInt(i + 1);
+            char temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    /**
+     * Shuffles the order of elements in an array
+     * @param array an array
+     * @return an ordered array
+     */
+    public static boolean[] shuffle(boolean[] array) {
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = array.length - 1; i > 0; i--){
+            int index = rnd.nextInt(i + 1);
+            boolean temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    /**
+     * Shuffles the order of elements in an array
+     * @param array an array
+     * @return an ordered array
+     */
+    public static short[] shuffle(short[] array) {
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = array.length - 1; i > 0; i--){
+            int index = rnd.nextInt(i + 1);
+            short temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    /**
+     * Shuffles the order of elements in an array
+     * @param array an array
+     * @return an ordered array
+     */
+    public static long[] shuffle(long[] array) {
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = array.length - 1; i > 0; i--){
+            int index = rnd.nextInt(i + 1);
+            long temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    /**
+     * Shuffles the order of elements in an array
+     * @param array an array
+     * @return an ordered array
+     */
+    public static double[] shuffle(double[] array) {
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = array.length - 1; i > 0; i--){
+            int index = rnd.nextInt(i + 1);
+            double temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    /**
+     * Shuffles the order of elements in an array
+     * @param array an array
+     * @return an ordered array
+     */
+    public static float[] shuffle(float[] array) {
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = array.length - 1; i > 0; i--){
+            int index = rnd.nextInt(i + 1);
+            float temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    /**
+     * Shuffles the order of elements in an array
+     * @param array an array
+     * @return an ordered array
+     */
+    public static byte[] shuffle(byte[] array) {
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = array.length - 1; i > 0; i--){
+            int index = rnd.nextInt(i + 1);
+            byte temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    /**
      * Shuffles the order of elements in a list
      * @param list a list
      * @return an ordered list
@@ -273,6 +577,110 @@ public class CommonUtils {
      */
     public static <E> E[] reverse(E[] array) {
         E[] narray = (E[]) Array.newInstance(array.getClass().getComponentType(), array.length);
+        for(int i = 0; i < array.length; i++){
+            narray[i] = array[array.length-i-1];
+        }
+        return narray;
+    }
+
+    /**
+     * Reverses the order of elements in an array
+     * @param array an array
+     * @return the reversed array
+     */
+    public static int[] reverse(int[] array) {
+        int[] narray = (int[]) Array.newInstance(int.class, array.length);
+        for(int i = 0; i < array.length; i++){
+            narray[i] = array[array.length-i-1];
+        }
+        return narray;
+    }
+
+    /**
+     * Reverses the order of elements in an array
+     * @param array an array
+     * @return the reversed array
+     */
+    public static char[] reverse(char[] array) {
+        char[] narray = (char[]) Array.newInstance(char.class, array.length);
+        for(int i = 0; i < array.length; i++){
+            narray[i] = array[array.length-i-1];
+        }
+        return narray;
+    }
+
+    /**
+     * Reverses the order of elements in an array
+     * @param array an array
+     * @return the reversed array
+     */
+    public static boolean[] reverse(boolean[] array) {
+        boolean[] narray = (boolean[]) Array.newInstance(boolean.class, array.length);
+        for(int i = 0; i < array.length; i++){
+            narray[i] = array[array.length-i-1];
+        }
+        return narray;
+    }
+
+    /**
+     * Reverses the order of elements in an array
+     * @param array an array
+     * @return the reversed array
+     */
+    public static short[] reverse(short[] array) {
+        short[] narray = (short[]) Array.newInstance(short.class, array.length);
+        for(int i = 0; i < array.length; i++){
+            narray[i] = array[array.length-i-1];
+        }
+        return narray;
+    }
+
+    /**
+     * Reverses the order of elements in an array
+     * @param array an array
+     * @return the reversed array
+     */
+    public static long[] reverse(long[] array) {
+        long[] narray = (long[]) Array.newInstance(long.class, array.length);
+        for(int i = 0; i < array.length; i++){
+            narray[i] = array[array.length-i-1];
+        }
+        return narray;
+    }
+
+    /**
+     * Reverses the order of elements in an array
+     * @param array an array
+     * @return the reversed array
+     */
+    public static double[] reverse(double[] array) {
+        double[] narray = (double[]) Array.newInstance(double.class, array.length);
+        for(int i = 0; i < array.length; i++){
+            narray[i] = array[array.length-i-1];
+        }
+        return narray;
+    }
+
+    /**
+     * Reverses the order of elements in an array
+     * @param array an array
+     * @return the reversed array
+     */
+    public static float[] reverse(float[] array) {
+        float[] narray = (float[]) Array.newInstance(float.class, array.length);
+        for(int i = 0; i < array.length; i++){
+            narray[i] = array[array.length-i-1];
+        }
+        return narray;
+    }
+
+    /**
+     * Reverses the order of elements in an array
+     * @param array an array
+     * @return the reversed array
+     */
+    public static byte[] reverse(byte[] array) {
+        byte[] narray = (byte[]) Array.newInstance(byte.class, array.length);
         for(int i = 0; i < array.length; i++){
             narray[i] = array[array.length-i-1];
         }
