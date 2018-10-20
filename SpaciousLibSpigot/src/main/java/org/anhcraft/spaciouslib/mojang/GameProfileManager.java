@@ -8,7 +8,7 @@ import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 
-import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
@@ -65,71 +65,71 @@ public class GameProfileManager {
     }
 
     /**
-     * Sets a new unique ID for this profile
+     * Set a new ID for this profile
      * @param id UUID object
      * @return this object
      */
-    public GameProfileManager setUniqueID(UUID id) {
-        try {
-            Field f = this.gp.getClass().getDeclaredField("id");
-            f.setAccessible(true);
-            f.set(this.gp, id);
-        } catch(IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+    public GameProfileManager setUniqueId(UUID id) {
+        ReflectionUtils.setField("id", this.gp.getClass(), this.gp, id);
         return this;
     }
 
     /**
-     * Sets a new properties map for this profile
+     * Get the ID of this profile
+     * @return UUID object
+     */
+    public UUID getUniqueId() {
+        return (UUID) ReflectionUtils.getField("id", this.gp.getClass(), this.gp);
+    }
+
+    /**
+     * Set a new properties map for this profile
      * @param properties the properties map
      * @return this object
      */
     public GameProfileManager setProperties(PropertyMap properties) {
-        try {
-            Field f = this.gp.getClass().getDeclaredField("properties");
-            f.setAccessible(true);
-            f.set(this.gp, properties);
-        } catch(IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+        ReflectionUtils.setField("properties", this.gp.getClass(), this.gp, properties);
         return this;
     }
 
     /**
-     * Sets a new legacy value for this profile
+     * Set a new legacy value for this profile
      * @param legacy the legacy value
      * @return this object
      */
     public GameProfileManager setLegacy(boolean legacy) {
-        try {
-            Field f = this.gp.getClass().getDeclaredField("legacy");
-            f.setAccessible(true);
-            f.set(this.gp, legacy);
-        } catch(IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+        ReflectionUtils.setField("legacy", this.gp.getClass(), this.gp, legacy);
         return this;
     }
 
     /**
-     * Sets a new name for this profile
+     * Check whether this profile is legacy or not
+     * @return true if yes
+     */
+    public boolean isLegacy() {
+        return (boolean) ReflectionUtils.getField("legacy", this.gp.getClass(), this.gp);
+    }
+
+    /**
+     * Set a new name for this profile
      * @param name the name
      * @return this object
      */
     public GameProfileManager setName(String name) {
-        try {
-            Field f = this.gp.getClass().getDeclaredField("name");
-            f.setAccessible(true);
-            f.set(this.gp, name);
-        } catch(IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+        ReflectionUtils.setField("name", this.gp.getClass(), this.gp, name);
         return this;
     }
 
     /**
-     * Sets a new skin for this profile
+     * Get the profile name
+     * @return the name
+     */
+    public String getName() {
+        return (String) ReflectionUtils.getField("name", this.gp.getClass(), this.gp);
+    }
+
+    /**
+     * Set a new skin for this profile
      * @param skin Skin object
      * @return this object
      */
@@ -139,6 +139,21 @@ public class GameProfileManager {
         // put the value as the first element of the texture values
         this.gp.getProperties().put("textures", new Property("textures", skin.getValue(), skin.getSignature()));
         return this;
+    }
+
+    /**
+     * Get the skin
+     * @return Skin object
+     */
+    public Skin getSkin(){
+        if(this.gp.getProperties().containsKey("textures")){
+            Collection<Property> v = this.gp.getProperties().get("textures");
+            if(v.size() > 0){
+                Property s = v.iterator().next();
+                return new Skin(s.getValue(), s.getSignature());
+            }
+        }
+        return null;
     }
 
     /**
@@ -158,6 +173,8 @@ public class GameProfileManager {
         vars.put(GameVersion.v1_10_R1, "bT");
         vars.put(GameVersion.v1_11_R1, "bS");
         vars.put(GameVersion.v1_12_R1, "g");
+        vars.put(GameVersion.v1_13_R1, "h");
+        vars.put(GameVersion.v1_13_R2, "h");
         try {
             Class<?> craftHumanEntityClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftHumanEntity");
             Class<?> nmsEntityHumanClass = Class.forName("net.minecraft.server." + v + ".EntityHuman");
@@ -171,7 +188,7 @@ public class GameProfileManager {
     }
 
     /**
-     * Gets the result as a game profile object
+     * Get the result as a game profile object
      * @return the game profile object
      */
     public GameProfile getGameProfile(){
