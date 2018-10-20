@@ -1,10 +1,8 @@
 package org.anhcraft.spaciouslib.mojang;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.io.FileManager;
+import org.anhcraft.spaciouslib.serialization.DataSerialization;
 import org.anhcraft.spaciouslib.utils.GZipUtils;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.TimeUnit;
@@ -26,8 +24,8 @@ public class SkinAPI {
     public SkinAPI() {
         try {
             cachedSkins = new LinkedHashMap<>();
-            for(File file : SpaciousLib.SKINS_FOLDER.listFiles((dir, name) -> name.endsWith(".skin"))) {
-                CachedSkin cs = fromJSON(new String(GZipUtils.decompress(new FileManager(file).read())));
+            for(File file : SpaciousLib.SKINS_FOLDER.listFiles((dir, name) -> name.endsWith(".skin2"))) {
+                CachedSkin cs = DataSerialization.deserialize(CachedSkin.class, GZipUtils.decompress(new FileManager(file).read()));
                 cachedSkins.put(cs.getOwner(), cs);
             }
         } catch(IOException e) {
@@ -98,40 +96,11 @@ public class SkinAPI {
     }
 
     /**
-     * Serializes the given CachedSkin object to a JSON string
-     * @param skin the CachedSkin object
-     * @return the JSON string
-     */
-    public static String toJSON(CachedSkin skin){
-        JsonObject o = new JsonObject();
-        o.addProperty("a", skin.getCachedTime());
-        o.addProperty("b", skin.getExpiredTime());
-        o.addProperty("c", skin.getOwner().toString());
-        o.addProperty("d", skin.getSkin().getValue());
-        o.addProperty("e", skin.getSkin().getSignature());
-        return new Gson().toJson(o, new TypeToken<JsonObject>(){}.getType());
-    }
-
-    /**
-     * Deserializes the given JSON string to its CachedSkin object
-     * @param json the JSON string
-     * @return the CachedSkin object
-     */
-    public static CachedSkin fromJSON(String json){
-        JsonObject o = new Gson().fromJson(json, new TypeToken<JsonObject>(){}.getType());
-        return new CachedSkin(new Skin(o.get("d").getAsString(),
-                o.get("e").getAsString()),
-                UUID.fromString(o.get("c").getAsString()),
-                o.get("a").getAsInt(),
-                o.get("b").getAsLong());
-    }
-
-    /**
      * Gets the cache file of the given skin
      * @param skin the CachedSkin object
      * @return the File object
      */
     public static File getSkinFile(CachedSkin skin) {
-       return new File(SpaciousLib.SKINS_FOLDER, skin.getOwner().toString()+".skin");
+       return new File(SpaciousLib.SKINS_FOLDER, skin.getOwner().toString()+".skin2");
     }
 }

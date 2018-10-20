@@ -1,5 +1,7 @@
 package org.anhcraft.spaciouslib.mojang;
 
+import org.anhcraft.spaciouslib.annotations.DataField;
+import org.anhcraft.spaciouslib.annotations.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -8,6 +10,7 @@ import java.util.UUID;
 /**
  * Represents a player skin implementation.
  */
+@Serializable
 public class Skin {
     /**
      * Represents the default player skin.
@@ -34,8 +37,15 @@ public class Skin {
         }
     }
 
+    @DataField
     private String value;
+    @DataField
     private String signature;
+
+    /**
+     * Not recommended constructor, only be used during serialization processes
+     */
+    public Skin(){}
 
     /**
      * Creates a new Skin instance
