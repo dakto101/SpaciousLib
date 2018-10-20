@@ -1,6 +1,5 @@
 package org.anhcraft.spaciouslib.utils;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -30,8 +29,8 @@ public class CommonUtils {
      * @param str the string
      * @return base64 encoded string
      */
-    public static String toBase64(String str) throws UnsupportedEncodingException {
-        byte[] bytes = str.getBytes("UTF-8");
+    public static String toBase64(String str) {
+        byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
         return Base64.getEncoder().encodeToString(bytes);
     }
 
@@ -90,9 +89,9 @@ public class CommonUtils {
     }
 
     /**
-     * A simple method helps you to check is the given string valid in JSON format by using RegEx (Regular expression)
-     * @param json the string which you want to check.
-     * @return true if that string is a valid JSON string
+     * A simple method to check whether the given string is a valid JSON
+     * @param json the string
+     * @return true if yes
      */
     public static boolean isValidJSON(String json) {
         return RegEx.JSON.matches(json);
