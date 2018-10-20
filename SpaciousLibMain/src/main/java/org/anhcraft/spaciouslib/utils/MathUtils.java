@@ -63,6 +63,6 @@ public class MathUtils {
      * @return true if yes
      */
     public static boolean isPalprime(int num){
-        return num == Integer.parseInt(new String(CommonUtils.reverse(Integer.toString(num).toCharArray())));
+        return isPrime(num) && num == Integer.parseInt(new String(CommonUtils.reverse(Integer.toString(num).toCharArray())));
     }
 }
