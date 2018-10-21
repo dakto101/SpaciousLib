@@ -29,7 +29,7 @@ public class ClickableItemListener implements Listener {
         Player player = (Player) event.getWhoClicked();
         Inventory inventory = CompatibilityUtils.getInventory(event);
         ClickType type = event.getClick();
-        if (inventory != null && data.containsKey(inventory)){
+        if (inventory != null && data.containsKey(inventory) && event.getRawSlot() < inventory.getSize()){
             ItemStack item = event.getCurrentItem();
             if(!InventoryUtils.isNull(item)){
                 ClickableItemHandler c = data.get(inventory).get(event.getRawSlot());
