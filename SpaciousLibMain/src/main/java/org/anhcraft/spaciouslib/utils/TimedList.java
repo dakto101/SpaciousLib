@@ -19,6 +19,16 @@ public class TimedList<E> implements Iterable<E> {
     @DataField
     private LinkedList<Long> b = new LinkedList<>();
 
+    /**
+     * Not recommended constructor, only be used during serialization processes
+     */
+    public TimedList(){}
+
+    public TimedList(TimedList<E> timedList){
+        this.a = new LinkedList<>(timedList.a);
+        this.b = new LinkedList<>(timedList.b);
+    }
+
     private Long getValue(E key){
         int i = 0;
         for(E e : a){

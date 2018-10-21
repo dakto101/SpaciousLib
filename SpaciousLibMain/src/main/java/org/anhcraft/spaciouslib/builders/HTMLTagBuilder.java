@@ -1,4 +1,4 @@
-package org.anhcraft.spaciouslib.utils;
+package org.anhcraft.spaciouslib.builders;
 
 import java.util.HashMap;
 import java.util.LinkedList;

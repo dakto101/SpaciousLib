@@ -1,9 +1,9 @@
 package org.anhcraft.spaciouslib.utils;
 
-import org.anhcraft.spaciouslib.builders.EqualsBuilder;
-import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
 import org.anhcraft.spaciouslib.annotations.DataField;
 import org.anhcraft.spaciouslib.annotations.Serializable;
+import org.anhcraft.spaciouslib.builders.EqualsBuilder;
+import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -18,6 +18,13 @@ public class TimedMap<K, V> {
     private LinkedHashMap<K, V> a = new LinkedHashMap<>();
     @DataField
     private LinkedHashMap<K, Long> b = new LinkedHashMap<>();
+
+    public TimedMap(){}
+
+    public TimedMap(TimedMap<K, V> timedMap){
+        this.a = new LinkedHashMap<>(timedMap.a);
+        this.b = new LinkedHashMap<>(timedMap.b);
+    }
 
     private void clean(){
         // don't use the "keySet" method to prevent the StackOverflow error

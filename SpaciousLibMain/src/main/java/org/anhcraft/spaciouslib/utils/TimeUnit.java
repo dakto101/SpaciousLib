@@ -88,6 +88,40 @@ public enum TimeUnit {
      * @param duration the duration
      * @param min the minimum unit of time
      * @param max the maximum unit of time
+     * @return a sorted map (from lowest unit to highest unit) contains units and their values, using this map to make a friendly string
+     */
+    public static TreeMap<TimeUnit, Long> format(TimeUnit origin, long duration, TimeUnit min, TimeUnit max){
+        ExceptionThrower.ifTrue(duration < 0, new Exception("Duration must be a positive integer"));
+        ExceptionThrower.ifTrue(min.getSeconds() >= max.getSeconds(), new Exception("The minimum unit can't be equals or greater than the maximum"));
+        ExceptionThrower.ifFalse(max.getSeconds() > origin.getSeconds(), new Exception("The maximum unit must be greater than the origin"));
+        duration = (int) (duration*origin.getSeconds());
+        TreeMap<TimeUnit, Long> map = new TreeMap<>(Comparator.comparingDouble(TimeUnit::getSeconds));
+        TimeUnit[] val = CommonUtils.reverse(values());
+        for(TimeUnit unit : val){
+            if(min.getSeconds() > unit.getSeconds()){
+                map.put(map.lastKey(), map.lastEntry().getValue()+duration);
+                break;
+            }
+            if(max.getSeconds() >= unit.getSeconds()){
+                long x = (long) TimeUnit.convert(TimeUnit.SECOND, duration, unit);
+                duration -= x*unit.getSeconds();
+                map.put(unit, x);
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Format the given time.<br>
+     * Normally, the origin time will be seconds and then formatting it into hours, minutes and seconds. In that situation, the hour is the maximum unit, seconds is the minimum unit and also is the origin unit.<br>
+     * There are some rules:<br>
+     * - The duration can't be less than 0<br>
+     * - The minimum unit can't be equals or greater than the maximum<br>
+     * - The maximum unit must be greater than the origin
+     * @param origin the original unit
+     * @param duration the duration
+     * @param min the minimum unit of time
+     * @param max the maximum unit of time
      * @param ignore array of ignoring units
      * @return a sorted map (from lowest unit to highest unit) contains units and their values, using this map to make a friendly string
      */
@@ -109,6 +143,45 @@ public enum TimeUnit {
             }
             if(max.getSeconds() >= unit.getSeconds()){
                 int x = (int) TimeUnit.convert(TimeUnit.SECOND, duration, unit);
+                duration -= x*unit.getSeconds();
+                map.put(unit, x);
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Format the given time.<br>
+     * Normally, the origin time will be seconds and then formatting it into hours, minutes and seconds. In that situation, the hour is the maximum unit, seconds is the minimum unit and also is the origin unit.<br>
+     * There are some rules:<br>
+     * - The duration can't be less than 0<br>
+     * - The minimum unit can't be equals or greater than the maximum<br>
+     * - The maximum unit must be greater than the origin
+     * @param origin the original unit
+     * @param duration the duration
+     * @param min the minimum unit of time
+     * @param max the maximum unit of time
+     * @param ignore array of ignoring units
+     * @return a sorted map (from lowest unit to highest unit) contains units and their values, using this map to make a friendly string
+     */
+    public static TreeMap<TimeUnit, Long> format(TimeUnit origin, long duration, TimeUnit min, TimeUnit max, TimeUnit... ignore){
+        ExceptionThrower.ifTrue(duration < 0, new Exception("Duration must be a positive integer"));
+        ExceptionThrower.ifTrue(min.getSeconds() >= max.getSeconds(), new Exception("The minimum unit can't be equals or greater than the maximum"));
+        ExceptionThrower.ifFalse(max.getSeconds() > origin.getSeconds(), new Exception("The maximum unit must be greater than the origin"));
+        duration = (int) (duration*origin.getSeconds());
+        TreeMap<TimeUnit, Long> map = new TreeMap<>(Comparator.comparingDouble(TimeUnit::getSeconds));
+        TimeUnit[] val = CommonUtils.reverse(values());
+        List<TimeUnit> ignores = CommonUtils.toList(ignore);
+        for(TimeUnit unit : val){
+            if(ignores.contains(unit)){
+                continue;
+            }
+            if(min.getSeconds() > unit.getSeconds()){
+                map.put(map.lastKey(), map.lastEntry().getValue()+duration);
+                break;
+            }
+            if(max.getSeconds() >= unit.getSeconds()){
+                long x = (long) TimeUnit.convert(TimeUnit.SECOND, duration, unit);
                 duration -= x*unit.getSeconds();
                 map.put(unit, x);
             }

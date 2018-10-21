@@ -1,5 +1,7 @@
 package org.anhcraft.spaciouslib.mojang;
 
+import org.anhcraft.spaciouslib.annotations.DataField;
+import org.anhcraft.spaciouslib.annotations.Serializable;
 import org.anhcraft.spaciouslib.builders.EqualsBuilder;
 import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
 
@@ -11,11 +13,21 @@ import java.util.UUID;
  * The skin data is stored in the folder of this library.<br>
  * The skin will be renewed automatically when it expired.
  */
+@Serializable
 public class CachedSkin {
+    @DataField
     private int cachedTime;
+    @DataField
     private long expiredTime;
+    @DataField
     private Skin skin;
+    @DataField
     private UUID owner;
+
+    /**
+     * Not recommended constructor, only be used during serialization processes
+     */
+    public CachedSkin(){}
 
     /**
      * Creates a new CachedSkin instance

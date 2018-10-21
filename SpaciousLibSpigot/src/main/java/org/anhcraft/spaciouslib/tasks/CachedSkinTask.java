@@ -3,11 +3,11 @@ package org.anhcraft.spaciouslib.tasks;
 import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.mojang.CachedSkin;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
+import org.anhcraft.spaciouslib.serialization.DataSerialization;
 import org.anhcraft.spaciouslib.utils.GZipUtils;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +25,7 @@ public class CachedSkinTask extends BukkitRunnable {
                 }
                 File file = SkinAPI.getSkinFile(skin);
                 if(save || !file.exists()) {
-                    new FileManager(file).delete().initFile(GZipUtils.compress(SkinAPI.toJSON(skin)
-                            .getBytes(StandardCharsets.UTF_8)));
+                    new FileManager(file).write(GZipUtils.compress(DataSerialization.serialize(CachedSkin.class, skin).getA()));
                 }
             }
         } catch(Exception e) {

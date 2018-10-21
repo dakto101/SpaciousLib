@@ -2,7 +2,8 @@ package org.anhcraft.spaciouslib.utils;
 
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
-import org.bukkit.OfflinePlayer;
+
+import java.util.UUID;
 
 public class PlayerPointsUtils {
     public static PlayerPointsAPI api;
@@ -17,81 +18,81 @@ public class PlayerPointsUtils {
 
     /**
      * Reset money from a player
-     * @param player a player
+     * @param id the unique id of the player
      * @return true if yes
      */
-    public static boolean reset(OfflinePlayer player) {
+    public static boolean reset(UUID id) {
         if(api == null){
             return false;
         }
-        return api.reset(player.getUniqueId());
+        return api.reset(id);
     }
 
     /**
      * Checks a player is having enough point
-     * @param player player
+     * @param id the unique id of the player
      * @param amount amount
      * @return true if yes
      */
-    public static boolean enough(OfflinePlayer player, int amount) {
+    public static boolean enough(UUID id, int amount) {
         if(api == null){
             return false;
         }
-        int a = api.look(player.getUniqueId());
+        int a = api.look(id);
         int b = a - amount;
         return !(b < 0);
     }
 
     /**
      * Withdraws a specific amount from the balance of a player
-     * @param player player
+     * @param id the unique id of the player
      * @param amount amount
      * @return true if success
      */
-    public static boolean withdraw(OfflinePlayer player, int amount) {
+    public static boolean withdraw(UUID id, int amount) {
         if(api == null){
             return false;
         }
-        int a = api.look(player.getUniqueId());
+        int a = api.look(id);
         int b = a - amount;
-        return !(b < 0) && api.take(player.getUniqueId(), amount);
+        return !(b < 0) && api.take(id, amount);
     }
 
     /**
      * Deposits a specific amount into the balance of a player
-     * @param player player
+     * @param id the unique id of the player
      * @param amount amount
      * @return true if success
      */
-    public static boolean deposit(OfflinePlayer player, int amount) {
+    public static boolean deposit(UUID id, int amount) {
         if(api == null){
             return false;
         }
-        return api.give(player.getUniqueId(), amount);
+        return api.give(id, amount);
     }
 
     /**
      * Gets the balance of a player
-     * @param player a player
+     * @param id the unique id of the player
      * @return the balance
      */
-    public static int getBalance(OfflinePlayer player) {
+    public static int getBalance(UUID id) {
         if(api == null){
             return 0;
         }
-        return api.look(player.getUniqueId());
+        return api.look(id);
     }
 
     /**
      * Set a player's balance
-     * @param player player
+     * @param id the unique id of the player
      * @param amount amount
      * @return true if success
      */
-    public static boolean set(OfflinePlayer player, int amount) {
+    public static boolean set(UUID id, int amount) {
         if(api == null){
             return false;
         }
-        return api.set(player.getUniqueId(), amount);
+        return api.set(id, amount);
     }
 }

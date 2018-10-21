@@ -2,7 +2,9 @@ package org.anhcraft.spaciouslib.inventory;
 
 import org.anhcraft.spaciouslib.listeners.ClickableItemListener;
 import org.anhcraft.spaciouslib.utils.Chat;
+import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
+import org.anhcraft.spaciouslib.utils.Table;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -15,9 +17,9 @@ import java.util.UUID;
 /**
  * A class helps you to manage inventories
  */
-public class InventoryManager extends ClickableItemListener {
+public class InventoryManager {
     private Inventory inv;
-    public ClickableItemHandler[] clickableSlots;
+    private Table<ClickableItemHandler> slots;
 
     /**
      * Creates a new InventoryManager instance
@@ -29,7 +31,7 @@ public class InventoryManager extends ClickableItemListener {
             size = size + (9 - size % 9);
         }
         this.inv = Bukkit.getServer().createInventory(null, size, Chat.color(name));
-        this.clickableSlots = new ClickableItemHandler[size];
+        this.slots = new Table<>(9, size/9);
     }
 
     /**
@@ -38,7 +40,7 @@ public class InventoryManager extends ClickableItemListener {
      */
     public InventoryManager(Inventory inv){
         this.inv = inv;
-        this.clickableSlots = new ClickableItemHandler[inv.getSize()];
+        this.slots = new Table<>(9, inv.getSize()/9);
     }
 
     /**
@@ -61,7 +63,7 @@ public class InventoryManager extends ClickableItemListener {
      */
     public InventoryManager set(int index, ItemStack item, ClickableItemHandler run){
         this.inv.setItem(index, item);
-        clickableSlots[index] = run;
+        slots.set(index, run);
         return this;
     }
 
@@ -91,7 +93,7 @@ public class InventoryManager extends ClickableItemListener {
      */
     public InventoryManager remove(int index){
         this.inv.setItem(index, null);
-        clickableSlots[index] = null;
+        slots.clearAll(index, 1);
         return this;
     }
 
@@ -110,7 +112,7 @@ public class InventoryManager extends ClickableItemListener {
     }
 
     /**
-     * Adds an item into this inventory
+     * Add an item into this inventory
      * @param item the item
      * @return this object
      */
@@ -123,7 +125,7 @@ public class InventoryManager extends ClickableItemListener {
     }
 
     /**
-     * Adds a clickable item into this inventory
+     * Add a clickable item into this inventory
      * @param item the item
      * @param run an handler
      * @return this object
@@ -132,13 +134,13 @@ public class InventoryManager extends ClickableItemListener {
         int emptySlot = this.inv.firstEmpty();
         if(emptySlot != -1){
             this.inv.setItem(emptySlot, item);
-            clickableSlots[emptySlot] = run;
+            slots.set(emptySlot, run);
         }
         return this;
     }
 
     /**
-     * Adds an item into the inventory, only when it doesn't exist
+     * Add an item into the inventory, only when it doesn't exist
      * @param item the item
      * @return this object
      */
@@ -157,7 +159,7 @@ public class InventoryManager extends ClickableItemListener {
     }
 
     /**
-     * Adds a clickable item into the inventory, only when it doesn't exist
+     * Add a clickable item into the inventory, only when it doesn't exist
      * @param item the item
      * @param run an handler
      * @return this object
@@ -213,7 +215,7 @@ public class InventoryManager extends ClickableItemListener {
      */
     public InventoryManager clear(){
         this.inv.clear();
-        clickableSlots = new ClickableItemHandler[inv.getSize()];
+        slots.clear();
         return this;
     }
 
@@ -224,12 +226,7 @@ public class InventoryManager extends ClickableItemListener {
      * @return this object
      */
     public InventoryManager open(String name){
-        for(int i = 0; i < clickableSlots.length; i++){
-            ClickableItemHandler handler = clickableSlots[i];
-            if(handler != null) {
-                a(this.inv, i, handler);
-            }
-        }
+        update();
         Bukkit.getServer().getPlayer(name).openInventory(this.inv);
         return this;
     }
@@ -240,12 +237,7 @@ public class InventoryManager extends ClickableItemListener {
      * @return this object
      */
     public InventoryManager open(UUID uuid){
-        for(int i = 0; i < clickableSlots.length; i++){
-            ClickableItemHandler handler = clickableSlots[i];
-            if(handler != null) {
-                a(this.inv, i, handler);
-            }
-        }
+        update();
         Bukkit.getServer().getPlayer(uuid).openInventory(this.inv);
         return this;
     }
@@ -256,12 +248,7 @@ public class InventoryManager extends ClickableItemListener {
      * @return this object
      */
     public InventoryManager open(Player player){
-        for(int i = 0; i < clickableSlots.length; i++){
-            ClickableItemHandler handler = clickableSlots[i];
-            if(handler != null) {
-                a(this.inv, i, handler);
-            }
-        }
+        update();
         player.openInventory(this.inv);
         return this;
     }
@@ -281,7 +268,9 @@ public class InventoryManager extends ClickableItemListener {
      */
     public InventoryManager apply(Player player){
         player.getInventory().setContents(this.inv.getContents());
-        player.updateInventory();
+        if(!GameVersion.is1_9Above()) {
+            player.updateInventory();
+        }
         return this;
     }
 
@@ -297,5 +286,12 @@ public class InventoryManager extends ClickableItemListener {
             }
         }
         return items;
+    }
+
+    /**
+     * Update the clickable status for this inventory
+     */
+    public void update(){
+        ClickableItemListener.add(this.inv, slots);
     }
 }

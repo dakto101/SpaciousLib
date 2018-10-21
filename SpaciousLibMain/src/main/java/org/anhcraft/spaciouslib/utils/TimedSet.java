@@ -22,6 +22,12 @@ public class TimedSet<E> implements Iterable<E> {
         data.keySet().removeIf(this::isExpired);
     }
 
+    public TimedSet(){}
+
+    public TimedSet(TimedSet<E> timedSet){
+        this.data = new LinkedHashMap<>(timedSet.data);
+    }
+
     /**
      * Checks was the given element expired<br>
      * By default, all elements which were expired will be removed automatically, so you don't need to use this method.
