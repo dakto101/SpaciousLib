@@ -40,12 +40,12 @@ public class MapSerializer extends DataType<Map<Object, Object>> {
                 DataType<Object> typeValue = DataSerialization.lookupType(in.readByte());
                 if(typeValue instanceof ObjectSerializer) {
                     try {
-                        k = DataSerialization.deserialize(Class.forName(in.readUTF()), in);
+                        v = DataSerialization.deserialize(Class.forName(in.readUTF()), in);
                     } catch(ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    k = typeValue.read(in);
+                    v = typeValue.read(in);
                 }
                 map.put(k, v);
             }
