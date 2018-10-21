@@ -23,7 +23,7 @@ public class SkullManager extends ItemManager {
             return;
         } else {
             if(GameVersion.is1_13Above()){
-                if(InventoryUtils.getSkulls().contains(skull.getType())){
+                if(InventoryUtils.getSkullTypes().contains(skull.getType())){
                     return;
                 }
             } else {
