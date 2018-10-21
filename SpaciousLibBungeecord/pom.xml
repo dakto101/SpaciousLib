@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>SpaciousLibBungeecord</artifactId>
-    <version>1.7.5</version>
+    <version>1.7.6</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.anhcraft</groupId>
         <artifactId>SpaciousLib</artifactId>
-        <version>1.7.5</version>
+        <version>1.7.6</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -71,6 +71,12 @@
             <groupId>org.anhcraft</groupId>
             <artifactId>SpaciousLibMain</artifactId>
             <version>1.7.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.anhcraft</groupId>
+            <artifactId>SpaciousLibMain</artifactId>
+            <version>1.7.6</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
