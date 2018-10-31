@@ -64,12 +64,12 @@ public class MapSerializer extends DataType<Map<Object, Object>> {
                 DataType<Object> typeValue = DataSerialization.lookupType(obj.getValue().getClass());
                 out.writeByte(typeKey.getIdentifier());
                 if(typeKey instanceof ObjectSerializer){
-                    out.writeUTF(obj.getKey().getClass().getCanonicalName());
+                    out.writeUTF(obj.getKey().getClass().getName());
                 }
                 typeKey.write(out, obj.getKey());
                 out.writeByte(typeValue.getIdentifier());
                 if(typeValue instanceof ObjectSerializer){
-                    out.writeUTF(obj.getValue().getClass().getCanonicalName());
+                    out.writeUTF(obj.getValue().getClass().getName());
                 }
                 typeValue.write(out, obj.getValue());
             }
