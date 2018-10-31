@@ -103,7 +103,7 @@ public class HTTPResponseWriter {
     }
 
     /**
-     * Writes this reponse to byte array
+     * Writes this response into a byte array
      * @return an array of bytes
      */
     public byte[] write() throws IOException {

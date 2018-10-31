@@ -19,10 +19,10 @@ public class HTTPRequestReader{
     private List<String> acceptedEncodings = new ArrayList<>();
     private List<String> acceptedLanguages = new ArrayList<>();
     private HashMap<String, String> cookies = new HashMap<>();
-    private String userAgent;
-    private HTTPRequestMethod method;
-    private String httpVersion;
-    private String path;
+    private String userAgent = "";
+    private HTTPRequestMethod method = HTTPRequestMethod.GET;
+    private String httpVersion = "";
+    private String path = "";
     private HashMap<String, String> queries = new HashMap<>();
     private StringBuilder content = new StringBuilder();
 
