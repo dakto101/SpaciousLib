@@ -2,6 +2,8 @@ package org.anhcraft.spaciouslib.utils;
 
 import org.anhcraft.spaciouslib.annotations.DataField;
 import org.anhcraft.spaciouslib.annotations.Serializable;
+import org.anhcraft.spaciouslib.builders.EqualsBuilder;
+import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -406,5 +408,30 @@ public class Table<E> {
             set(index+i+1, v);
             i++;
         }
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o != null && o.getClass() == this.getClass()){
+            Table t = (Table) o;
+            return new EqualsBuilder()
+                    .append(t.column, this.column)
+                    .append(t.data, this.data)
+                    .append(t.remain, this.remain)
+                    .append(t.row, this.row)
+                    .append(t.lastEmptySlot, this.lastEmptySlot)
+                    .build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(23, 15)
+                .append(this.column)
+                .append(this.data)
+                .append(this.remain)
+                .append(this.row)
+                .append(this.lastEmptySlot).build();
     }
 }
