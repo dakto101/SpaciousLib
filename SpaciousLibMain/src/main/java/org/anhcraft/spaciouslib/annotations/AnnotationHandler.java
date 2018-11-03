@@ -25,7 +25,7 @@ public class AnnotationHandler {
     }
 
     /**
-     * Unregisters the given registered object and its class.<br>Only calls this method whenever you handled completely and don't want to use any annotations anymore. If there's a working annotation, shouldn't call this method!
+     * Unregisters the given registered object and its class.<br>Only calls this method whenever you handled completely and don't want to use any SpaciousLib's custom annotations anymore. If there's a working annotation, shouldn't call this method!
      * @param object an registered object
      * @param clazz the class of the given object
      */
@@ -40,6 +40,6 @@ public class AnnotationHandler {
     }
 
     public static HashMap<Class, List<Object>> getClasses(){
-        return data;
+        return new HashMap<>(data);
     }
 }
