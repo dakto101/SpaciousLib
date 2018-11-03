@@ -37,6 +37,7 @@ public abstract class DataSerialization extends DataType {
         // 31: ItemMeta
         // 32: Location
         // 33: Vector
+        // 34: NBTCompound
 
         arraySerializersa.put(boolean[].class, new PrimitiveArraySerializer((byte) 118, boolean.class));
         arraySerializersa.put(byte[].class, new PrimitiveArraySerializer((byte) 119, byte.class));
