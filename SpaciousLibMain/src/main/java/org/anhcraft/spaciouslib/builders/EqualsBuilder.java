@@ -1,6 +1,6 @@
 package org.anhcraft.spaciouslib.builders;
 
-import java.lang.reflect.Field;
+import org.anhcraft.spaciouslib.utils.CommonUtils;
 
 public class EqualsBuilder {
     private boolean equal = true;
@@ -13,35 +13,7 @@ public class EqualsBuilder {
             equal = false;
             return this;
         }
-        equal = a.equals(b);
-        return this;
-    }
-
-    public EqualsBuilder append(Object a, Object b, boolean deep) {
-        if(!equal){
-            return this;
-        }
-        if(a == null && b != null || a != null && b == null){
-            equal = false;
-            return this;
-        }
-        if(!deep){
-            return append(a, b);
-        }
-        if(a.getClass().isAssignableFrom(b.getClass())){
-            equal = false;
-            return this;
-        }
-        try {
-            for(Field f : a.getClass().getDeclaredFields()) {
-                if(!new EqualsBuilder().append(f.get(a), f.get(b)).equal) {
-                    equal = false;
-                    break;
-                }
-            }
-        } catch(IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        equal = CommonUtils.compare(a, b);
         return this;
     }
 
@@ -98,49 +70,6 @@ public class EqualsBuilder {
             return this;
         }
         equal = (a == b);
-        return this;
-    }
-
-    public EqualsBuilder append(Object[] a, Object[] b) {
-        if(!equal){
-            return this;
-        }
-        if(a == null && b != null || a != null && b == null){
-            equal = false;
-            return this;
-        }
-        if(a.length != b.length) {
-            equal = false;
-            return this;
-        }
-        for(Object oa : a){
-            for(Object ob : b){
-                if(!oa.equals(ob)){
-                    equal = false;
-                    break;
-                }
-            }
-        }
-        return this;
-    }
-
-    public EqualsBuilder append(Object[] a, Object[] b, boolean deep) {
-        if(!equal){
-            return this;
-        }
-        if(a == null && b != null || a != null && b == null){
-            equal = false;
-            return this;
-        }
-        if(a.length != b.length) {
-            equal = false;
-            return this;
-        }
-        for(Object oa : a){
-            for(Object ob : b){
-                append(oa, ob, deep);
-            }
-        }
         return this;
     }
 
