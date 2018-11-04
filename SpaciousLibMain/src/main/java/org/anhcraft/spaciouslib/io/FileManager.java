@@ -150,10 +150,34 @@ public class FileManager {
     }
 
     /**
-     * Copies this file into another directory
-     * @param output an another file
+     * Copies the data of this file into another file or copy this file to another directory
+     * @param output another file or directory
      */
     public void copy(File output) throws IOException {
-        new FileManager(output).create().write(read());
+        if(output.isDirectory()) {
+            new DirectoryManager(output).mkdirs();
+            new FileManager(new File(output, file.getName())).create().write(read());
+        } else {
+            new FileManager(output).create().write(read());
+        }
+    }
+
+    /**
+     * Copies the data of this file into another file or copy this file to another directory
+     * @param output another file or directory
+     * @param override override the existing file or not
+     */
+    public void copy(File output, boolean override) throws IOException {
+        if(output.isDirectory()) {
+            new DirectoryManager(output).mkdirs();
+            File f = new File(output, file.getName());
+            if(!f.exists() || override) {
+                new FileManager(f).create().write(read());
+            }
+        } else {
+            if(!output.exists() || override) {
+                new FileManager(output).create().write(read());
+            }
+        }
     }
 }
