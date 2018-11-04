@@ -84,7 +84,9 @@ public class DirectoryManager {
      * @return this object
      */
     public DirectoryManager copy(File output) throws IOException {
-        handleCopy(this.directory, output, pathname -> true);
+        ExceptionThrower.ifTrue(output.exists() && !output.isDirectory(), new Exception("The output file object doesn't represents for a directory"));
+        new DirectoryManager(output).mkdir();
+        handleCopy(this.directory, output, pathname -> true, true);
         return this;
     }
 
@@ -96,36 +98,53 @@ public class DirectoryManager {
      */
     public DirectoryManager copy(File output, FileFilter filter) throws IOException {
         ExceptionThrower.ifTrue(output.exists() && !output.isDirectory(), new Exception("The output file object doesn't represents for a directory"));
-        mkdir();
         new DirectoryManager(output).mkdir();
-        handleCopy(this.directory, output, filter);
+        handleCopy(this.directory, output, filter, true);
         return this;
     }
 
-    private static void handleCopy(File directory, File output, FileFilter filter) throws IOException {
-        // gets list of files in that directory
+    /**
+     * Copies this directory and its child directories into another directory.<br>
+     * @param output an output directory
+     * @param override override existing files or not
+     * @return this object
+     */
+    public DirectoryManager copy(File output, boolean override) throws IOException {
+        ExceptionThrower.ifTrue(output.exists() && !output.isDirectory(), new Exception("The output file object doesn't represents for a directory"));
+        new DirectoryManager(output).mkdir();
+        handleCopy(this.directory, output, pathname -> true, override);
+        return this;
+    }
+
+    /**
+     * Copies this directory and its child directories into another directory.<br>
+     * @param output an output directory
+     * @param filter a file filter
+     * @param override override existing files or not
+     * @return this object
+     */
+    public DirectoryManager copy(File output, FileFilter filter, boolean override) throws IOException {
+        ExceptionThrower.ifTrue(output.exists() && !output.isDirectory(), new Exception("The output file object doesn't represents for a directory"));
+        new DirectoryManager(output).mkdir();
+        handleCopy(this.directory, output, filter, override);
+        return this;
+    }
+
+    private static void handleCopy(File directory, File output, FileFilter filter, boolean override) throws IOException {
         for(File f : directory.listFiles(filter)){
-            // gets the child output file object which is located at that output directory
-            // and named same as the name of this file
             File out = new File(output, f.getName());
-            // checks whether this file object represents for a normal file
             if(f.isFile()){
-                // copies this file to the child output file
-                // the child output file will be created automatically if it doesn't exist
-                new FileManager(f).copy(out);
+                new FileManager(f).copy(out, override);
             }
-            // checks whether this file object represents for a directory
             else if(f.isDirectory()){
-                // creates the child output directory
                 new DirectoryManager(out).mkdir();
-                // calls this method again which is handled in the child output directory
-                handleCopy(f, out, filter);
+                handleCopy(f, out, filter, override);
             }
         }
     }
 
     /**
-     * Cleans all the files and directories inside this directory
+     * Clean all files and directories inside this directory
      * @return this object
      */
     public DirectoryManager clean(){
