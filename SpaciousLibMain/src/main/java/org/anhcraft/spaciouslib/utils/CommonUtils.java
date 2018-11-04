@@ -1,6 +1,8 @@
 package org.anhcraft.spaciouslib.utils;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -685,5 +687,86 @@ public class CommonUtils {
             narray[i] = array[array.length-i-1];
         }
         return narray;
+    }
+
+    /**
+     * Compares two given objects
+     * @param a the first object
+     * @param b the second object
+     * @return true if they're equal
+     */
+    public static boolean compare(Object a, Object b){
+        if(a.getClass().isArray()){
+            if(b.getClass().isArray()){
+                if(a.getClass().getComponentType().equals(b.getClass().getComponentType())){
+                    if(Array.getLength(a) != Array.getLength(b)){
+                        return false;
+                    }
+                    for(int i = 0; i < Array.getLength(a); i++){
+                        if(!compare(Array.get(a, i), Array.get(b, i))){
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        if(!a.getClass().equals(b.getClass())){
+            return false;
+        }
+        if(a instanceof String){
+            return a.equals(b);
+        }
+        else if(a instanceof Integer){
+            return ((Integer) a).intValue() == ((Integer) b).intValue();
+        }
+        else if(a instanceof Byte){
+            return ((Byte) a).byteValue() == ((Byte) b).byteValue();
+        }
+        else if(a instanceof Float){
+            return ((Float) a).floatValue() == ((Float) b).floatValue();
+        }
+        else if(a instanceof Short){
+            return ((Short) a).shortValue() == ((Short) b).shortValue();
+        }
+        else if(a instanceof Long){
+            return ((Long) a).longValue() == ((Long) b).longValue();
+        }
+        else if(a instanceof Double){
+            return ((Double) a).doubleValue() == ((Double) b).doubleValue();
+        }
+        else if(a instanceof Character){
+            return ((Character) a).charValue() == ((Character) b).charValue();
+        }
+        else if(a instanceof Boolean){
+            return ((Boolean) a).booleanValue() == ((Boolean) b).booleanValue();
+        } else {
+            try {
+                for(Field f : a.getClass().getDeclaredFields()) {
+                    f.setAccessible(true);
+                    if(!Modifier.isStatic(f.getModifiers())) {
+                        if(Object.class.isAssignableFrom(f.getType())) {
+                            if(!compare(f.get(a), f.get(b))){
+                                System.out.println(f.getName());
+                                return false;
+                            }
+                        } else {
+                            if(!compare(PrimitiveUtils.toObject(f.get(a), f.getType()), PrimitiveUtils.toObject(f.get(b), f.getType()))){
+                                System.out.println(f.getName());
+                                return false;
+                            }
+                        }
+                    }
+                }
+            } catch(IllegalAccessException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
     }
 }
