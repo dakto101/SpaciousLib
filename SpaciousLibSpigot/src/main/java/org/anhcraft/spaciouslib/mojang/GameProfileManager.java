@@ -3,6 +3,7 @@ package org.anhcraft.spaciouslib.mojang;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import org.anhcraft.spaciouslib.utils.ClassFinder;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
@@ -49,19 +50,12 @@ public class GameProfileManager {
      * @param entity the human entity
      */
     public GameProfileManager(HumanEntity entity){
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> craftHumanEntityClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftHumanEntity");
-            Class<?> nmsEntityHumanClass = Class.forName("net.minecraft.server." + v + ".EntityHuman");
-            Object craftHumanEntity = ReflectionUtils.cast(craftHumanEntityClass, entity);
-            Object entityHuman = ReflectionUtils.getMethod("getHandle", craftHumanEntityClass, craftHumanEntity);
-            GameProfile gp = (GameProfile) ReflectionUtils.getMethod("getProfile", nmsEntityHumanClass, entityHuman);
-            this.gp = new GameProfile(gp.getId(), gp.getName());
-            setProperties(gp.getProperties());
-            setLegacy(gp.isLegacy());
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        Object craftHumanEntity = ReflectionUtils.cast(ClassFinder.CB.CraftHumanEntity, entity);
+        Object entityHuman = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftHumanEntity, craftHumanEntity);
+        GameProfile gp = (GameProfile) ReflectionUtils.getMethod("getProfile", ClassFinder.NMS.EntityHuman, entityHuman);
+        this.gp = new GameProfile(gp.getId(), gp.getName());
+        setProperties(gp.getProperties());
+        setLegacy(gp.isLegacy());
     }
 
     /**
@@ -163,7 +157,6 @@ public class GameProfileManager {
      * @return this object
      */
     public GameProfileManager apply(HumanEntity entity){
-        String v = GameVersion.getVersion().toString();
         LinkedHashMap<GameVersion, String> vars = new LinkedHashMap<>();
         vars.put(GameVersion.v1_8_R1, "bF");
         vars.put(GameVersion.v1_8_R2, "bH");
@@ -175,15 +168,9 @@ public class GameProfileManager {
         vars.put(GameVersion.v1_12_R1, "g");
         vars.put(GameVersion.v1_13_R1, "h");
         vars.put(GameVersion.v1_13_R2, "h");
-        try {
-            Class<?> craftHumanEntityClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftHumanEntity");
-            Class<?> nmsEntityHumanClass = Class.forName("net.minecraft.server." + v + ".EntityHuman");
-            Object craftHumanEntity = ReflectionUtils.cast(craftHumanEntityClass, entity);
-            Object entityHuman = ReflectionUtils.getMethod("getHandle", craftHumanEntityClass, craftHumanEntity);
-            ReflectionUtils.setField(vars.get(GameVersion.getVersion()), nmsEntityHumanClass, entityHuman, this.gp);
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        Object craftHumanEntity = ReflectionUtils.cast(ClassFinder.CB.CraftHumanEntity, entity);
+        Object entityHuman = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftHumanEntity, craftHumanEntity);
+        ReflectionUtils.setField(vars.get(GameVersion.getVersion()), ClassFinder.NMS.EntityHuman, entityHuman, this.gp);
         return this;
     }
 

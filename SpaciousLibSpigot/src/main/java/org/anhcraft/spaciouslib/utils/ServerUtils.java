@@ -37,15 +37,8 @@ public class ServerUtils {
      * @return an array contains three recent TPS
      */
     public static double[] getTPS(){
-        try{
-            Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");
-            Class<?> nmsServerClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".MinecraftServer");
-            Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
-            Object nmsServer = ReflectionUtils.getMethod("getServer", craftServerClass, craftServer);
-            return (double[]) ReflectionUtils.getField("recentTps", nmsServerClass, nmsServer);
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return new double[]{-1, -1, -1};
+        Object craftServer = ReflectionUtils.cast(ClassFinder.CB.CraftServer, Bukkit.getServer());
+        Object nmsServer = ReflectionUtils.getMethod("getServer", ClassFinder.CB.CraftServer, craftServer);
+        return (double[]) ReflectionUtils.getField("recentTps", ClassFinder.NMS.MinecraftServer, nmsServer);
     }
 }

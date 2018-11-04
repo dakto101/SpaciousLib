@@ -100,51 +100,45 @@ public class BossBar {
         task = new BukkitRunnable() {
             @Override
             public void run() {
-                try {
-                    String v = GameVersion.getVersion().toString();
-                    Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
-                    for(UUID uuid : viewers){
-                        Player player = Bukkit.getServer().getPlayer(uuid);
-                        if(!locationTracker.containsKey(uuid)){
-                            locationTracker.put(uuid, LocationUtils.loc2str(player.getLocation()));
+                for(UUID uuid : viewers){
+                    Player player = Bukkit.getServer().getPlayer(uuid);
+                    if(!locationTracker.containsKey(uuid)){
+                        locationTracker.put(uuid, LocationUtils.loc2str(player.getLocation()));
+                        return;
+                    }
+                    if(entities.containsKey(uuid)) {
+                        Location old = LocationUtils.str2loc(locationTracker.get(uuid));
+                        // if a player has teleported to a new world
+                        // we will remove the bar of that player and add it again
+                        // the dragon will teleport to the new world
+                        if(!old.getWorld().getName().equals(player.getWorld().getName())){
+                            remove(uuid);
+                            add(uuid);
                             return;
                         }
-                        if(entities.containsKey(uuid)) {
-                            Location old = LocationUtils.str2loc(locationTracker.get(uuid));
-                            // if a player has teleported to a new world
-                            // we will remove the bar of that player and add it again
-                            // the dragon will teleport to the new world
-                            if(!old.getWorld().getName().equals(player.getWorld().getName())){
-                                remove(uuid);
-                                add(uuid);
-                                return;
-                            }
-                            // if the player just move around the world, we will send a teleport packet
-                            // to tell the client to update the location of the dragon
-                            locationTracker.put(uuid, LocationUtils.loc2str(player.getLocation()));
-                            Location location = player.getLocation().getDirection().multiply(64).subtract(player.getLocation().toVector()).toLocation(player.getWorld());
-                            Object nmsEntityDragon = entities.get(uuid).getA();
-                            ReflectionUtils.getMethod("setLocation", nmsEntityClass, nmsEntityDragon, new Group<>(
-                                            new Class<?>[]{
-                                                    double.class,
-                                                    double.class,
-                                                    double.class,
-                                                    float.class,
-                                                    float.class,
-                                            }, new Object[]{
-                                            location.getX(),
-                                            location.getY(),
-                                            location.getZ(),
-                                            location.getYaw(),
-                                            location.getPitch(),
-                                    })
-                            );
-                            entities.put(uuid, entities.get(uuid).setA(nmsEntityDragon));
-                            EntityTeleport.create(nmsEntityDragon).sendPlayer(player);
-                        }
+                        // if the player just move around the world, we will send a teleport packet
+                        // to tell the client to update the location of the dragon
+                        locationTracker.put(uuid, LocationUtils.loc2str(player.getLocation()));
+                        Location location = player.getLocation().getDirection().multiply(64).subtract(player.getLocation().toVector()).toLocation(player.getWorld());
+                        Object nmsEntityDragon = entities.get(uuid).getA();
+                        ReflectionUtils.getMethod("setLocation", ClassFinder.NMS.Entity, nmsEntityDragon, new Group<>(
+                                        new Class<?>[]{
+                                                double.class,
+                                                double.class,
+                                                double.class,
+                                                float.class,
+                                                float.class,
+                                        }, new Object[]{
+                                        location.getX(),
+                                        location.getY(),
+                                        location.getZ(),
+                                        location.getYaw(),
+                                        location.getPitch(),
+                                })
+                        );
+                        entities.put(uuid, entities.get(uuid).setA(nmsEntityDragon));
+                        EntityTeleport.create(nmsEntityDragon).sendPlayer(player);
                     }
-                } catch(ClassNotFoundException e) {
-                    e.printStackTrace();
                 }
             }
         }.runTaskTimerAsynchronously(SpaciousLib.instance, 0, 30);
@@ -341,20 +335,14 @@ public class BossBar {
                 removeViewer(viewer);
                 addViewer(viewer);
             } else {
-                try {
-                    String v = GameVersion.getVersion().toString();
-                    Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
-                    Group<Object, Integer> dragonData = this.entities.get(viewer);
-                    Object nmsEntityDragon = dragonData.getA();
-                    ReflectionUtils.getMethod("setCustomName", nmsEntityClass, nmsEntityDragon,
-                            new Group<>(new Class<?>[]{String.class}, new Object[]{this.title})
-                    );
-                    dragonData.setA(nmsEntityDragon);
-                    this.entities.put(viewer, dragonData);
-                    EntityMetadata.create(nmsEntityDragon).sendPlayer(Bukkit.getServer().getPlayer(viewer));
-                } catch(ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+                Group<Object, Integer> dragonData = this.entities.get(viewer);
+                Object nmsEntityDragon = dragonData.getA();
+                ReflectionUtils.getMethod("setCustomName", ClassFinder.NMS.Entity, nmsEntityDragon,
+                        new Group<>(new Class<?>[]{String.class}, new Object[]{this.title})
+                );
+                dragonData.setA(nmsEntityDragon);
+                this.entities.put(viewer, dragonData);
+                EntityMetadata.create(nmsEntityDragon).sendPlayer(Bukkit.getServer().getPlayer(viewer));
             }
         }
         return this;
@@ -390,20 +378,15 @@ public class BossBar {
                 removeViewer(viewer);
                 addViewer(viewer);
             } else {
-                try {
-                    String v = GameVersion.getVersion().toString();
-                    Class<?> nmsEntityLivingClass = Class.forName("net.minecraft.server." + v + ".EntityLiving");
-                    Group<Object, Integer> dragonData = this.entities.get(viewer);
-                    Object nmsEntityDragon = dragonData.getA();
-                    ReflectionUtils.getMethod("setHealth", nmsEntityLivingClass, nmsEntityDragon,
-                            new Group<>(new Class<?>[]{float.class}, new Object[]{this.health})
-                    );
-                    dragonData.setA(nmsEntityDragon);
-                    this.entities.put(viewer, dragonData);
-                    EntityMetadata.create(nmsEntityDragon).sendPlayer(Bukkit.getServer().getPlayer(viewer));
-                } catch(ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+                String v = GameVersion.getVersion().toString();
+                Group<Object, Integer> dragonData = this.entities.get(viewer);
+                Object nmsEntityDragon = dragonData.getA();
+                ReflectionUtils.getMethod("setHealth", ClassFinder.NMS.EntityLiving, nmsEntityDragon,
+                        new Group<>(new Class<?>[]{float.class}, new Object[]{this.health})
+                );
+                dragonData.setA(nmsEntityDragon);
+                this.entities.put(viewer, dragonData);
+                EntityMetadata.create(nmsEntityDragon).sendPlayer(Bukkit.getServer().getPlayer(viewer));
             }
         }
         return this;
@@ -427,18 +410,9 @@ public class BossBar {
     
     private BossBar add(UUID uuid){
         Player viewer = Bukkit.getServer().getPlayer(uuid);
-        String v = GameVersion.getVersion().toString();
         try {
-            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "IChatBaseComponent$") + "ChatSerializer");
-            Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent");
-            Object title = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
-                    new Group<>(
-                            new Class<?>[]{String.class},
-                            new String[]{
-                                    CommonUtils.isValidJSON(this.title) ? this.title :
-                                            "{\"text\": \"" + Chat.color(this.title) + "\"}"
-                            }
-                    ));
+            Object title = ReflectionUtils.getStaticMethod("a", ClassFinder.NMS.ChatSerializer,
+                    new Group<>(new Class<?>[]{String.class}, new String[]{CommonUtils.isValidJSON(this.title) ? this.title : "{\"text\": \"" + Chat.color(this.title) + "\"}"}));
 
             if(this.health < 0){
                 this.health = 0;
@@ -448,30 +422,25 @@ public class BossBar {
             }
 
             if(GameVersion.is1_9Above()){
-                Class<?> bossBarPacketClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutBoss");
-                Class<?> bossBarActionClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutBoss$Action");
-                Class<?> bossBattleClass = Class.forName("net.minecraft.server." + v + ".BossBattle");
-                Class<?> abstractedbossBattleClass = Class.forName(
+                Class<?> abstractbossBattleClass = Class.forName(
                         "org.anhcraft.spaciouslib.entity.bossbar.BossBattle_" +
                                 GameVersion.getVersion().toString().replace("v", ""));
-                Class<?> barColorClass = Class.forName("net.minecraft.server." + v + ".BossBattle$BarColor");
-                Class<?> barStyleClass = Class.forName("net.minecraft.server." + v + ".BossBattle$BarStyle");
-                Object bossBarAction = ReflectionUtils.getEnum("ADD", bossBarActionClass);
-                Object barColor = ReflectionUtils.getEnum(this.color.toString(), barColorClass);
-                Object barStyle = ReflectionUtils.getEnum(this.style.toString(), barStyleClass);
-                Object bossBattle = ReflectionUtils.getConstructor(abstractedbossBattleClass, new Group<>(
-                        new Class<?>[]{UUID.class, chatBaseComponentClass, barColorClass, barStyleClass},
+                Object bossBarAction = ReflectionUtils.getEnum("ADD", ClassFinder.NMS.BossAction);
+                Object barColor = ReflectionUtils.getEnum(this.color.toString(), ClassFinder.NMS.BarColor);
+                Object barStyle = ReflectionUtils.getEnum(this.style.toString(), ClassFinder.NMS.BarStyle);
+                Object bossBattle = ReflectionUtils.getConstructor(abstractbossBattleClass, new Group<>(
+                        new Class<?>[]{UUID.class, ClassFinder.NMS.IChatBaseComponent, ClassFinder.NMS.BarColor, ClassFinder.NMS.BarStyle},
                         new Object[]{UUID.randomUUID(), title, barColor, barStyle}
                 ));
-                ReflectionUtils.setField("b", bossBattleClass, bossBattle, this.health);
-                ReflectionUtils.setField("e", bossBattleClass, bossBattle,
+                ReflectionUtils.setField("b", ClassFinder.NMS.BossBattle, bossBattle, this.health);
+                ReflectionUtils.setField("e", ClassFinder.NMS.BossBattle, bossBattle,
                         this.flags.contains(Flag.DARKEN_SKY));
-                ReflectionUtils.setField("f", bossBattleClass, bossBattle,
+                ReflectionUtils.setField("f", ClassFinder.NMS.BossBattle, bossBattle,
                         this.flags.contains(Flag.PLAY_BOSS_MUSIC));
-                ReflectionUtils.setField("g", bossBattleClass, bossBattle,
+                ReflectionUtils.setField("g", ClassFinder.NMS.BossBattle, bossBattle,
                         this.flags.contains(Flag.CREATE_FOG));
-                Object packet = ReflectionUtils.getConstructor(bossBarPacketClass, new Group<>(
-                        new Class<?>[]{bossBarActionClass, bossBattleClass},
+                Object packet = ReflectionUtils.getConstructor(ClassFinder.NMS.PacketPlayOutBoss, new Group<>(
+                        new Class<?>[]{ClassFinder.NMS.BossAction, ClassFinder.NMS.BossBattle},
                         new Object[]{bossBarAction, bossBattle}
                 ));
                 new PacketSender(packet).sendPlayer(viewer);
@@ -482,22 +451,16 @@ public class BossBar {
                 // 1.8 versions doesn't have boss bar packet so we need to spawn a fake ender dragon
                 // don't try to visible the dragon because it doesn't work after many testing times
 
-                Class<?> entityEnderDragonClass = Class.forName("net.minecraft.server." + v + ".EntityEnderDragon");
-                Class<?> craftWorldClass = Class.forName("org.bukkit.craftbukkit." + v + ".CraftWorld");
-                Class<?> nmsWorldClass = Class.forName("net.minecraft.server." + v + ".World");
-                Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
-                Class<?> nmsEntityLivingClass = Class.forName("net.minecraft.server." + v + ".EntityLiving");
-
                 // why -64? to make the ender dragon move behind the viewer
                 Location location = viewer.getLocation().getDirection().multiply(64).subtract(viewer.getLocation().toVector()).toLocation(viewer.getWorld());
-                Object craftWorld = ReflectionUtils.cast(craftWorldClass, location.getWorld());
-                Object nmsWorld = ReflectionUtils.getMethod("getHandle", craftWorldClass, craftWorld);
+                Object craftWorld = ReflectionUtils.cast(ClassFinder.CB.CraftWorld, location.getWorld());
+                Object nmsWorld = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftWorld, craftWorld);
 
-                Object nmsEntityDragon = ReflectionUtils.getConstructor(entityEnderDragonClass, new Group<>(
-                        new Class<?>[]{nmsWorldClass},
+                Object nmsEntityDragon = ReflectionUtils.getConstructor(ClassFinder.NMS.EntityEnderDragon, new Group<>(
+                        new Class<?>[]{ClassFinder.NMS.World},
                         new Object[]{nmsWorld}
                 ));
-                ReflectionUtils.getMethod("setLocation", nmsEntityClass, nmsEntityDragon, new Group<>(
+                ReflectionUtils.getMethod("setLocation", ClassFinder.NMS.Entity, nmsEntityDragon, new Group<>(
                         new Class<?>[]{
                                 double.class,
                                 double.class,
@@ -512,17 +475,17 @@ public class BossBar {
                             location.getPitch(),
                         }
                 ));
-                ReflectionUtils.getMethod("setCustomName", nmsEntityClass, nmsEntityDragon,
+                ReflectionUtils.getMethod("setCustomName", ClassFinder.NMS.Entity, nmsEntityDragon,
                         new Group<>(new Class<?>[]{String.class}, new Object[]{this.title})
                 );
-                float maxHealth = (float) ReflectionUtils.getMethod("getMaxHealth", nmsEntityLivingClass, nmsEntityDragon);
+                float maxHealth = (float) ReflectionUtils.getMethod("getMaxHealth", ClassFinder.NMS.EntityLiving, nmsEntityDragon);
                 float health = maxHealth * this.health;
-                ReflectionUtils.getMethod("setHealth", nmsEntityLivingClass, nmsEntityDragon,
+                ReflectionUtils.getMethod("setHealth", ClassFinder.NMS.EntityLiving, nmsEntityDragon,
                         new Group<>(new Class<?>[]{float.class}, new Object[]{health})
                 );
                 LivingEntitySpawn.create(nmsEntityDragon).sendPlayer(viewer);
 
-                int id = (int) ReflectionUtils.getMethod("getId", nmsEntityClass, nmsEntityDragon);
+                int id = (int) ReflectionUtils.getMethod("getId", ClassFinder.NMS.Entity, nmsEntityDragon);
                 this.entities.put(uuid, new Group<>(nmsEntityDragon, id));
                 this.locationTracker.put(uuid, LocationUtils.loc2str(viewer.getLocation()));
             }
@@ -533,26 +496,18 @@ public class BossBar {
     }
 
     private BossBar remove(UUID viewer){
-        String v = GameVersion.getVersion().toString();
-        try {
-            if(GameVersion.is1_9Above()) {
-                Class<?> bossBarPacketClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutBoss");
-                Class<?> bossBarActionClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutBoss$Action");
-                Class<?> bossBattleClass = Class.forName("net.minecraft.server." + v + ".BossBattle");
-                Object bossBarAction = ReflectionUtils.getEnum("REMOVE", bossBarActionClass);
-                Object packet = ReflectionUtils.getConstructor(bossBarPacketClass, new Group<>(
-                        new Class<?>[]{bossBarActionClass, bossBattleClass},
-                        new Object[]{bossBarAction, bossBattles.get(viewer)}
-                ));
-                new PacketSender(packet).sendPlayer(Bukkit.getServer().getPlayer(viewer));
-                this.bossBattles.remove(viewer);
-            } else {
-                EntityDestroy.create(this.entities.get(viewer).getB());
-                this.entities.remove(viewer);
-                this.locationTracker.remove(viewer);
-            }
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
+        if(GameVersion.is1_9Above()) {
+            Object bossBarAction = ReflectionUtils.getEnum("REMOVE", ClassFinder.NMS.BossAction);
+            Object packet = ReflectionUtils.getConstructor(ClassFinder.NMS.PacketPlayOutBoss, new Group<>(
+                    new Class<?>[]{ClassFinder.NMS.BossAction, ClassFinder.NMS.BossBattle},
+                    new Object[]{bossBarAction, bossBattles.get(viewer)}
+            ));
+            new PacketSender(packet).sendPlayer(Bukkit.getServer().getPlayer(viewer));
+            this.bossBattles.remove(viewer);
+        } else {
+            EntityDestroy.create(this.entities.get(viewer).getB());
+            this.entities.remove(viewer);
+            this.locationTracker.remove(viewer);
         }
         return this;
     }

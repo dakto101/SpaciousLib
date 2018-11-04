@@ -28,34 +28,26 @@ public class PlayerList {
     }
 
     private static PacketSender build(String header, String footer) {
-        String v = GameVersion.getVersion().toString();
         String a = "a";
         String b = "b";
         if(GameVersion.getVersion().equals(GameVersion.v1_13_R2)){
             a = "header";
             b = "footer";
         }
-        try {
-            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "IChatBaseComponent$") + "ChatSerializer");
-            Class<?> packetPlayOutPlayerListHeaderFooterClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutPlayerListHeaderFooter");
-            Object chatBaseComponentHeader = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
-                    new Group<>(
-                            new Class<?>[]{String.class},
-                            new String[]{header}
-                    ));
-            Object chatBaseComponentFooter = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
-                    new Group<>(
-                            new Class<?>[]{String.class},
-                            new String[]{footer}
-                    ));
-            Object packet = ReflectionUtils.getConstructor(packetPlayOutPlayerListHeaderFooterClass);
-            ReflectionUtils.setField(a, packetPlayOutPlayerListHeaderFooterClass, packet, chatBaseComponentHeader);
-            ReflectionUtils.setField(b, packetPlayOutPlayerListHeaderFooterClass, packet, chatBaseComponentFooter);
-            return new PacketSender(packet);
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Object chatBaseComponentHeader = ReflectionUtils.getStaticMethod("a", ClassFinder.NMS.ChatSerializer,
+                new Group<>(
+                        new Class<?>[]{String.class},
+                        new String[]{header}
+                ));
+        Object chatBaseComponentFooter = ReflectionUtils.getStaticMethod("a", ClassFinder.NMS.ChatSerializer,
+                new Group<>(
+                        new Class<?>[]{String.class},
+                        new String[]{footer}
+                ));
+        Object packet = ReflectionUtils.getConstructor(ClassFinder.NMS.PacketPlayOutPlayerListHeaderFooter);
+        ReflectionUtils.setField(a, ClassFinder.NMS.PacketPlayOutPlayerListHeaderFooter, packet, chatBaseComponentHeader);
+        ReflectionUtils.setField(b, ClassFinder.NMS.PacketPlayOutPlayerListHeaderFooter, packet, chatBaseComponentFooter);
+        return new PacketSender(packet);
     }
 
     /**

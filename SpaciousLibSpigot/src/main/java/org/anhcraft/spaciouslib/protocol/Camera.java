@@ -1,6 +1,6 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.ClassFinder;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.entity.Entity;
 
@@ -23,15 +23,8 @@ public class Camera {
      * @return PacketSender object
      */
     public static PacketSender create(int entityId) {
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> packetClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutCamera");
-            Object camera = ReflectionUtils.getConstructor(packetClass);
-            ReflectionUtils.setField("a", packetClass, camera, entityId);
-            return new PacketSender(camera);
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        Object camera = ReflectionUtils.getConstructor(ClassFinder.NMS.PacketPlayOutCamera);
+        ReflectionUtils.setField("a", ClassFinder.NMS.PacketPlayOutCamera, camera, entityId);
         return null;
     }
 }
