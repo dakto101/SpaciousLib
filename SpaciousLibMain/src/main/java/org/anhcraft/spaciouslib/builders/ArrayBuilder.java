@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.builders;
 
+import org.anhcraft.spaciouslib.utils.ExceptionThrower;
 import org.anhcraft.spaciouslib.utils.PrimitiveType;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 
@@ -14,6 +15,13 @@ public class ArrayBuilder {
         this.clazz = clazz;
         array = Array.newInstance(clazz, 0);
         size = 0;
+    }
+
+    public ArrayBuilder(Object array){
+        ExceptionThrower.ifFalse(array.getClass().isArray(), new Exception("Object is not an array"));
+        clazz = array.getClass().getComponentType();
+        this.array = array;
+        size = Array.getLength(array);
     }
 
     public ArrayBuilder append(Object obj){
