@@ -11,13 +11,13 @@ import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
  */
 public abstract class Placeholder {
     /**
-     * Gets the placeholder (e.g: {player_name})
+     * Returns the placeholder (e.g: {player_name})
      * @return the placeholder
      */
     public abstract String getPlaceholder();
 
     /**
-     * Gets the value of this placeholder with the given player
+     * Returns the replaced text which dedicated to the given player
      * @param player the player
      * @return the replaced text, returns null if you want to prevent replace
      */
