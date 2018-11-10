@@ -253,6 +253,36 @@ public class ArrayBuilder {
         }
     }
 
+    public ArrayBuilder append(char v){
+        if(clazz.isAssignableFrom(char.class)){
+            char[] n = (char[]) Array.newInstance(char.class, size+1);
+            System.arraycopy(array, 0, n, 0, size);
+            n[size] = v;
+            array = n;
+            size++;
+            return this;
+        } else {
+            return append(ReflectionUtils.cast(PrimitiveType.getObjectClass(char.class), v));
+        }
+    }
+
+    public ArrayBuilder append(char... chars){
+        if(clazz.isAssignableFrom(char.class)) {
+            char[] n = (char[]) Array.newInstance(char.class, size + chars.length);
+            System.arraycopy(array, 0, n, 0, size);
+            System.arraycopy(chars, 0, n, size, chars.length);
+            array = n;
+            size += chars.length;
+            return this;
+        } else {
+            Class<?> c = PrimitiveType.getObjectClass(char.class);
+            for(char v : chars){
+                append(ReflectionUtils.cast(c, v));
+            }
+            return this;
+        }
+    }
+
     public Object build(){
         return array;
     }
