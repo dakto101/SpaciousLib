@@ -9,17 +9,43 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 /**
  * A class helps you to send messages or color them
  */
 public class Chat {
     /**
      * Colors the given string
-     * @param text a text string
-     * @return the colored message
+     * @param text a string
+     * @return colored string
      */
     public static String color(String text){
         return ChatColor.translateAlternateColorCodes('&', text);
+    }
+
+    /**
+     * Colors the given array of strings
+     * @param array an array of strings
+     * @return colored array of strings
+     */
+    public static String[] color(String[] array){
+        for(int i = 0; i < array.length; i++){
+            array[i] = ChatColor.translateAlternateColorCodes('&', array[i]);
+        }
+        return array;
+    }
+
+    /**
+     * Colors the given list of strings
+     * @param list a list of strings
+     * @return colored list of strings
+     */
+    public static List<String> color(List<String> list){
+        for(int i = 0; i < list.size(); i++){
+            list.set(i, ChatColor.translateAlternateColorCodes('&', list.get(i)));
+        }
+        return list;
     }
 
     private String prefix;
