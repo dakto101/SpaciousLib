@@ -129,14 +129,14 @@ public class Table<E> {
     }
 
     /**
-     * Clears all objects
+     * Clears all entries
      */
     public void clear(){
         this.data = (E[][]) new Object[column][row];
     }
 
     /**
-     * Clears object in a specific entry
+     * Clears a specific entry
      * @param column the column index
      * @param row the row index
      */
@@ -147,7 +147,7 @@ public class Table<E> {
     }
 
     /**
-     * Clears all objects in a column
+     * Clears a column
      * @param column the column index
      */
     public void clearAllRows(int column){
@@ -156,7 +156,7 @@ public class Table<E> {
     }
 
     /**
-     * Clears all objects in a row
+     * Clears a row
      * @param row the row index
      */
     public void clearAllColumns(int row){
@@ -167,7 +167,7 @@ public class Table<E> {
     }
 
     /**
-     * Clears all objects in a range of entries
+     * Clears multiple entries
      * @param from the begin index
      * @param length range of entries
      */
@@ -200,7 +200,23 @@ public class Table<E> {
     }
 
     /**
-     * Copies objects in the same column from a range of rows to other rows
+     * Copies objects in a row to other rows
+     * @param srcRow the index of the source row
+     * @param desRows the indexes of destination rows
+     */
+    public void copyRow(int srcRow, int... desRows){
+        ExceptionThrower.ifTrue(srcRow > row, new Exception("Entries are out of bound"));
+        for(int desRow : desRows) {
+            int j = 0;
+            while(j < column) {
+                data[j][desRow] = data[j][srcRow];
+                j++;
+            }
+        }
+    }
+
+    /**
+     * Copies objects in a range of rows to other rows
      * @param srcRow the index of the source row
      * @param desRow the index of the destination row
      * @param range the range of rows will be copied
@@ -220,7 +236,19 @@ public class Table<E> {
     }
 
     /**
-     * Copies objects in the same row from a range of columns to other columns
+     * Copies objects in a column to other columns
+     * @param srcColumn the index of the source column
+     * @param desColumns the indexes of destination columns
+     */
+    public void copyColumn(int srcColumn, int... desColumns){
+        ExceptionThrower.ifTrue(srcColumn > column, new Exception("Entries are out of bound"));
+        for(int desColumn : desColumns){
+            data[desColumn] = data[srcColumn];
+        }
+    }
+
+    /**
+     * Copies objects in a range of columns to other columns
      * @param srcColumn the index of the source column
      * @param desColumn the index of the destination column
      * @param range the range of columns will be copied
@@ -247,7 +275,7 @@ public class Table<E> {
      * Get the number of rows
      * @return the number of rows
      */
-    public long rows(){
+    public int rows(){
         return row;
     }
 
@@ -255,7 +283,7 @@ public class Table<E> {
      * Get the number of columns
      * @return the number of columns
      */
-    public long columns(){
+    public int columns(){
         return column;
     }
 
@@ -406,6 +434,82 @@ public class Table<E> {
         int i = 0;
         while (i < range){
             set(index+i+1, v);
+            i++;
+        }
+    }
+
+    /**
+     * Delete multiple row at a same time
+     * @param rows indexes of rows
+     */
+    public void deleteRow(int... rows){
+        ExceptionThrower.ifTrue(this.row-rows.length < 1, new Exception("Table must have at least one row"));
+        int i = 0;
+        for(int r : rows) {
+            int in = r - i;
+            this.row--;
+            for(int c = 0; c < column; c++) {
+                E[] rowData = (E[]) new Object[this.row];
+                System.arraycopy(this.data[c], 0, rowData, 0, in);
+                System.arraycopy(this.data[c], in + 1, rowData, in, this.row - in);
+                this.data[c] = rowData;
+            }
+            i++;
+        }
+    }
+
+    /**
+     * Delete multiple column at a same time
+     * @param columns indexes of columns
+     */
+    public void deleteColumn(int... columns){
+        ExceptionThrower.ifTrue(this.column-columns.length < 1, new Exception("Table must have at least one column"));
+        int i = 0;
+        for(int c : columns) {
+            int in = c - i;
+            this.column--;
+            E[][] columnData = (E[][]) new Object[this.column][this.row];
+            System.arraycopy(this.data, 0, columnData, 0, in);
+            System.arraycopy(this.data, in + 1, columnData, in, this.column - in);
+            this.data = columnData;
+            i++;
+        }
+    }
+
+    /**
+     * Add multiple rows at a same time.<br>
+     * Once the new row is created, all objects will be moved to the bottom by one row
+     * @param indexes indexes of rows
+     */
+    public void addRow(int... indexes){
+        int i = 0;
+        for(int r : indexes) {
+            int in = r + i;
+            this.row++;
+            for(int c = 0; c < column; c++) {
+                E[] rowData = (E[]) new Object[this.row];
+                System.arraycopy(this.data[c], 0, rowData, 0, in);
+                System.arraycopy(this.data[c], in, rowData, in + 1, this.row - in - 1);
+                this.data[c] = rowData;
+            }
+            i++;
+        }
+    }
+
+    /**
+     * Add multiple columns at a same time.<br>
+     * Once the new column is created, all objects will be moved to the right by one column
+     * @param indexes indexes of columns
+     */
+    public void addColumn(int... indexes){
+        int i = 0;
+        for(int r : indexes) {
+            int in = r + i;
+            this.column++;
+            E[][] columnData = (E[][]) new Object[this.column][this.row];
+            System.arraycopy(this.data, 0, columnData, 0, in);
+            System.arraycopy(this.data, in, columnData, in + 1, this.column - in - 1);
+            this.data = columnData;
             i++;
         }
     }
