@@ -3,6 +3,7 @@ package org.anhcraft.spaciouslib.command;
 /**
  * Represents a command argument implementation.
  */
+@Deprecated
 public class CommandArgument {
     public enum Type{
         /**
