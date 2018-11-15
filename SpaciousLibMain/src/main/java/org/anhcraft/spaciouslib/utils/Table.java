@@ -2,6 +2,7 @@ package org.anhcraft.spaciouslib.utils;
 
 import org.anhcraft.spaciouslib.annotations.DataField;
 import org.anhcraft.spaciouslib.annotations.Serializable;
+import org.anhcraft.spaciouslib.builders.ArrayBuilder;
 import org.anhcraft.spaciouslib.builders.EqualsBuilder;
 import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
 
@@ -33,8 +34,6 @@ public class Table<E> {
      * @param row number of rows
      */
     public Table(int column, int row){
-        ExceptionThrower.ifFalse(column > 0, new Exception("Number of columns must be greater than 0"));
-        ExceptionThrower.ifFalse(row > 0, new Exception("Number of rows must be greater than 0"));
         this.column = column;
         this.row = row;
         this.remain = row*column;
@@ -108,6 +107,16 @@ public class Table<E> {
         ExceptionThrower.ifTrue(column >= this.column, new Exception("Entry is out of bound"));
         ExceptionThrower.ifTrue(row >= this.row, new Exception("Entry is out of bound"));
         data[column][row] = obj;
+    }
+
+    /**
+     * Overrides objects in a range of entries
+     * @param column the column index of the starting entry
+     * @param row the row index of the starting entry
+     * @param objs an array of objects
+     */
+    public void set(int column, int row, E... objs){
+        set(column*row, objs);
     }
 
     /**
@@ -537,5 +546,76 @@ public class Table<E> {
                 .append(this.remain)
                 .append(this.row)
                 .append(this.lastEmptySlot).build();
+    }
+
+    /**
+     * Expand the table by one row on the left side
+     */
+    public void addFirstColumn() {
+        addColumn(0);
+    }
+
+    /**
+     * Expand the table by one row on the top
+     */
+    public void addFirstRow() {
+        addRow(0);
+    }
+
+    /**
+     * Expand the table by one row on the right side
+     */
+    public void addLastColumn() {
+        addColumn(column);
+    }
+
+    /**
+     * Expand the table by one row at the bottom
+     */
+    public void addLastRow() {
+        addRow(row);
+    }
+
+    /**
+     * Convert all entries inside the table into an array.<br>
+     * The method will loop through columns and then move to the next row
+     * @return array of entries
+     */
+    public E[] toArray(){
+        ArrayBuilder array = new ArrayBuilder(Object.class);
+        for(int r = 0; r < row; r++){
+            for(int c = 0; c < column; c++){
+                array.append(data[c][r]);
+            }
+        }
+        return (E[]) array.build();
+    }
+
+    /**
+     * Convert all entries inside the given column into an array.
+     * @param column the column index
+     * @return array of entries
+     */
+    public E[] toArrayOfRows(int column){
+        ExceptionThrower.ifTrue(column >= this.column, new Exception("Entries are out of bound"));
+        ArrayBuilder array = new ArrayBuilder(Object.class);
+        for(int r = 0; r < row; r++){
+            array.append(data[column][r]);
+        }
+        return (E[]) array.build();
+    }
+
+    /**
+     * Convert all entries inside the given row into an array.
+     * @param row the row index
+     * @return array of entries
+     */
+    public E[] toArrayOfColumns(int row){
+        ExceptionThrower.ifTrue(row >= this.row, new Exception("Entries are out of bound"));
+        ArrayBuilder array = new ArrayBuilder(Object.class);
+        for(int c = 0; c < column; c++){
+            array.append(data[c][row]);
+        }
+        return (E[]) array.build();
     }
 }
