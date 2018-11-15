@@ -286,4 +286,8 @@ public class ArrayBuilder {
     public Object build(){
         return array;
     }
+
+    public int length(){
+        return size;
+    }
 }
