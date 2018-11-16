@@ -7,16 +7,10 @@ import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.listeners.*;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
 import org.anhcraft.spaciouslib.placeholder.PlaceholderAPI;
-import org.anhcraft.spaciouslib.serialization.serializers.ItemMetaSerializer;
-import org.anhcraft.spaciouslib.serialization.serializers.ItemStackSerializer;
-import org.anhcraft.spaciouslib.serialization.serializers.LocationSerializer;
-import org.anhcraft.spaciouslib.serialization.serializers.VectorSerializer;
+import org.anhcraft.spaciouslib.serialization.serializers.*;
 import org.anhcraft.spaciouslib.tasks.ArmorEquipEventTask;
 import org.anhcraft.spaciouslib.tasks.CachedSkinTask;
-import org.anhcraft.spaciouslib.utils.Chat;
-import org.anhcraft.spaciouslib.utils.PlayerPointsUtils;
-import org.anhcraft.spaciouslib.utils.ProxyUtils;
-import org.anhcraft.spaciouslib.utils.VaultUtils;
+import org.anhcraft.spaciouslib.utils.*;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -42,12 +36,13 @@ public final class SpaciousLib extends JavaPlugin {
         try{
             Class.forName("org.spigotmc.SpigotConfig");
         } catch(ClassNotFoundException e) {
-            getLogger().info("SpaciousLib only works in Spigot-based servers (Spigot, PaperSpigot, etc)");
+            getLogger().info("SpaciousLib only works with Spigot-based servers (Spigot, PaperSpigot, etc)");
             Bukkit.getServer().getPluginManager().disablePlugin(this);
         }
 
         instance = this;
 
+        getLogger().info("Loading configuration...");
         try {
             new DirectoryManager(ROOT_FOLDER).mkdirs();
             new DirectoryManager(SKINS_FOLDER).mkdirs();
@@ -77,7 +72,7 @@ public final class SpaciousLib extends JavaPlugin {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        chat.sendSender("&eInitializing APIs...");
+        chat.sendSender("&eInitializing library...");
         new PlaceholderAPI();
         new SkinAPI();
         new BungeeAPI();
@@ -89,8 +84,20 @@ public final class SpaciousLib extends JavaPlugin {
         new ItemMetaSerializer((byte) 31);
         new LocationSerializer((byte) 32);
         new VectorSerializer((byte) 33);
+        new NBTCompoundSerializer((byte) 34);
+        AnnotationHandler.register(NPCInteractEventListener.class, null);
+        AnnotationHandler.register(AnvilListener.class, null);
 
-        chat.sendSender("&eStarting the tasks...");
+        chat.sendSender("&eLoading NMS/CB classes "+ GameVersion.getVersion().toString() +"...");
+        try {
+            Class.forName("org.anhcraft.spaciouslib.utils.ClassFinder$NMS");
+            Class.forName("org.anhcraft.spaciouslib.utils.ClassFinder$CB");
+        } catch(ClassNotFoundException e) {
+            chat.sendSender("&cGot errors while trying to load NMS/CB classes!");
+            e.printStackTrace();
+        }
+
+        chat.sendSender("&eStarting tasks...");
         if(config.getBoolean("stats", true)){
             new Updater1520156620("1520156620", this);
         }
@@ -101,7 +108,7 @@ public final class SpaciousLib extends JavaPlugin {
             new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 1200);
         }
 
-        chat.sendSender("&eRegistering the listeners...");
+        chat.sendSender("&eRegistering listeners...");
         getServer().getPluginManager().registerEvents(new PlayerJumpEventListener(), this);
         getServer().getPluginManager().registerEvents(new ClickableItemListener(), this);
         getServer().getPluginManager().registerEvents(new BowArrowHitEventListener(), this);
@@ -112,11 +119,11 @@ public final class SpaciousLib extends JavaPlugin {
         if(config.getBoolean("packet_handler", true)) {
             getServer().getPluginManager().registerEvents(new PacketListener(), this);
         }
+
+        chat.sendSender("&eRegistering messaging channel...");
         getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, new BungeeListener());
 
-        AnnotationHandler.register(NPCInteractEventListener.class, null);
-        AnnotationHandler.register(AnvilListener.class, null);
         if(Bukkit.getServer().getPluginManager().isPluginEnabled("Vault")){
             VaultUtils.init();
             if(VaultUtils.isInitialized()) {
@@ -133,6 +140,7 @@ public final class SpaciousLib extends JavaPlugin {
         if(config.getBoolean("dev_mode", false)){
             chat.sendSender("&aSwitched to the development mode!");
             getServer().getPluginManager().registerEvents(new SLDev(), this);
+            getServer().getPluginManager().registerEvents(new SLDev2(), this);
         }
     }
 
