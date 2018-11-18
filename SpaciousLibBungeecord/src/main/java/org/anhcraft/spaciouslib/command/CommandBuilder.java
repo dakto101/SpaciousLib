@@ -13,6 +13,7 @@ import java.util.*;
 /**
  * A command builder helps you to create a new command and register it in runtime
  */
+@Deprecated
 public class CommandBuilder extends CommandString {
     private PluginCommand command;
     private String name;

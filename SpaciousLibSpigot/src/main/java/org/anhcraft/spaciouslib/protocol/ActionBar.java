@@ -31,38 +31,27 @@ public class ActionBar {
         } else {
             text = "{\"text\": \"" + Chat.color(text) + "\"}";
         }
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "IChatBaseComponent$") + "ChatSerializer");
-            Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent");
-            Object chatBaseComponent = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
-                    new Group<>(
-                            new Class<?>[]{String.class},
-                            new String[]{text}
-                    ));
+        Object chatBaseComponent = ReflectionUtils.getStaticMethod("a", ClassFinder.NMS.ChatSerializer,
+                new Group<>(
+                        new Class<?>[]{String.class},
+                        new String[]{text}
+                ));
 
-            // 1.11 above
-            if(GameVersion.is1_11Above()){
-                Class<?> packetPlayOutTitleClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutTitle");
-                Class<?> enumTitleActionClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutTitle$EnumTitleAction");
-                Object enumActionBar = ReflectionUtils.getEnum("ACTIONBAR", enumTitleActionClass);
-                return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutTitleClass, new Group<>(
-                        new Class<?>[]{enumTitleActionClass, chatBaseComponentClass,
-                                int.class, int.class, int.class},
-                        new Object[]{enumActionBar, chatBaseComponent, fadeIn, stay, fadeOut}
-                )));
-            }
-            // 1.8 R1 - 1.10
-            else{
-                Class<?> packetPlayOutChatClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutChat");
-                return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutChatClass, new Group<>(
-                        new Class<?>[]{chatBaseComponentClass, byte.class},
-                        new Object[]{chatBaseComponent, (byte) 2}
-                )));
-            }
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
+        // 1.11 above
+        if(GameVersion.is1_11Above()){
+            Object enumActionBar = ReflectionUtils.getEnum("ACTIONBAR", ClassFinder.NMS.EnumTitleAction);
+            return new PacketSender(ReflectionUtils.getConstructor(ClassFinder.NMS.PacketPlayOutTitle, new Group<>(
+                    new Class<?>[]{ClassFinder.NMS.EnumTitleAction, ClassFinder.NMS.IChatBaseComponent,
+                            int.class, int.class, int.class},
+                    new Object[]{enumActionBar, chatBaseComponent, fadeIn, stay, fadeOut}
+            )));
         }
-        return null;
+        // 1.8 R1 - 1.10
+        else{
+            return new PacketSender(ReflectionUtils.getConstructor(ClassFinder.NMS.PacketPlayOutChat, new Group<>(
+                    new Class<?>[]{ClassFinder.NMS.IChatBaseComponent, byte.class},
+                    new Object[]{chatBaseComponent, (byte) 2}
+            )));
+        }
     }
 }

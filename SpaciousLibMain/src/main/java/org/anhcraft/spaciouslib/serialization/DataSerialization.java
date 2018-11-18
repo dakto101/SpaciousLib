@@ -31,12 +31,15 @@ public abstract class DataSerialization extends DataType {
         new CollectionSerializer((byte) 9);
         new MapSerializer((byte) 10);
         new EnumSerializer((byte) 11);
+        new BoolSerializer((byte) 12);
 
         // 30: ItemStack
         // 31: ItemMeta
         // 32: Location
         // 33: Vector
+        // 34: NBTCompound
 
+        arraySerializersa.put(boolean[].class, new PrimitiveArraySerializer((byte) 118, boolean.class));
         arraySerializersa.put(byte[].class, new PrimitiveArraySerializer((byte) 119, byte.class));
         arraySerializersa.put(char[].class, new PrimitiveArraySerializer((byte) 120, char.class));
         arraySerializersa.put(int[].class, new PrimitiveArraySerializer((byte) 121, int.class));
@@ -204,7 +207,7 @@ public abstract class DataSerialization extends DataType {
                         out.writeByte(type.getIdentifier());
                         if(type instanceof ObjectSerializer){
                             out.writeUTF(value == null ? field.getType()
-                                    .getCanonicalName() : value.getClass().getCanonicalName());
+                                    .getName() : value.getClass().getName());
                         }
                         type.write(out, field.get(obj));
                     }

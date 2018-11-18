@@ -1,6 +1,6 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.ClassFinder;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Location;
@@ -21,22 +21,14 @@ public class BlockBreakAnimation {
         if(stage < 0 || stage > 9){
             stage = 9;
         }
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> blockPositionClass = Class.forName("net.minecraft.server." + v + ".BlockPosition");
-            Class<?> packetPlayOutBlockBreakAnimationClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutBlockBreakAnimation");
-            Object blockPosition = ReflectionUtils.getConstructor(blockPositionClass, new Group<>(
-                    new Class<?>[]{int.class, int.class, int.class},
-                    new Object[]{block.getLocation().getBlockX(), block.getLocation().getBlockY(), block.getLocation().getBlockZ()}
-            ));
-            return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutBlockBreakAnimationClass, new Group<>(
-                    new Class<?>[]{int.class, blockPositionClass, int.class},
-                    new Object[]{id, blockPosition, stage}
-            )));
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Object blockPosition = ReflectionUtils.getConstructor(ClassFinder.NMS.BlockPosition, new Group<>(
+                new Class<?>[]{int.class, int.class, int.class},
+                new Object[]{block.getLocation().getBlockX(), block.getLocation().getBlockY(), block.getLocation().getBlockZ()}
+        ));
+        return new PacketSender(ReflectionUtils.getConstructor(ClassFinder.NMS.PacketPlayOutBlockBreakAnimation, new Group<>(
+                new Class<?>[]{int.class, ClassFinder.NMS.BlockPosition, int.class},
+                new Object[]{id, blockPosition, stage}
+        )));
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.anhcraft.spaciouslib.placeholder;
 
 /**
- * A fixed placeholder will store the value of the placeholder for each online player.<br>
- * So if you replace the fixed placeholder, you will never get the newer data.
+ * A fixed placeholder stores the placeholder value which is same as CachedPlaceholder.<br>
+ * FixedPlaceholder never gets the new data until the plugin is reloaded
  */
 public abstract class FixedPlaceholder extends CachedPlaceholder {}

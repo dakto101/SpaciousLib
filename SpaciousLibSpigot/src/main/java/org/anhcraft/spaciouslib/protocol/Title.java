@@ -33,27 +33,17 @@ public class Title {
         } else {
             text = "{\"text\": \"" + Chat.color(text) + "\"}";
         }
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "IChatBaseComponent$") + "ChatSerializer");
-            Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent");
-            Object chatBaseComponent = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
-                    new Group<>(
-                            new Class<?>[]{String.class},
-                            new String[]{text}
-                    ));
-            Class<?> packetPlayOutTitleClass = Class.forName("net.minecraft.server." + GameVersion.getVersion().toString() + ".PacketPlayOutTitle");
-            Class<?> enumTitleActionClass = Class.forName("net.minecraft.server." + v + "."+(v.equals(GameVersion.v1_8_R1.toString()) ? "" : "PacketPlayOutTitle$")+"EnumTitleAction");
-            Object enumTitle = ReflectionUtils.getEnum(type.toString(), enumTitleActionClass);
-            return new PacketSender(ReflectionUtils.getConstructor(packetPlayOutTitleClass, new Group<>(
-                    new Class<?>[]{enumTitleActionClass, chatBaseComponentClass,
-                            int.class, int.class, int.class},
-                    new Object[]{enumTitle, chatBaseComponent, fadeIn, stay, fadeOut}
-            )));
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Object chatBaseComponent = ReflectionUtils.getStaticMethod("a", ClassFinder.NMS.ChatSerializer,
+                new Group<>(
+                        new Class<?>[]{String.class},
+                        new String[]{text}
+                ));
+        Object enumTitle = ReflectionUtils.getEnum(type.toString(), ClassFinder.NMS.EnumTitleAction);
+        return new PacketSender(ReflectionUtils.getConstructor(ClassFinder.NMS.PacketPlayOutTitle, new Group<>(
+                new Class<?>[]{ClassFinder.NMS.EnumTitleAction, ClassFinder.NMS.IChatBaseComponent,
+                        int.class, int.class, int.class},
+                new Object[]{enumTitle, chatBaseComponent, fadeIn, stay, fadeOut}
+        )));
     }
 
     public enum Type {

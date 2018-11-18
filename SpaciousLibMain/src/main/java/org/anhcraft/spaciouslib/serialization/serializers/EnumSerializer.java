@@ -30,7 +30,7 @@ public class EnumSerializer extends DataType<Enum<?>> {
     @Override
     public void write(DataSerializerStream out, Enum<?> data) throws IOException {
         ExceptionThrower.ifNull(data, new IOException("The given enum mustn't be null."));
-        out.writeUTF(data.getDeclaringClass().getCanonicalName());
+        out.writeUTF(data.getDeclaringClass().getName());
         out.writeUTF(data.name());
     }
 }

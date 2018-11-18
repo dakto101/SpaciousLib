@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.inventory;
 
+import org.anhcraft.spaciouslib.utils.ClassFinder;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
@@ -36,62 +37,51 @@ public class RecipeManager {
      * Unregisters that recipe
      */
     public void unregister(){
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> craftingManagerClass = Class.forName("net.minecraft.server."+v+".CraftingManager");
-            Class<?> recipeClass = Class.forName("net.minecraft.server."+v+".IRecipe");
-            Class<?> registryMaterialClass = Class.forName("net.minecraft.server."+v+".RegistryMaterials");
-
-            if(GameVersion.is1_13Above()) {
-                Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");
-                Class<?> minecraftServerClass = Class.forName("net.minecraft.server."+v+".MinecraftServer");
-                Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
-                Object nmsServer = ReflectionUtils.getMethod("getServer", craftServerClass, craftServer);
-                Object craftingManager = ReflectionUtils.getField("ag", minecraftServerClass, nmsServer);
-                Map<?, ?> recipes = (Map<?, ?>) ReflectionUtils
-                        .getField("recipes", craftingManagerClass, craftingManager);
-                Object k = null;
-                for(Object key : recipes.keySet()) {
-                    Object rcp = recipes.get(key);
-                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, rcp);
-                    if(compare(recipeBukkit)) {
-                        k = key;
-                        break;
-                    }
+        if(GameVersion.is1_13Above()) {
+            Object craftServer = ReflectionUtils.cast(ClassFinder.CB.CraftServer, Bukkit.getServer());
+            Object nmsServer = ReflectionUtils.getMethod("getServer", ClassFinder.CB.CraftServer, craftServer);
+            Object craftingManager = ReflectionUtils.getField("ag", ClassFinder.NMS.MinecraftServer, nmsServer);
+            Map<?, ?> recipes = (Map<?, ?>) ReflectionUtils
+                    .getField("recipes", ClassFinder.NMS.CraftingManager, craftingManager);
+            Object k = null;
+            for(Object key : recipes.keySet()) {
+                Object rcp = recipes.get(key);
+                Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", ClassFinder.NMS.IRecipe, rcp);
+                if(compare(recipeBukkit)) {
+                    k = key;
+                    break;
                 }
-                if(k != null){
-                    recipes.remove(k);
-                }
-            } else if(GameVersion.is1_12Above()) {
-                Object registryMaterials = ReflectionUtils.getStaticField("recipes", craftingManagerClass);
-                List<Recipe> recipes = new ArrayList<>();
-                Iterator<Object> iterator = (Iterator<Object>) ReflectionUtils.getMethod("iterator", registryMaterialClass, registryMaterials);
-                for(; iterator.hasNext(); ) {
-                    Object rcp = iterator.next();
-                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, rcp);
-                    if(!compare(recipeBukkit)) {
-                        recipes.add(recipeBukkit);
-                    }
-                }
-                Bukkit.getServer().clearRecipes();
-                for(Recipe rc : recipes){
-                    Bukkit.getServer().addRecipe(rc);
-                }
-            } else {
-                Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", craftingManagerClass);
-                List<Object> newNmsRecipes = new ArrayList<>();
-                List<Object> nmsRecipes = (List<Object>) ReflectionUtils.getMethod("getRecipes", craftingManagerClass, craftingManager);
-                for(Object nr : nmsRecipes) {
-                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, nr);
-                    if(compare(recipeBukkit)) {
-                        continue;
-                    }
-                    newNmsRecipes.add(nr);
-                }
-                ReflectionUtils.setField("recipes", craftingManagerClass, craftingManager, newNmsRecipes);
             }
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
+            if(k != null){
+                recipes.remove(k);
+            }
+        } else if(GameVersion.is1_12Above()) {
+            Object registryMaterials = ReflectionUtils.getStaticField("recipes", ClassFinder.NMS.CraftingManager);
+            List<Recipe> recipes = new ArrayList<>();
+            Iterator<Object> iterator = (Iterator<Object>) ReflectionUtils.getMethod("iterator", ClassFinder.NMS.RegistryMaterials, registryMaterials);
+            for(; iterator.hasNext(); ) {
+                Object rcp = iterator.next();
+                Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", ClassFinder.NMS.IRecipe, rcp);
+                if(!compare(recipeBukkit)) {
+                    recipes.add(recipeBukkit);
+                }
+            }
+            Bukkit.getServer().clearRecipes();
+            for(Recipe rc : recipes){
+                Bukkit.getServer().addRecipe(rc);
+            }
+        } else {
+            Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", ClassFinder.NMS.CraftingManager);
+            List<Object> newNmsRecipes = new ArrayList<>();
+            List<Object> nmsRecipes = (List<Object>) ReflectionUtils.getMethod("getRecipes", ClassFinder.NMS.CraftingManager, craftingManager);
+            for(Object nr : nmsRecipes) {
+                Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", ClassFinder.NMS.IRecipe, nr);
+                if(compare(recipeBukkit)) {
+                    continue;
+                }
+                newNmsRecipes.add(nr);
+            }
+            ReflectionUtils.setField("recipes", ClassFinder.NMS.CraftingManager, craftingManager, newNmsRecipes);
         }
     }
 
@@ -100,49 +90,38 @@ public class RecipeManager {
      * @return true if yes
      */
     public boolean isRegistered(){
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> craftingManagerClass = Class.forName("net.minecraft.server."+v+".CraftingManager");
-            Class<?> recipeClass = Class.forName("net.minecraft.server."+v+".IRecipe");
-            Class<?> registryMaterialClass = Class.forName("net.minecraft.server."+v+".RegistryMaterials");
-
-            if(GameVersion.is1_13Above()) {
-                Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + GameVersion.getVersion().toString() + ".CraftServer");
-                Class<?> minecraftServerClass = Class.forName("net.minecraft.server."+v+".MinecraftServer");
-                Object craftServer = ReflectionUtils.cast(craftServerClass, Bukkit.getServer());
-                Object nmsServer = ReflectionUtils.getMethod("getServer", craftServerClass, craftServer);
-                Object craftingManager = ReflectionUtils.getField("ag", minecraftServerClass, nmsServer);
-                Map<?, ?> recipes = (Map<?, ?>) ReflectionUtils
-                        .getField("recipes", craftingManagerClass, craftingManager);
-                for(Object key : recipes.keySet()) {
-                    Object rcp = recipes.get(key);
-                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, rcp);
-                    if(compare(recipeBukkit)) {
-                        return true;
-                    }
-                }
-            } else if(GameVersion.is1_12Above()) {
-                Object registryMaterials = ReflectionUtils.getStaticField("recipes", craftingManagerClass);
-                Iterator<Object> iterator = (Iterator<Object>) ReflectionUtils.getMethod("iterator", registryMaterialClass, registryMaterials);
-                for(; iterator.hasNext(); ) {
-                    Object rcp = iterator.next();
-                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, rcp);
-                    if(compare(recipeBukkit)) {
-                        return true;
-                    }
-                }
-            } else {
-                Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", craftingManagerClass);
-                List<Object> nmsRecipes = (List<Object>) ReflectionUtils.getMethod("getRecipes", craftingManagerClass, craftingManager);
-                for(Object nr : nmsRecipes) {
-                    Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", recipeClass, nr);
-                    if(compare(recipeBukkit)) {
-                        return true;
-                    }
+        if(GameVersion.is1_13Above()) {
+            Object craftServer = ReflectionUtils.cast(ClassFinder.CB.CraftServer, Bukkit.getServer());
+            Object nmsServer = ReflectionUtils.getMethod("getServer", ClassFinder.CB.CraftServer, craftServer);
+            Object craftingManager = ReflectionUtils.getField("ag", ClassFinder.NMS.MinecraftServer, nmsServer);
+            Map<?, ?> recipes = (Map<?, ?>) ReflectionUtils
+                    .getField("recipes", ClassFinder.NMS.CraftingManager, craftingManager);
+            for(Object key : recipes.keySet()) {
+                Object rcp = recipes.get(key);
+                Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", ClassFinder.NMS.IRecipe, rcp);
+                if(compare(recipeBukkit)) {
+                    return true;
                 }
             }
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
+        } else if(GameVersion.is1_12Above()) {
+            Object registryMaterials = ReflectionUtils.getStaticField("recipes", ClassFinder.NMS.CraftingManager);
+            Iterator<Object> iterator = (Iterator<Object>) ReflectionUtils.getMethod("iterator", ClassFinder.NMS.RegistryMaterials, registryMaterials);
+            for(; iterator.hasNext(); ) {
+                Object rcp = iterator.next();
+                Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", ClassFinder.NMS.IRecipe, rcp);
+                if(compare(recipeBukkit)) {
+                    return true;
+                }
+            }
+        } else {
+            Object craftingManager = ReflectionUtils.getStaticMethod("getInstance", ClassFinder.NMS.CraftingManager);
+            List<Object> nmsRecipes = (List<Object>) ReflectionUtils.getMethod("getRecipes", ClassFinder.NMS.CraftingManager, craftingManager);
+            for(Object nr : nmsRecipes) {
+                Recipe recipeBukkit = (Recipe) ReflectionUtils.getMethod("toBukkitRecipe", ClassFinder.NMS.IRecipe, nr);
+                if(compare(recipeBukkit)) {
+                    return true;
+                }
+            }
         }
         return false;
     }

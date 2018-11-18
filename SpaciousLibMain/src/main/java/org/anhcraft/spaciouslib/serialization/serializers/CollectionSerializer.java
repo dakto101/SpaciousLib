@@ -52,7 +52,7 @@ public class CollectionSerializer extends DataType<Collection<Object>> {
                 DataType<Object> type = DataSerialization.lookupType(obj.getClass());
                 out.writeByte(type.getIdentifier());
                 if(type instanceof ObjectSerializer){
-                    out.writeUTF(obj.getClass().getCanonicalName());
+                    out.writeUTF(obj.getClass().getName());
                 }
                 type.write(out, obj);
             }

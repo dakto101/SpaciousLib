@@ -1,6 +1,6 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.ClassFinder;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.entity.Entity;
 
@@ -25,17 +25,10 @@ public class Animation {
      * @return PacketSender object
      */
     public static PacketSender create(int entityId, Type type) {
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> packetPlayOutAnimationClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutAnimation");
-            Object ani = ReflectionUtils.getConstructor(packetPlayOutAnimationClass);
-            ReflectionUtils.setField("a", packetPlayOutAnimationClass, ani, entityId);
-            ReflectionUtils.setField("b", packetPlayOutAnimationClass, ani, type.getId());
-            return new PacketSender(ani);
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Object ani = ReflectionUtils.getConstructor(ClassFinder.NMS.PacketPlayOutAnimation);
+        ReflectionUtils.setField("a", ClassFinder.NMS.PacketPlayOutAnimation, ani, entityId);
+        ReflectionUtils.setField("b", ClassFinder.NMS.PacketPlayOutAnimation, ani, type.getId());
+        return new PacketSender(ani);
     }
 
     public enum Type {

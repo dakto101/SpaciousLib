@@ -126,28 +126,22 @@ public class ArmorStand extends PacketBuilder<ArmorStand> {
      */
     public ArmorStand teleport(Location location){
         this.location = location;
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
-            ReflectionUtils.getMethod("setLocation", nmsEntityClass, entity, new Group<>(
-                    new Class<?>[]{
-                            double.class,
-                            double.class,
-                            double.class,
-                            float.class,
-                            float.class,
-                    }, new Object[]{
-                    location.getX(),
-                    location.getY(),
-                    location.getZ(),
-                    location.getYaw(),
-                    location.getPitch(),
-            }
-            ));
-            EntityTeleport.create(entity).sendPlayers(viewers.stream().map(uuid -> Bukkit.getServer().getPlayer(uuid)).collect(Collectors.toList()));
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
+        ReflectionUtils.getMethod("setLocation", ClassFinder.NMS.Entity, entity, new Group<>(
+                new Class<?>[]{
+                        double.class,
+                        double.class,
+                        double.class,
+                        float.class,
+                        float.class,
+                }, new Object[]{
+                location.getX(),
+                location.getY(),
+                location.getZ(),
+                location.getYaw(),
+                location.getPitch(),
         }
+        ));
+        EntityTeleport.create(entity).sendPlayers(viewers.stream().map(uuid -> Bukkit.getServer().getPlayer(uuid)).collect(Collectors.toList()));
         return this;
     }
 
@@ -379,147 +373,132 @@ public class ArmorStand extends PacketBuilder<ArmorStand> {
 
     @Override
     public ArmorStand buildPackets() {
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> craftWorldClass = Class.forName("org.bukkit.craftbukkit." + v + ".CraftWorld");
-            Class<?> craftItemStackClass = Class.forName("org.bukkit.craftbukkit." + v + ".inventory.CraftItemStack");
-            Class<?> nmsWorldClass = Class.forName("net.minecraft.server." + v + ".World");
-            Class<?> itemClass = Class.forName("net.minecraft.server." + v + ".ItemStack");
-            Class<?> nmsEntityClass = Class.forName("net.minecraft.server." + v + ".Entity");
-            Class<?> entityClass = Class.forName("net.minecraft.server." + v + ".EntityArmorStand");
-            Class<?> enumItemSlotClass = Class.forName("net.minecraft.server." + v + ".EnumItemSlot");
-            Class<?> vectorClass = Class.forName("net.minecraft.server." + v + ".Vector3f");
-            Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + v + "." + (v.equals(GameVersion.v1_8_R1.toString()) ? "" : "IChatBaseComponent$") + "ChatSerializer");
-            Class<?> chatBaseComponentClass = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent");
-            Object craftWorld = ReflectionUtils.cast(craftWorldClass, location.getWorld());
-            Object nmsWorld = ReflectionUtils.getMethod("getHandle", craftWorldClass, craftWorld);
-            entity = ReflectionUtils.getConstructor(entityClass, new Group<>(
-                    new Class<?>[]{nmsWorldClass}, new Object[]{nmsWorld}
-            ));
-            ReflectionUtils.getMethod("setLocation", nmsEntityClass, entity, new Group<>(
-                    new Class<?>[]{
-                            double.class,
-                            double.class,
-                            double.class,
-                            float.class,
-                            float.class,
-                    }, new Object[]{
-                    location.getX(),
-                    location.getY(),
-                    location.getZ(),
-                    location.getYaw(),
-                    location.getPitch(),
-            }
-            ));
-            ReflectionUtils.getMethod("setHeadPose", entityClass, entity, new Group<>(
-                    new Class<?>[]{vectorClass}, new Object[]{ReflectionUtils.getConstructor(vectorClass,
-                    new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
-                            a(headPose.getX()), a(headPose.getY()), a(headPose.getZ())}))}));
-            ReflectionUtils.getMethod("setBodyPose", entityClass, entity, new Group<>(
-                    new Class<?>[]{vectorClass}, new Object[]{ReflectionUtils.getConstructor(vectorClass,
-                    new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
-                            a(bodyPose.getX()), a(bodyPose.getY()), a(bodyPose.getZ())}))}));
-            ReflectionUtils.getMethod("setLeftArmPose", entityClass, entity, new Group<>(
-                    new Class<?>[]{vectorClass}, new Object[]{ReflectionUtils.getConstructor(vectorClass,
-                    new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
-                            a(leftArmPose.getX()), a(leftArmPose.getY()), a(leftArmPose.getZ())}))}));
-            ReflectionUtils.getMethod("setRightArmPose", entityClass, entity, new Group<>(
-                    new Class<?>[]{vectorClass}, new Object[]{ReflectionUtils.getConstructor(vectorClass,
-                    new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
-                            a(rightArmPose.getX()), a(rightArmPose.getY()), a(rightArmPose.getZ())}))}));
-            ReflectionUtils.getMethod("setLeftLegPose", entityClass, entity, new Group<>(
-                    new Class<?>[]{vectorClass}, new Object[]{ReflectionUtils.getConstructor(vectorClass,
-                    new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
-                            a(leftLegPose.getX()), a(leftLegPose.getY()), a(leftLegPose.getZ())}))}));
-            ReflectionUtils.getMethod("setRightLegPose", entityClass, entity, new Group<>(
-                    new Class<?>[]{vectorClass}, new Object[]{ReflectionUtils.getConstructor(vectorClass,
-                    new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
-                            a(rightLegPose.getX()), a(rightLegPose.getY()), a(rightLegPose.getZ())}))}));
-            if(GameVersion.is1_9Above()) {
-                ReflectionUtils.getMethod("setMarker", entityClass, entity,
-                        new Group<>(new Class<?>[]{boolean.class}, new Object[]{marker})
-                );
-                ReflectionUtils.getMethod("setSlot", entityClass, entity,
-                        new Group<>(new Class<?>[]{enumItemSlotClass, itemClass}, new Object[]{ReflectionUtils.getEnum("MAINHAND", enumItemSlotClass), ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{mainHand}))}));
-                ReflectionUtils.getMethod("setSlot", entityClass, entity,
-                        new Group<>(new Class<?>[]{enumItemSlotClass, itemClass}, new Object[]{ReflectionUtils.getEnum("OFFHAND", enumItemSlotClass), ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{offHand}))}));
-                ReflectionUtils.getMethod("setSlot", entityClass, entity,
-                        new Group<>(new Class<?>[]{enumItemSlotClass, itemClass}, new Object[]{ReflectionUtils.getEnum("HEAD", enumItemSlotClass), ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{helmet}))}));
-                ReflectionUtils.getMethod("setSlot", entityClass, entity,
-                        new Group<>(new Class<?>[]{enumItemSlotClass, itemClass}, new Object[]{ReflectionUtils.getEnum("CHEST", enumItemSlotClass), ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{chestplate}))}));
-                ReflectionUtils.getMethod("setSlot", entityClass, entity,
-                        new Group<>(new Class<?>[]{enumItemSlotClass, itemClass}, new Object[]{ReflectionUtils.getEnum("LEGS", enumItemSlotClass), ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{leggings}))}));
-                ReflectionUtils.getMethod("setSlot", entityClass, entity,
-                        new Group<>(new Class<?>[]{enumItemSlotClass, itemClass}, new Object[]{ReflectionUtils.getEnum("FEET", enumItemSlotClass), ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{boots}))}));
-            } else {
-                ReflectionUtils.getMethod("setEquipment", entityClass, entity,
-                        new Group<>(new Class<?>[]{int.class, itemClass}, new Object[]{0, ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{mainHand}))})
-                );
-                ReflectionUtils.getMethod("setEquipment", entityClass, entity,
-                        new Group<>(new Class<?>[]{int.class, itemClass}, new Object[]{1, ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{helmet}))})
-                );
-                ReflectionUtils.getMethod("setEquipment", entityClass, entity,
-                        new Group<>(new Class<?>[]{int.class, itemClass}, new Object[]{2, ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{chestplate}))})
-                );
-                ReflectionUtils.getMethod("setEquipment", entityClass, entity,
-                        new Group<>(new Class<?>[]{int.class, itemClass}, new Object[]{3, ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{leggings}))})
-                );
-                ReflectionUtils.getMethod("setEquipment", entityClass, entity,
-                        new Group<>(new Class<?>[]{int.class, itemClass}, new Object[]{4, ReflectionUtils.getStaticMethod("asNMSCopy", craftItemStackClass, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{boots}))})
-                );
-            }
-            ReflectionUtils.getMethod("setBasePlate", entityClass, entity,
-                    new Group<>(new Class<?>[]{boolean.class}, new Object[]{basePlate})
-            );
-            ReflectionUtils.getMethod("setInvisible", entityClass, entity,
-                    new Group<>(new Class<?>[]{boolean.class}, new Object[]{!visible})
-            );
-            if(GameVersion.is1_13Above()){
-                if(!CommonUtils.isValidJSON(customName)){
-                    customName = "{\"text\": \"" + customName + "\"}";
-                }
-                Object customNameComponent = ReflectionUtils.getStaticMethod("a", chatSerializerClass,
-                        new Group<>(
-                                new Class<?>[]{String.class},
-                                new String[]{customName}
-                        ));
-                ReflectionUtils.getMethod("setCustomName", nmsEntityClass, entity,
-                        new Group<>(new Class<?>[]{chatBaseComponentClass}, new Object[]{customNameComponent})
-                );
-            } else {
-                ReflectionUtils.getMethod("setCustomName", nmsEntityClass, entity,
-                        new Group<>(new Class<?>[]{String.class}, new Object[]{customName})
-                );
-            }
-            ReflectionUtils.getMethod("setCustomNameVisible", nmsEntityClass, entity,
-                    new Group<>(new Class<?>[]{boolean.class}, new Object[]{showCustomName})
-            );
-            ReflectionUtils.getMethod("setSmall", entityClass, entity,
-                    new Group<>(new Class<?>[]{boolean.class}, new Object[]{small})
-            );
-            if(GameVersion.is1_10Above()) {
-                ReflectionUtils.getMethod("setNoGravity", nmsEntityClass, entity,
-                        new Group<>(new Class<?>[]{boolean.class}, new Object[]{!gravity})
-                );
-            } else {
-                ReflectionUtils.getMethod("setGravity", entityClass, entity,
-                        new Group<>(new Class<?>[]{boolean.class}, new Object[]{gravity})
-                );
-            }
-            ReflectionUtils.getMethod("setArms", entityClass, entity,
-                    new Group<>(new Class<?>[]{boolean.class}, new Object[]{arms})
-            );
-            id = (int) ReflectionUtils.getMethod("getId", nmsEntityClass, entity);
-            packets.add(LivingEntitySpawn.create(entity));
-            packets.add(EntityEquipment.create(id, EquipSlot.MAINHAND, mainHand));
-            packets.add(EntityEquipment.create(id, EquipSlot.OFFHAND, mainHand));
-            packets.add(EntityEquipment.create(id, EquipSlot.HEAD, helmet));
-            packets.add(EntityEquipment.create(id, EquipSlot.CHEST, chestplate));
-            packets.add(EntityEquipment.create(id, EquipSlot.LEGS, leggings));
-            packets.add(EntityEquipment.create(id, EquipSlot.FEET, boots));
-        } catch(ClassNotFoundException e1) {
-            e1.printStackTrace();
+        Object craftWorld = ReflectionUtils.cast(ClassFinder.CB.CraftWorld, location.getWorld());
+        Object nmsWorld = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftWorld, craftWorld);
+        entity = ReflectionUtils.getConstructor(ClassFinder.NMS.EntityArmorStand, new Group<>(
+                new Class<?>[]{ClassFinder.NMS.World}, new Object[]{nmsWorld}
+        ));
+        ReflectionUtils.getMethod("setLocation", ClassFinder.NMS.Entity, entity, new Group<>(
+                new Class<?>[]{
+                        double.class,
+                        double.class,
+                        double.class,
+                        float.class,
+                        float.class,
+                }, new Object[]{
+                location.getX(),
+                location.getY(),
+                location.getZ(),
+                location.getYaw(),
+                location.getPitch(),
         }
+        ));
+        ReflectionUtils.getMethod("setHeadPose", ClassFinder.NMS.EntityArmorStand, entity, new Group<>(
+                new Class<?>[]{ClassFinder.NMS.Vector3f}, new Object[]{ReflectionUtils.getConstructor(ClassFinder.NMS.Vector3f,
+                new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
+                        a(headPose.getX()), a(headPose.getY()), a(headPose.getZ())}))}));
+        ReflectionUtils.getMethod("setBodyPose", ClassFinder.NMS.EntityArmorStand, entity, new Group<>(
+                new Class<?>[]{ClassFinder.NMS.Vector3f}, new Object[]{ReflectionUtils.getConstructor(ClassFinder.NMS.Vector3f,
+                new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
+                        a(bodyPose.getX()), a(bodyPose.getY()), a(bodyPose.getZ())}))}));
+        ReflectionUtils.getMethod("setLeftArmPose", ClassFinder.NMS.EntityArmorStand, entity, new Group<>(
+                new Class<?>[]{ClassFinder.NMS.Vector3f}, new Object[]{ReflectionUtils.getConstructor(ClassFinder.NMS.Vector3f,
+                new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
+                        a(leftArmPose.getX()), a(leftArmPose.getY()), a(leftArmPose.getZ())}))}));
+        ReflectionUtils.getMethod("setRightArmPose", ClassFinder.NMS.EntityArmorStand, entity, new Group<>(
+                new Class<?>[]{ClassFinder.NMS.Vector3f}, new Object[]{ReflectionUtils.getConstructor(ClassFinder.NMS.Vector3f,
+                new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
+                        a(rightArmPose.getX()), a(rightArmPose.getY()), a(rightArmPose.getZ())}))}));
+        ReflectionUtils.getMethod("setLeftLegPose", ClassFinder.NMS.EntityArmorStand, entity, new Group<>(
+                new Class<?>[]{ClassFinder.NMS.Vector3f}, new Object[]{ReflectionUtils.getConstructor(ClassFinder.NMS.Vector3f,
+                new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
+                        a(leftLegPose.getX()), a(leftLegPose.getY()), a(leftLegPose.getZ())}))}));
+        ReflectionUtils.getMethod("setRightLegPose", ClassFinder.NMS.EntityArmorStand, entity, new Group<>(
+                new Class<?>[]{ClassFinder.NMS.Vector3f}, new Object[]{ReflectionUtils.getConstructor(ClassFinder.NMS.Vector3f,
+                new Group<>(new Class<?>[]{float.class, float.class, float.class}, new Object[]{
+                        a(rightLegPose.getX()), a(rightLegPose.getY()), a(rightLegPose.getZ())}))}));
+        if(GameVersion.is1_9Above()) {
+            ReflectionUtils.getMethod("setMarker", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{boolean.class}, new Object[]{marker})
+            );
+            ReflectionUtils.getMethod("setSlot", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{ClassFinder.NMS.EnumItemSlot, ClassFinder.NMS.ItemStack}, new Object[]{ReflectionUtils.getEnum("MAINHAND", ClassFinder.NMS.EnumItemSlot), ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{mainHand}))}));
+            ReflectionUtils.getMethod("setSlot", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{ClassFinder.NMS.EnumItemSlot, ClassFinder.NMS.ItemStack}, new Object[]{ReflectionUtils.getEnum("OFFHAND", ClassFinder.NMS.EnumItemSlot), ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{offHand}))}));
+            ReflectionUtils.getMethod("setSlot", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{ClassFinder.NMS.EnumItemSlot, ClassFinder.NMS.ItemStack}, new Object[]{ReflectionUtils.getEnum("HEAD", ClassFinder.NMS.EnumItemSlot), ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{helmet}))}));
+            ReflectionUtils.getMethod("setSlot", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{ClassFinder.NMS.EnumItemSlot, ClassFinder.NMS.ItemStack}, new Object[]{ReflectionUtils.getEnum("CHEST", ClassFinder.NMS.EnumItemSlot), ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{chestplate}))}));
+            ReflectionUtils.getMethod("setSlot", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{ClassFinder.NMS.EnumItemSlot, ClassFinder.NMS.ItemStack}, new Object[]{ReflectionUtils.getEnum("LEGS", ClassFinder.NMS.EnumItemSlot), ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{leggings}))}));
+            ReflectionUtils.getMethod("setSlot", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{ClassFinder.NMS.EnumItemSlot, ClassFinder.NMS.ItemStack}, new Object[]{ReflectionUtils.getEnum("FEET", ClassFinder.NMS.EnumItemSlot), ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{boots}))}));
+        } else {
+            ReflectionUtils.getMethod("setEquipment", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{int.class, ClassFinder.NMS.ItemStack}, new Object[]{0, ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{mainHand}))})
+            );
+            ReflectionUtils.getMethod("setEquipment", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{int.class, ClassFinder.NMS.ItemStack}, new Object[]{1, ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{helmet}))})
+            );
+            ReflectionUtils.getMethod("setEquipment", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{int.class, ClassFinder.NMS.ItemStack}, new Object[]{2, ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{chestplate}))})
+            );
+            ReflectionUtils.getMethod("setEquipment", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{int.class, ClassFinder.NMS.ItemStack}, new Object[]{3, ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{leggings}))})
+            );
+            ReflectionUtils.getMethod("setEquipment", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{int.class, ClassFinder.NMS.ItemStack}, new Object[]{4, ReflectionUtils.getStaticMethod("asNMSCopy", ClassFinder.CB.CraftItemStack, new Group<>(new Class<?>[]{ItemStack.class}, new Object[]{boots}))})
+            );
+        }
+        ReflectionUtils.getMethod("setBasePlate", ClassFinder.NMS.EntityArmorStand, entity,
+                new Group<>(new Class<?>[]{boolean.class}, new Object[]{basePlate})
+        );
+        ReflectionUtils.getMethod("setInvisible", ClassFinder.NMS.EntityArmorStand, entity,
+                new Group<>(new Class<?>[]{boolean.class}, new Object[]{!visible})
+        );
+        if(GameVersion.is1_13Above()){
+            if(!CommonUtils.isValidJSON(customName)){
+                customName = "{\"text\": \"" + customName + "\"}";
+            }
+            Object customNameComponent = ReflectionUtils.getStaticMethod("a", ClassFinder.NMS.ChatSerializer,
+                    new Group<>(
+                            new Class<?>[]{String.class},
+                            new String[]{customName}
+                    ));
+            ReflectionUtils.getMethod("setCustomName", ClassFinder.NMS.Entity, entity,
+                    new Group<>(new Class<?>[]{ClassFinder.NMS.IChatBaseComponent}, new Object[]{customNameComponent})
+            );
+        } else {
+            ReflectionUtils.getMethod("setCustomName", ClassFinder.NMS.Entity, entity,
+                    new Group<>(new Class<?>[]{String.class}, new Object[]{customName})
+            );
+        }
+        ReflectionUtils.getMethod("setCustomNameVisible", ClassFinder.NMS.Entity, entity,
+                new Group<>(new Class<?>[]{boolean.class}, new Object[]{showCustomName})
+        );
+        ReflectionUtils.getMethod("setSmall", ClassFinder.NMS.EntityArmorStand, entity,
+                new Group<>(new Class<?>[]{boolean.class}, new Object[]{small})
+        );
+        if(GameVersion.is1_10Above()) {
+            ReflectionUtils.getMethod("setNoGravity", ClassFinder.NMS.Entity, entity,
+                    new Group<>(new Class<?>[]{boolean.class}, new Object[]{!gravity})
+            );
+        } else {
+            ReflectionUtils.getMethod("setGravity", ClassFinder.NMS.EntityArmorStand, entity,
+                    new Group<>(new Class<?>[]{boolean.class}, new Object[]{gravity})
+            );
+        }
+        ReflectionUtils.getMethod("setArms", ClassFinder.NMS.EntityArmorStand, entity,
+                new Group<>(new Class<?>[]{boolean.class}, new Object[]{arms})
+        );
+        id = (int) ReflectionUtils.getMethod("getId", ClassFinder.NMS.Entity, entity);
+        packets.add(LivingEntitySpawn.create(entity));
+        packets.add(EntityEquipment.create(id, EquipSlot.MAINHAND, mainHand));
+        packets.add(EntityEquipment.create(id, EquipSlot.OFFHAND, mainHand));
+        packets.add(EntityEquipment.create(id, EquipSlot.HEAD, helmet));
+        packets.add(EntityEquipment.create(id, EquipSlot.CHEST, chestplate));
+        packets.add(EntityEquipment.create(id, EquipSlot.LEGS, leggings));
+        packets.add(EntityEquipment.create(id, EquipSlot.FEET, boots));
         createPacketSender();
         return this;
     }

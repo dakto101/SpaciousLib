@@ -34,6 +34,7 @@ public final class SpaciousLib extends Plugin {
     public void onEnable() {
         instance = this;
 
+        getLogger().info("Loading configuration...");
         try {
             new DirectoryManager(ROOT_FOLDER).mkdirs();
             new DirectoryManager(SKINS_FOLDER).mkdirs();
@@ -66,7 +67,7 @@ public final class SpaciousLib extends Plugin {
         }
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        chat.sendSender("&eInitializing the APIs...");
+        chat.sendSender("&eInitializing library...");
         new PlaceholderAPI();
         new SkinAPI();
         for(String proxy : config.getStringList("proxies")){
@@ -74,7 +75,7 @@ public final class SpaciousLib extends Plugin {
             ProxyUtils.put(x[0], Integer.parseInt(x[1]));
         }
 
-        chat.sendSender("&eStarting the tasks...");
+        chat.sendSender("&eStarting tasks...");
         if(config.getBoolean("auto_renew_skin", false)) {
             getProxy().getScheduler().schedule(this, new CachedSkinTask(), 0, 60, TimeUnit.SECONDS);
         }
@@ -82,12 +83,12 @@ public final class SpaciousLib extends Plugin {
             new Updater1520156620("1520156620", this);
         }
 
-        chat.sendSender("&eRegistering the listeners...");
+        chat.sendSender("&eRegistering listeners...");
         getProxy().getPluginManager().registerListener(this, new SpigotListener());
         getProxy().getPluginManager().registerListener(this, new PlaceholderListener());
         getProxy().getPluginManager().registerListener(this, new PlayerCleanerListener());
 
-        chat.sendSender("&eRegistering the messaging channel...");
+        chat.sendSender("&eRegistering messaging channel...");
         getProxy().registerChannel(CHANNEL);
 
         if(config.getBoolean("dev_mode", false)){

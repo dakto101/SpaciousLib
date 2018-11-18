@@ -11,14 +11,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * A class helps you to manage placeholders
  */
 public class PlaceholderAPI {
-    private static final LinkedHashMap<String, Placeholder> data = new LinkedHashMap<>();
+    private static final HashMap<String, Placeholder> data = new HashMap<>();
 
     /**
      * Initializes PlaceholderAPI
@@ -478,7 +478,7 @@ public class PlaceholderAPI {
                 x = p.getValue(player);
             }
             if(x != null) {
-                text = text.replace(p.getPlaceholder(), x);
+                text = text.replaceAll(p.getPlaceholder(), x);
             }
         }
         return text;

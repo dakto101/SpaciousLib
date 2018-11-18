@@ -5,10 +5,9 @@ import org.anhcraft.spaciouslib.builders.HashCodeBuilder;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A class helps you to manage the connections between a socket client and a server socket.<br>
@@ -17,7 +16,6 @@ import java.util.List;
 public class ClientSocketManager extends SocketHandler {
     private Socket server;
     private ClientSocketHandler requestHandler;
-    private List<byte[]> data;
 
     /**
      * Creates a new client socket and starts a new thread for handling the requests.
@@ -32,14 +30,12 @@ public class ClientSocketManager extends SocketHandler {
         } catch(Exception e){
             e.printStackTrace();
         }
-        this.data = new ArrayList<>();
         try {
             this.in = new BufferedInputStream(server.getInputStream());
             this.out = new BufferedOutputStream(server.getOutputStream());
         } catch(IOException e) {
             e.printStackTrace();
         }
-        this.isStopped = false;
         // starts the thread
         this.start();
     }
@@ -48,32 +44,49 @@ public class ClientSocketManager extends SocketHandler {
      * Closes this client socket.
      */
     public void close() throws IOException {
-        this.isStopped = true;
         this.interrupt();
+        server.close();
         out.close();
         in.close();
-        server.close();
-    }
-
-    /**
-     * Gets a list of data.<br>
-     * Each data is of each time the server sent
-     * @return list of data
-     */
-    public List<byte[]> getData(){
-        return this.data;
     }
 
     @Override
     public void run() {
         try {
-            while(this.isAlive() && !server.isClosed() && !this.isStopped){
-                if(0 < this.in.available()) {
-                    byte[] data = new byte[1024];
-                    this.in.read(data);
-                    this.requestHandler.response(this, data);
-                    this.data.add(data);
+            // init the buffer
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream(1024);
+            int n;
+            int csize = 0;
+            int size = -1;
+            boolean triggered = false;
+            while(this.isAlive() && !server.isClosed() && (n = this.in.read()) != -1){
+                // read the size of data first
+                if(size == -1){
+                    size = n;
+                    triggered = true;
                 }
+                else {
+                    // write each byte to the output
+                    buffer.write(n);
+                    // increase the current size of data by 1
+                    csize++;
+                    // when read the data completely
+                    // reset and then wait for the next data
+                    if(csize == size){
+                        size = -1;
+                        csize = 0;
+                        buffer.flush();
+                        this.requestHandler.response(this, buffer.toByteArray());
+                        buffer.reset();
+                        // prevent duplicates
+                        triggered = false;
+                    }
+                }
+            }
+            // happen when the data wasn't read completely
+            if(triggered) {
+                buffer.flush();
+                this.requestHandler.response(this, buffer.toByteArray());
             }
         } catch(IOException e) {
             e.printStackTrace();

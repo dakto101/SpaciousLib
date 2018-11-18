@@ -18,6 +18,7 @@ import java.util.List;
  * A argument can be optional or required.<br>
  * E.g: players can only type integer number if the type of that argument which they was typed in is INTEGER_NUMBER
  */
+@Deprecated
 public class SubCommandBuilder extends CommandString{
     private String name;
     private String description;

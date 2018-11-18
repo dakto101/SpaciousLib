@@ -32,7 +32,7 @@ public class ObjectSerializer extends DataType<Object> {
     @Override
     public void write(DataSerializerStream out, Object data) throws IOException {
         ExceptionThrower.ifNull(data, new IOException("The given object mustn't be null."));
-        ExceptionThrower.ifFalse(data.getClass().isAnnotationPresent(Serializable.class), new IOException("The given object couldn't be serialized due to class ("+data.getClass().getCanonicalName()+") wasn't serializable."));
+        ExceptionThrower.ifFalse(data.getClass().isAnnotationPresent(Serializable.class), new IOException("The given object couldn't be serialized due to class ("+data.getClass().getName()+") wasn't serializable."));
         DataSerialization.serialize(data.getClass(), data, out);
     }
 }

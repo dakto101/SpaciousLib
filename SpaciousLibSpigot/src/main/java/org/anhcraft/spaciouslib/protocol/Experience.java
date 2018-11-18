@@ -1,9 +1,9 @@
 package org.anhcraft.spaciouslib.protocol;
 
-import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.ClassFinder;
+import org.anhcraft.spaciouslib.utils.ExceptionThrower;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
-import org.apache.commons.lang3.Validate;
 
 public class Experience {
     /**
@@ -14,17 +14,10 @@ public class Experience {
      * @return PacketSender object
      */
     public static PacketSender create(float expBar, int level, int totalExp){
-        Validate.isTrue(expBar < 0 || expBar > 1, "the current progress must be between 0.0 and 1.0");
-        String v = GameVersion.getVersion().toString();
-        try {
-            Class<?> packetClass = Class.forName("net.minecraft.server." + v + ".PacketPlayOutExperience");
-            return new PacketSender(ReflectionUtils.getConstructor(packetClass, new Group<>(
-                    new Class<?>[]{float.class, int.class, int.class},
-                    new Object[]{expBar, level, totalExp}
-            )));
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        ExceptionThrower.ifTrue(expBar < 0 || expBar > 1, new Exception("the exp progress must be between 0.0 and 1.0"));
+        return new PacketSender(ReflectionUtils.getConstructor(ClassFinder.NMS.PacketPlayOutExperience, new Group<>(
+                new Class<?>[]{float.class, int.class, int.class},
+                new Object[]{expBar, level, totalExp}
+        )));
     }
 }

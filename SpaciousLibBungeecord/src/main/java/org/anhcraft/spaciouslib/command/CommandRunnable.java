@@ -2,6 +2,7 @@ package org.anhcraft.spaciouslib.command;
 
 import net.md_5.bungee.api.CommandSender;
 
+@Deprecated
 public abstract class CommandRunnable {
     /**
      * This method will be called if a player execute a command or a sub command (with or without arguments)

@@ -6,7 +6,7 @@
 
     <groupId>org.anhcraft</groupId>
     <artifactId>SpaciousLib</artifactId>
-    <version>1.7.6</version>
+    <version>1.7.7</version>
     <packaging>pom</packaging>
 
     <modules>

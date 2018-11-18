@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.builders;
 
+import org.anhcraft.spaciouslib.utils.ExceptionThrower;
 import org.anhcraft.spaciouslib.utils.PrimitiveType;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 
@@ -14,6 +15,13 @@ public class ArrayBuilder {
         this.clazz = clazz;
         array = Array.newInstance(clazz, 0);
         size = 0;
+    }
+
+    public ArrayBuilder(Object array){
+        ExceptionThrower.ifFalse(array.getClass().isArray(), new Exception("Object is not an array"));
+        clazz = array.getClass().getComponentType();
+        this.array = array;
+        size = Array.getLength(array);
     }
 
     public ArrayBuilder append(Object obj){
@@ -245,7 +253,41 @@ public class ArrayBuilder {
         }
     }
 
+    public ArrayBuilder append(char v){
+        if(clazz.isAssignableFrom(char.class)){
+            char[] n = (char[]) Array.newInstance(char.class, size+1);
+            System.arraycopy(array, 0, n, 0, size);
+            n[size] = v;
+            array = n;
+            size++;
+            return this;
+        } else {
+            return append(ReflectionUtils.cast(PrimitiveType.getObjectClass(char.class), v));
+        }
+    }
+
+    public ArrayBuilder append(char... chars){
+        if(clazz.isAssignableFrom(char.class)) {
+            char[] n = (char[]) Array.newInstance(char.class, size + chars.length);
+            System.arraycopy(array, 0, n, 0, size);
+            System.arraycopy(chars, 0, n, size, chars.length);
+            array = n;
+            size += chars.length;
+            return this;
+        } else {
+            Class<?> c = PrimitiveType.getObjectClass(char.class);
+            for(char v : chars){
+                append(ReflectionUtils.cast(c, v));
+            }
+            return this;
+        }
+    }
+
     public Object build(){
         return array;
+    }
+
+    public int length(){
+        return size;
     }
 }

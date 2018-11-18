@@ -3,7 +3,7 @@ package org.anhcraft.spaciouslib.annotations;
 import java.lang.annotation.*;
 
 /**
- * DataField is the annotation for serializable declared fields in objects
+ * DataField is the annotation for serializable declared fields in objects.<br>
  * This annotation don't need to be registered with AnnotationHandler
  */
 @Inherited

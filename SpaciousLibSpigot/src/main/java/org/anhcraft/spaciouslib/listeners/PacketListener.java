@@ -7,7 +7,7 @@ import io.netty.channel.ChannelPromise;
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.PacketHandler;
-import org.anhcraft.spaciouslib.utils.GameVersion;
+import org.anhcraft.spaciouslib.utils.ClassFinder;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -89,22 +89,11 @@ public class PacketListener implements Listener{
     }
 
     public static Channel getChannel(Player player) {
-        GameVersion v = GameVersion.getVersion();
-        try {
-            Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v.toString() + ".entity.CraftPlayer");
-            Class<?> nmsEntityPlayerClass = Class.forName("net.minecraft.server." + v.toString() + ".EntityPlayer");
-            Class<?> playerConnClass = Class.forName("net.minecraft.server." + v.toString() + ".PlayerConnection");
-            Class<?> networkManagerClass = Class.forName("net.minecraft.server." + v.toString() + ".NetworkManager");
-            Object craftPlayer = ReflectionUtils.cast(craftPlayerClass, player);
-            Object nmsEntityPlayer = ReflectionUtils.getMethod("getHandle", craftPlayerClass, craftPlayer);
-            Object playerConn = ReflectionUtils.getField("playerConnection", nmsEntityPlayerClass, nmsEntityPlayer);
-            Object networkManager = ReflectionUtils.getField("networkManager", playerConnClass, playerConn);
-            return (Channel) ReflectionUtils.getField("channel", networkManagerClass, networkManager);
-        }
-        catch (ClassNotFoundException e){
-            e.printStackTrace();
-        }
-        return null;
+        Object craftPlayer = ReflectionUtils.cast(ClassFinder.CB.CraftPlayer, player);
+        Object nmsEntityPlayer = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftPlayer, craftPlayer);
+        Object playerConn = ReflectionUtils.getField("playerConnection", ClassFinder.NMS.EntityPlayer, nmsEntityPlayer);
+        Object networkManager = ReflectionUtils.getField("networkManager", ClassFinder.NMS.PlayerConnection, playerConn);
+        return (Channel) ReflectionUtils.getField("channel", ClassFinder.NMS.NetworkManager, networkManager);
     }
 
     public static void remove(Player player) {

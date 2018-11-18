@@ -11,13 +11,13 @@ import org.bukkit.entity.Player;
  */
 public abstract class Placeholder {
     /**
-     * Gets the placeholder (e.g: {player_name})
+     * Returns the placeholder (e.g: {player_name})
      * @return the placeholder
      */
     public abstract String getPlaceholder();
 
     /**
-     * Gets the replaced text for the given player
+     * Returns the replaced text which dedicated to the given player
      * @param player the player
      * @return the replaced text, returns null if you want to prevent replace
      */

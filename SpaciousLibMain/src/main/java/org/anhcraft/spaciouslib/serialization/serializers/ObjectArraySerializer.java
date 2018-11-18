@@ -44,12 +44,12 @@ public class ObjectArraySerializer extends DataType<Object[]> {
     public void write(DataSerializerStream out, Object[] data) throws IOException {
         out.writeInt(data.length);
         if(data.length > 0) {
-            out.writeUTF(data.getClass().getComponentType().getCanonicalName());
+            out.writeUTF(data.getClass().getComponentType().getName());
             for(Object d : data) {
                 DataType type = DataSerialization.lookupType(d.getClass());
                 out.writeByte(type.getIdentifier());
                 if(type instanceof ObjectSerializer){
-                    out.writeUTF(d.getClass().getCanonicalName());
+                    out.writeUTF(d.getClass().getName());
                 }
                 type.write(out, d);
             }

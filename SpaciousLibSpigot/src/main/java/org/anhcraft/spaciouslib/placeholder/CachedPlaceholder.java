@@ -4,17 +4,16 @@ import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
- * A cached placeholder will store the value of the placeholder for each online player.<br>
- * So if you replace the cached placeholder, you won't get the newest data immediately.<br>
- * By default, the cached placeholder will renew every 10 seconds.
+ * CachedPlaceholder stores the placeholder value which will increase the performance.<br>
+ * Each placeholder get changes after specified duration which was set in the configuration.
  */
 public abstract class CachedPlaceholder extends Placeholder {
     @PlayerCleaner
-    protected LinkedHashMap<UUID, String> cache = new LinkedHashMap<>();
+    protected HashMap<UUID, String> cache = new HashMap<>();
 
     protected void updateCache(){
         this.cache.clear();

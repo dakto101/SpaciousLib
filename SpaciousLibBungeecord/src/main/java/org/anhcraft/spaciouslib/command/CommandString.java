@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 /**
  * This class uses to define the color codes for command string
  */
+@Deprecated
 public abstract class CommandString {
     public enum Type {
         BEGIN_COMMAND,

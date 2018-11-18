@@ -1,6 +1,8 @@
 package org.anhcraft.spaciouslib.utils;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -107,13 +109,36 @@ public class CommonUtils {
      */
     public static <E> E[] getPageItems(E[] all, int index, int max){
         int first = max * index;
-        int end = max * index + (max - 1);
-        E[] filter = (E[]) Array.newInstance(all.getClass().getComponentType(), end-first+1);
+        int end = max * index + max;
+        end = end > all.length ? all.length : end;
+        max = end-first;
+        E[] filter = (E[]) Array.newInstance(all.getClass().getComponentType(), max);
         int i = 0;
-        for(E v : all){
-            if(first <= i && i <= end){
-                filter[i] = v;
-            }
+        while(i < max){
+            filter[i] = all[i+first];
+            i++;
+        }
+        return filter;
+    }
+
+
+    /**
+     * Divides the given array of objects to each "page" based on the index
+     *
+     * @param all array of objects
+     * @param index the index of "page" (start from 0)
+     * @param max maximum amount of objects in each "page"
+     * @return all objects in that "page"
+     */
+    public static byte[] getPageItems(byte[] all, int index, int max){
+        int first = max * index;
+        int end = max * index + max;
+        end = end > all.length ? all.length : end;
+        max = end-first;
+        byte[] filter = (byte[]) Array.newInstance(byte.class, max);
+        int i = 0;
+        while(i < max){
+            filter[i] = all[i+first];
             i++;
         }
         return filter;
@@ -129,13 +154,13 @@ public class CommonUtils {
      */
     public static int[] getPageItems(int[] all, int index, int max){
         int first = max * index;
-        int end = max * index + (max - 1);
-        int[] filter = (int[]) Array.newInstance(int.class, end-first+1);
+        int end = max * index + max;
+        end = end > all.length ? all.length : end;
+        max = end-first;
+        int[] filter = (int[]) Array.newInstance(int.class, max);
         int i = 0;
-        for(int v : all){
-            if(first <= i && i <= end){
-                filter[i] = v;
-            }
+        while(i < max){
+            filter[i] = all[i+first];
             i++;
         }
         return filter;
@@ -151,13 +176,13 @@ public class CommonUtils {
      */
     public static char[] getPageItems(char[] all, int index, int max){
         int first = max * index;
-        int end = max * index + (max - 1);
-        char[] filter = (char[]) Array.newInstance(char.class, end-first+1);
+        int end = max * index + max;
+        end = end > all.length ? all.length : end;
+        max = end-first;
+        char[] filter = (char[]) Array.newInstance(char.class, max);
         int i = 0;
-        for(char v : all){
-            if(first <= i && i <= end){
-                filter[i] = v;
-            }
+        while(i < max){
+            filter[i] = all[i+first];
             i++;
         }
         return filter;
@@ -173,13 +198,13 @@ public class CommonUtils {
      */
     public static boolean[] getPageItems(boolean[] all, int index, int max){
         int first = max * index;
-        int end = max * index + (max - 1);
-        boolean[] filter = (boolean[]) Array.newInstance(boolean.class, end-first+1);
+        int end = max * index + max;
+        end = end > all.length ? all.length : end;
+        max = end-first;
+        boolean[] filter = (boolean[]) Array.newInstance(boolean.class, max);
         int i = 0;
-        for(boolean v : all){
-            if(first <= i && i <= end){
-                filter[i] = v;
-            }
+        while(i < max){
+            filter[i] = all[i+first];
             i++;
         }
         return filter;
@@ -195,13 +220,13 @@ public class CommonUtils {
      */
     public static short[] getPageItems(short[] all, int index, int max){
         int first = max * index;
-        int end = max * index + (max - 1);
-        short[] filter = (short[]) Array.newInstance(short.class, end-first+1);
+        int end = max * index + max;
+        end = end > all.length ? all.length : end;
+        max = end-first;
+        short[] filter = (short[]) Array.newInstance(short.class, max);
         int i = 0;
-        for(short v : all){
-            if(first <= i && i <= end){
-                filter[i] = v;
-            }
+        while(i < max){
+            filter[i] = all[i+first];
             i++;
         }
         return filter;
@@ -217,13 +242,13 @@ public class CommonUtils {
      */
     public static long[] getPageItems(long[] all, int index, int max){
         int first = max * index;
-        int end = max * index + (max - 1);
-        long[] filter = (long[]) Array.newInstance(long.class, end-first+1);
+        int end = max * index + max;
+        end = end > all.length ? all.length : end;
+        max = end-first;
+        long[] filter = (long[]) Array.newInstance(long.class, max);
         int i = 0;
-        for(long v : all){
-            if(first <= i && i <= end){
-                filter[i] = v;
-            }
+        while(i < max){
+            filter[i] = all[i+first];
             i++;
         }
         return filter;
@@ -239,13 +264,13 @@ public class CommonUtils {
      */
     public static double[] getPageItems(double[] all, int index, int max){
         int first = max * index;
-        int end = max * index + (max - 1);
-        double[] filter = (double[]) Array.newInstance(double.class, end-first+1);
+        int end = max * index + max;
+        end = end > all.length ? all.length : end;
+        max = end-first;
+        double[] filter = (double[]) Array.newInstance(double.class, max);
         int i = 0;
-        for(double v : all){
-            if(first <= i && i <= end){
-                filter[i] = v;
-            }
+        while(i < max){
+            filter[i] = all[i+first];
             i++;
         }
         return filter;
@@ -261,35 +286,13 @@ public class CommonUtils {
      */
     public static float[] getPageItems(float[] all, int index, int max){
         int first = max * index;
-        int end = max * index + (max - 1);
-        float[] filter = (float[]) Array.newInstance(float.class, end-first+1);
+        int end = max * index + max;
+        end = end > all.length ? all.length : end;
+        max = end-first;
+        float[] filter = (float[]) Array.newInstance(float.class, max);
         int i = 0;
-        for(float v : all){
-            if(first <= i && i <= end){
-                filter[i] = v;
-            }
-            i++;
-        }
-        return filter;
-    }
-
-    /**
-     * Divides the given array of objects to each "page" based on the index
-     *
-     * @param all array of objects
-     * @param index the index of "page" (start from 0)
-     * @param max maximum amount of objects in each "page"
-     * @return all objects in that "page"
-     */
-    public static byte[] getPageItems(byte[] all, int index, int max){
-        int first = max * index;
-        int end = max * index + (max - 1);
-        byte[] filter = (byte[]) Array.newInstance(byte.class, end-first+1);
-        int i = 0;
-        for(byte v : all){
-            if(first <= i && i <= end){
-                filter[i] = v;
-            }
+        while(i < max){
+            filter[i] = all[i+first];
             i++;
         }
         return filter;
@@ -305,13 +308,13 @@ public class CommonUtils {
      */
     public static <E> List<E> getPageItems(List<E> all, int index, int max){
         int first = max * index;
-        int end = max * index + (max - 1);
+        int end = max * index + max;
+        end = end > all.size() ? all.size() : end;
+        max = end-first;
         List<E> filter = new ArrayList<>();
         int i = 0;
-        for(E v : all){
-            if(first <= i && i <= end){
-                filter.add(v);
-            }
+        while(i < max){
+            filter.add(all.get(i+first));
             i++;
         }
         return filter;
@@ -326,14 +329,15 @@ public class CommonUtils {
      * @return all objects in that "page"
      */
     public static <E> Set<E> getPageItems(Set<E> all, int index, int max){
+        E[] all_ = (E[]) all.toArray();
         int first = max * index;
-        int end = max * index + (max - 1);
+        int end = max * index + max;
+        end = end > all.size() ? all.size() : end;
+        max = end-first;
         Set<E> filter = new HashSet<>();
         int i = 0;
-        for(E v : all){
-            if(first <= i && i <= end){
-                filter.add(v);
-            }
+        while(i < max){
+            filter.add(all_[i+first]);
             i++;
         }
         return filter;
@@ -685,5 +689,84 @@ public class CommonUtils {
             narray[i] = array[array.length-i-1];
         }
         return narray;
+    }
+
+    /**
+     * Compares two given objects
+     * @param a the first object
+     * @param b the second object
+     * @return true if they're equal
+     */
+    public static boolean compare(Object a, Object b){
+        if(a.getClass().isArray()){
+            if(b.getClass().isArray()){
+                if(a.getClass().getComponentType().equals(b.getClass().getComponentType())){
+                    if(Array.getLength(a) != Array.getLength(b)){
+                        return false;
+                    }
+                    for(int i = 0; i < Array.getLength(a); i++){
+                        if(!compare(Array.get(a, i), Array.get(b, i))){
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        if(!a.getClass().equals(b.getClass())){
+            return false;
+        }
+        if(a instanceof String){
+            return a.equals(b);
+        }
+        else if(a instanceof Integer){
+            return ((Integer) a).intValue() == ((Integer) b).intValue();
+        }
+        else if(a instanceof Byte){
+            return ((Byte) a).byteValue() == ((Byte) b).byteValue();
+        }
+        else if(a instanceof Float){
+            return ((Float) a).floatValue() == ((Float) b).floatValue();
+        }
+        else if(a instanceof Short){
+            return ((Short) a).shortValue() == ((Short) b).shortValue();
+        }
+        else if(a instanceof Long){
+            return ((Long) a).longValue() == ((Long) b).longValue();
+        }
+        else if(a instanceof Double){
+            return ((Double) a).doubleValue() == ((Double) b).doubleValue();
+        }
+        else if(a instanceof Character){
+            return ((Character) a).charValue() == ((Character) b).charValue();
+        }
+        else if(a instanceof Boolean){
+            return ((Boolean) a).booleanValue() == ((Boolean) b).booleanValue();
+        } else {
+            try {
+                for(Field f : a.getClass().getDeclaredFields()) {
+                    f.setAccessible(true);
+                    if(!Modifier.isStatic(f.getModifiers())) {
+                        if(Object.class.isAssignableFrom(f.getType())) {
+                            if(!compare(f.get(a), f.get(b))){
+                                return false;
+                            }
+                        } else {
+                            if(!compare(PrimitiveUtils.toObject(f.get(a), f.getType()), PrimitiveUtils.toObject(f.get(b), f.getType()))){
+                                return false;
+                            }
+                        }
+                    }
+                }
+            } catch(IllegalAccessException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
     }
 }
