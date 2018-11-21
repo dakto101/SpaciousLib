@@ -1,11 +1,11 @@
 package org.anhcraft.spaciouslib.entity;
 
 import com.mojang.authlib.GameProfile;
+import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.PlayerCleaner;
 import org.anhcraft.spaciouslib.listeners.NPCInteractEventListener;
 import org.anhcraft.spaciouslib.protocol.*;
-import org.anhcraft.spaciouslib.scheduler.DelayedTask;
 import org.anhcraft.spaciouslib.utils.ClassFinder;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
@@ -182,8 +182,7 @@ public class NPC extends PacketBuilder<NPC> {
     private NPC add(UUID uuid){
         Player player = Bukkit.getServer().getPlayer(uuid);
         packetSender.sendPlayer(player);
-        DelayedTask task = new DelayedTask(() -> new PacketSender(tabListPacket).sendPlayer(player), 2);
-        task.run();
+        Bukkit.getScheduler().runTaskLaterAsynchronously(SpaciousLib.instance, () -> new PacketSender(tabListPacket).sendPlayer(player), 40);
         return this;
     }
 
