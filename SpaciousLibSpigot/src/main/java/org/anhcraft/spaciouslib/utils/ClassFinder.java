@@ -42,6 +42,7 @@ public class ClassFinder {
         public static Class<?> BarStyle;
         public static Class<?> BarColor;
         public static Class<?> EntityEnderDragon;
+        public static Class<?> PacketDataSerializer;
         public static Class<?> PacketPlayOutTitle;
         public static Class<?> PacketPlayOutChat;
         public static Class<?> PacketPlayOutAnimation;
@@ -59,6 +60,7 @@ public class ClassFinder {
         public static Class<?> PacketPlayOutPlayerInfo;
         public static Class<?> PacketPlayOutPlayerListHeaderFooter;
         public static Class<?> PacketPlayOutWindowData;
+        public static Class<?> PacketPlayOutCustomPayload;
 
         static {
             try {
@@ -85,6 +87,7 @@ public class ClassFinder {
                 EntityArmorStand = Class.forName(base + "EntityArmorStand");
                 Vector3f = Class.forName(base + "Vector3f");
                 EntityEnderDragon = Class.forName(base + "EntityEnderDragon");
+                PacketDataSerializer = Class.forName(base + "PacketDataSerializer");
                 PacketPlayOutTitle = Class.forName(base + "PacketPlayOutTitle");
                 PacketPlayOutAnimation = Class.forName(base + "PacketPlayOutAnimation");
                 PacketPlayOutBlockBreakAnimation = Class.forName(base + "PacketPlayOutBlockBreakAnimation");
@@ -101,6 +104,7 @@ public class ClassFinder {
                 PacketPlayOutPlayerListHeaderFooter = Class.forName(base + "PacketPlayOutPlayerListHeaderFooter");
                 PacketPlayOutTitle = Class.forName(base + "PacketPlayOutTitle");
                 PacketPlayOutWindowData = Class.forName(base + "PacketPlayOutWindowData");
+                PacketPlayOutCustomPayload = Class.forName(base + "PacketPlayOutCustomPayload");
                 if(GameVersion.getVersion().equals(GameVersion.v1_8_R1)){
                     EnumTitleAction = Class.forName(base + "EnumTitleAction");
                     ChatSerializer = Class.forName(base + "ChatSerializer");
