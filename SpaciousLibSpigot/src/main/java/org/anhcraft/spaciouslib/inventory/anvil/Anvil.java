@@ -1,6 +1,6 @@
 package org.anhcraft.spaciouslib.inventory.anvil;
 
-import org.anhcraft.spaciouslib.listeners.AnvilListener;
+import org.anhcraft.spaciouslib.listeners.PlayerListener;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
@@ -38,8 +38,8 @@ public class Anvil extends AnvilWrapper<Anvil> {
      * @return this object
      */
     public Anvil open() {
+        PlayerListener.anvilPlayers.put(this.player.getUniqueId(), new Group<>(this.wrapper.inv, this.handler));
         this.wrapper.open();
-        AnvilListener.data.put(this.player.getUniqueId(), new Group<>(this.wrapper.inv, this.handler));
         return this;
     }
 

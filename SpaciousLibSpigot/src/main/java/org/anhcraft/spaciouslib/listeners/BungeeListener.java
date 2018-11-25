@@ -1,8 +1,8 @@
 package org.anhcraft.spaciouslib.listeners;
 
 import org.anhcraft.spaciouslib.SpaciousLib;
-import org.anhcraft.spaciouslib.entity.PlayerManager;
 import org.anhcraft.spaciouslib.mojang.Skin;
+import org.anhcraft.spaciouslib.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -23,8 +23,8 @@ public class BungeeListener implements PluginMessageListener {
                         String player1 = data.readUTF();
                         String value = data.readUTF();
                         String signature = data.readUTF();
-                        new PlayerManager(Bukkit.getServer().getPlayer(player1))
-                                .changeSkin(new Skin(value, signature));
+                        PlayerUtils.changeSkin(Bukkit.getServer().getPlayer(player1),
+                                new Skin(value, signature));
                         break;
                     case "cmdsv":
                         String cmd1 = data.readUTF();
