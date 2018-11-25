@@ -3,6 +3,7 @@ package org.anhcraft.spaciouslib.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.anhcraft.spaciouslib.builders.ProfileBuilder;
+import org.anhcraft.spaciouslib.listeners.PlayerListener;
 import org.anhcraft.spaciouslib.mojang.Skin;
 import org.anhcraft.spaciouslib.protocol.EntityDestroy;
 import org.anhcraft.spaciouslib.protocol.NamedEntitySpawn;
@@ -81,8 +82,8 @@ public class PlayerUtils {
 
     /**
      * Change the given player's skin.<br>
-     * Only affecting the viewers within the defined view distance.<br>
-     * Using this for a server which is under a proxy like Bungeecord is impossible. Use the alternative method {@link org.anhcraft.spaciouslib.bungee.BungeeAPI#requestChangeSkin(String, Skin)}
+     * Only affecting any viewers within the defined view distance.<br>
+     * Using this for a server which is under a proxy like Bungeecord is impossible. Use the alternative method {@link org.anhcraft.spaciouslib.bungee.BungeeAPI#requestChangeSkin(String, Skin)} instead.
      * @param player the player
      * @param skin new skin
      */
@@ -113,8 +114,8 @@ public class PlayerUtils {
 
     /**
      * Change the given player's skin.<br>
-     * Only affecting the viewers which is defined from the parameter "viewers".<br>
-     * Using this for a server which is under a proxy like Bungeecord is impossible. Use the alternative method {@link org.anhcraft.spaciouslib.bungee.BungeeAPI#requestChangeSkin(String, Skin)}
+     * Only affecting any viewers which is defined from the parameter "viewers".<br>
+     * Using this for a server which is under a proxy like Bungeecord is impossible. Use the alternative method {@link org.anhcraft.spaciouslib.bungee.BungeeAPI#requestChangeSkin(String, Skin)} instead.
      * @param player the player
      * @param skin new skin
      */
@@ -138,5 +139,22 @@ public class PlayerUtils {
                 new Class<?>[]{ClassFinder.NMS.EntityPlayer, int.class, boolean.class, Location.class, boolean.class},
                 new Object[]{nmsEntityPlayer, dimension, true, player.getLocation(), true}
         ));
+    }
+
+    /**
+     * Freeze the given player.<br>
+     * He will not be allowed to move over a half of block away
+     * @param player player
+     */
+    public static void freeze(Player player){
+        PlayerListener.freezedPlayers.add(player.getUniqueId());
+    }
+
+    /**
+     * Unfreeze the given player
+     * @param player player
+     */
+    public static void unfreeze(Player player){
+        PlayerListener.freezedPlayers.remove(player.getUniqueId());
     }
 }
