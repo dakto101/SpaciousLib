@@ -1,5 +1,6 @@
 package org.anhcraft.spaciouslib.tasks;
 
+import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.io.FileManager;
 import org.anhcraft.spaciouslib.mojang.CachedSkin;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
@@ -19,13 +20,13 @@ public class CachedSkinTask extends BukkitRunnable {
             List<CachedSkin> a = new ArrayList<>(SkinAPI.getSkins().values());
             for(CachedSkin skin : a){
                 boolean save = false;
-                if(skin.isExpired()){
+                if(skin.isExpired() && SpaciousLib.config.getBoolean("auto_renew_skin", false)){
                     SkinAPI.renewSkin(skin.getOwner());
                     save = true;
                 }
                 File file = SkinAPI.getSkinFile(skin);
                 if(save || !file.exists()) {
-                    new FileManager(file).write(GZipUtils.compress(DataSerialization.serialize(CachedSkin.class, skin).getA()));
+                    new FileManager(file).create().write(GZipUtils.compress(DataSerialization.serialize(CachedSkin.class, skin).getA()));
                 }
             }
         } catch(Exception e) {
