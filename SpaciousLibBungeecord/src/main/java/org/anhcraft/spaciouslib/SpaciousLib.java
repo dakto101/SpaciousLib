@@ -76,9 +76,7 @@ public final class SpaciousLib extends Plugin {
         }
 
         chat.sendSender("&eStarting tasks...");
-        if(config.getBoolean("auto_renew_skin", false)) {
-            getProxy().getScheduler().schedule(this, new CachedSkinTask(), 0, 60, TimeUnit.SECONDS);
-        }
+        getProxy().getScheduler().schedule(this, new CachedSkinTask(), 0, 60, TimeUnit.SECONDS);
         if(config.getBoolean("stats", true)){
             new Updater1520156620("1520156620", this);
         }
