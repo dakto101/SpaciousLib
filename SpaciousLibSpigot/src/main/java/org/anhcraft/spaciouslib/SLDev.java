@@ -7,10 +7,15 @@ import org.anhcraft.spaciouslib.builders.command.CommandBuilder;
 import org.anhcraft.spaciouslib.builders.command.CommandCallback;
 import org.anhcraft.spaciouslib.events.*;
 import org.anhcraft.spaciouslib.inventory.BookManager;
+import org.anhcraft.spaciouslib.inventory.HandSlot;
 import org.anhcraft.spaciouslib.inventory.anvil.Anvil;
 import org.anhcraft.spaciouslib.inventory.anvil.AnvilHandler;
 import org.anhcraft.spaciouslib.inventory.anvil.AnvilSlot;
+import org.anhcraft.spaciouslib.mojang.MojangAPI;
+import org.anhcraft.spaciouslib.mojang.SkinAPI;
+import org.anhcraft.spaciouslib.protocol.CustomPayload;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
+import org.anhcraft.spaciouslib.utils.PlayerUtils;
 import org.anhcraft.spaciouslib.utils.TimedSet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,7 +39,8 @@ public class SLDev implements Listener {
             public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
                 builder.sendHelpMessages(sender, true, true);
             }
-        }).addChild(new ChildCommandBuilder().path("anvil", new CommandCallback() {
+        })
+                .addChild(new ChildCommandBuilder().path("anvil", new CommandCallback() {
             @Override
             public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
                 if(sender instanceof Player){
@@ -56,7 +62,61 @@ public class SLDev implements Listener {
                     }
                 }).setItem(AnvilSlot.INPUT_LEFT, new ItemStack(Material.DIAMOND, 1)).open();
             }
-        }, ArgumentType.ONLINE_PLAYER).build()).build(SpaciousLib.instance).clone("spaciouslibspigot").build(SpaciousLib.instance);
+        }, ArgumentType.ONLINE_PLAYER).build())
+
+                .addChild(new ChildCommandBuilder().path("book", new CommandCallback() {
+            @Override
+            public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+
+            }
+        }).var("player", new CommandCallback() {
+            @Override
+            public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                CustomPayload.openBook(HandSlot.MAINHAND).sendPlayer(Bukkit.getPlayer(value));
+            }
+        }, ArgumentType.ONLINE_PLAYER).build())
+
+                .addChild(new ChildCommandBuilder().path("utils freeze", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                    }
+                }).var("player", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        PlayerUtils.freeze(Bukkit.getPlayer(value));
+                    }
+                }, ArgumentType.ONLINE_PLAYER).build())
+
+                .addChild(new ChildCommandBuilder().path("utils unfreeze", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                    }
+                }).var("player", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        PlayerUtils.unfreeze(Bukkit.getPlayer(value));
+                    }
+                }, ArgumentType.ONLINE_PLAYER).build())
+
+                .addChild(new ChildCommandBuilder().path("utils changeskin", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                    }
+                }).var("skin", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                    }
+                }, ArgumentType.ANYTHING).var("player", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        try {
+                            PlayerUtils.changeSkin(Bukkit.getPlayer(value), SkinAPI.getSkin(MojangAPI.getUniqueId(args[arg-1]).getB()).getSkin());
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, ArgumentType.ONLINE_PLAYER).build())
+                .build(SpaciousLib.instance).clone("spaciouslibspigot").build(SpaciousLib.instance);
     }
 
 

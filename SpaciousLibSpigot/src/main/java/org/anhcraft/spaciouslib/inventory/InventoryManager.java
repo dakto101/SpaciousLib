@@ -1,6 +1,6 @@
 package org.anhcraft.spaciouslib.inventory;
 
-import org.anhcraft.spaciouslib.listeners.ClickableItemListener;
+import org.anhcraft.spaciouslib.listeners.PlayerListener;
 import org.anhcraft.spaciouslib.utils.Chat;
 import org.anhcraft.spaciouslib.utils.GameVersion;
 import org.anhcraft.spaciouslib.utils.InventoryUtils;
@@ -292,6 +292,6 @@ public class InventoryManager {
      * Update the clickable status for this inventory
      */
     public void update(){
-        ClickableItemListener.add(this.inv, slots);
+        PlayerListener.invTracker.put(this.inv, slots);
     }
 }

@@ -2,8 +2,8 @@ package org.anhcraft.spaciouslib.placeholder;
 
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
-import org.anhcraft.spaciouslib.entity.PlayerManager;
 import org.anhcraft.spaciouslib.utils.MathUtils;
+import org.anhcraft.spaciouslib.utils.PlayerUtils;
 import org.anhcraft.spaciouslib.utils.ServerUtils;
 import org.anhcraft.spaciouslib.utils.VaultUtils;
 import org.bukkit.Bukkit;
@@ -94,7 +94,7 @@ public class PlaceholderAPI {
 
             @Override
             public String getValue(Player player) {
-                return Integer.toString(new PlayerManager(player).getPing());
+                return Integer.toString(PlayerUtils.getPing(player));
             }
         });
 

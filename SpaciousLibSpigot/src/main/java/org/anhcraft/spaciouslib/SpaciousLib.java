@@ -73,6 +73,12 @@ public final class SpaciousLib extends JavaPlugin {
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         chat.sendSender("&eInitializing library...");
+        new ItemStackSerializer((byte) 30);
+        new ItemMetaSerializer((byte) 31);
+        new LocationSerializer((byte) 32);
+        new VectorSerializer((byte) 33);
+        new NBTCompoundSerializer((byte) 34);
+
         new PlaceholderAPI();
         new SkinAPI();
         new BungeeAPI();
@@ -80,13 +86,8 @@ public final class SpaciousLib extends JavaPlugin {
             String[] x = proxy.split(":");
             ProxyUtils.put(x[0], Integer.parseInt(x[1]));
         }
-        new ItemStackSerializer((byte) 30);
-        new ItemMetaSerializer((byte) 31);
-        new LocationSerializer((byte) 32);
-        new VectorSerializer((byte) 33);
-        new NBTCompoundSerializer((byte) 34);
         AnnotationHandler.register(NPCInteractEventListener.class, null);
-        AnnotationHandler.register(AnvilListener.class, null);
+        AnnotationHandler.register(PlayerListener.class, null);
 
         chat.sendSender("&eLoading NMS/CB classes "+ GameVersion.getVersion().toString() +"...");
         try {
@@ -104,17 +105,10 @@ public final class SpaciousLib extends JavaPlugin {
 
         // uses synchronous task because this task will call the ArmorEquipEvent event
         new ArmorEquipEventTask().runTaskTimer(this, 0, 20);
-        if(getConfig().getBoolean("auto_renew_skin", false)) {
-            new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 1200);
-        }
+        new CachedSkinTask().runTaskTimerAsynchronously(this, 0, 1200);
 
         chat.sendSender("&eRegistering listeners...");
-        getServer().getPluginManager().registerEvents(new PlayerJumpEventListener(), this);
-        getServer().getPluginManager().registerEvents(new ClickableItemListener(), this);
-        getServer().getPluginManager().registerEvents(new BowArrowHitEventListener(), this);
-        getServer().getPluginManager().registerEvents(new PlaceholderListener(), this);
-        getServer().getPluginManager().registerEvents(new AnvilListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerCleanerListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
         if(config.getBoolean("packet_handler", true)) {
             getServer().getPluginManager().registerEvents(new PacketListener(), this);
@@ -147,7 +141,7 @@ public final class SpaciousLib extends JavaPlugin {
     @Override
     public void onDisable() {
         AnnotationHandler.unregister(NPCInteractEventListener.class, null);
-        AnnotationHandler.unregister(AnvilListener.class, null);
+        AnnotationHandler.unregister(PlayerListener.class, null);
         for(Player player : getServer().getOnlinePlayers()){
             PacketListener.remove(player);
         }

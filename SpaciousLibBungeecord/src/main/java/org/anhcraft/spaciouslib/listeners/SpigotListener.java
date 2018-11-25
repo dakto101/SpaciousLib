@@ -7,8 +7,8 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.anhcraft.spaciouslib.SpaciousLib;
-import org.anhcraft.spaciouslib.entity.PlayerManager;
 import org.anhcraft.spaciouslib.mojang.Skin;
+import org.anhcraft.spaciouslib.utils.PlayerUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -29,8 +29,8 @@ public class SpigotListener implements Listener {
                     String player = data.readUTF();
                     String value = data.readUTF();
                     String signature = data.readUTF();
-                    new PlayerManager(BungeeCord.getInstance().getPlayer(player))
-                            .changeSkin(new Skin(value, signature));
+                    PlayerUtils.changeSkin(BungeeCord.getInstance().getPlayer(player),
+                            new Skin(value, signature));
                     break;
                 case "cmd":
                     String cmd = data.readUTF();

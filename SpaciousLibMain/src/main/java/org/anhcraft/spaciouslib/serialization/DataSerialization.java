@@ -3,6 +3,8 @@ package org.anhcraft.spaciouslib.serialization;
 import org.anhcraft.spaciouslib.annotations.DataField;
 import org.anhcraft.spaciouslib.annotations.Serializable;
 import org.anhcraft.spaciouslib.serialization.serializers.*;
+import org.anhcraft.spaciouslib.utils.CommonUtils;
+import org.anhcraft.spaciouslib.utils.ExceptionThrower;
 import org.anhcraft.spaciouslib.utils.Group;
 import org.anhcraft.spaciouslib.utils.ReflectionUtils;
 
@@ -12,6 +14,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings(value = "unchecked")
 public abstract class DataSerialization extends DataType {
@@ -104,8 +107,9 @@ public abstract class DataSerialization extends DataType {
         T obj = null;
         try {
             DataInputStream in = new DataInputStream(inputStream);
-            in.readInt(); // version
-            if(clazz.isAnnotationPresent(org.anhcraft.spaciouslib.annotations.Serializable.class)) {
+            int v = in.readInt(); // version
+            ExceptionThrower.ifFalse(v == VERSION, new Exception("Incorrect version. The process can't be started."));
+            if(clazz.isAnnotationPresent(Serializable.class)) {
                 Constructor<T> cons = clazz.getConstructor();
                 cons.setAccessible(true);
                 obj = cons.newInstance();
@@ -194,23 +198,20 @@ public abstract class DataSerialization extends DataType {
         try {
             out.writeInt(VERSION);
             if(clazz.isAnnotationPresent(Serializable.class)) {
-                Field[] fields = clazz.getDeclaredFields();
-                out.writeInt(fields.length);
+                List<Field> fields = CommonUtils.toList(clazz.getDeclaredFields()).stream().filter(field -> !Modifier.isStatic(field.getModifiers()) && field.isAnnotationPresent(DataField.class)).collect(Collectors.toList());
+                out.writeInt(fields.size());
                 for(Field field : fields) {
                     field.setAccessible(true);
-                    if(!Modifier.isStatic(field.getModifiers())
-                            && field.isAnnotationPresent(DataField.class)) {
-                        Object value = field.get(obj);
-                        DataType<Object> type = value == null ? lookupType(
-                                field.getType()) : lookupType(value.getClass());
-                        out.writeUTF(field.getName());
-                        out.writeByte(type.getIdentifier());
-                        if(type instanceof ObjectSerializer){
-                            out.writeUTF(value == null ? field.getType()
-                                    .getName() : value.getClass().getName());
-                        }
-                        type.write(out, field.get(obj));
+                    Object value = field.get(obj);
+                    DataType<Object> type = value == null ? lookupType(
+                            field.getType()) : lookupType(value.getClass());
+                    out.writeUTF(field.getName());
+                    out.writeByte(type.getIdentifier());
+                    if(type instanceof ObjectSerializer){
+                        out.writeUTF(value == null ? field.getType()
+                                .getName() : value.getClass().getName());
                     }
+                    type.write(out, field.get(obj));
                 }
             }
         } catch(IOException | IllegalAccessException e) {

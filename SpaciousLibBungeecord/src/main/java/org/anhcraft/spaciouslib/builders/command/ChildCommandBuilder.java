@@ -12,7 +12,14 @@ public class ChildCommandBuilder {
      * @return this object
      */
     public ChildCommandBuilder path(String name, CommandCallback callback){
-        array.append(new Argument(name, callback, "", null));
+        String[] names = name.split(" ");
+        if(names.length == 1) {
+            array.append(new Argument(name, callback, "", null));
+        } else {
+            for(String n : names){
+                array.append(new Argument(n, callback, "", null));
+            }
+        }
         return this;
     }
 
@@ -24,7 +31,14 @@ public class ChildCommandBuilder {
      * @return this object
      */
     public ChildCommandBuilder path(String name, CommandCallback callback, String explanation){
-        array.append(new Argument(name, callback, explanation, null));
+        String[] names = name.split(" ");
+        if(names.length == 1) {
+            array.append(new Argument(name, callback, explanation, null));
+        } else {
+            for(String n : names){
+                array.append(new Argument(n, callback, explanation, null));
+            }
+        }
         return this;
     }
 
@@ -36,7 +50,14 @@ public class ChildCommandBuilder {
      * @return this object
      */
     public ChildCommandBuilder var(String name, CommandCallback callback, ArgumentType type){
-        array.append(new Argument(name, callback, "", type));
+        String[] names = name.split(" ");
+        if(names.length == 1) {
+            array.append(new Argument(name, callback, "", type));
+        } else {
+            for(String n : names){
+                array.append(new Argument(n, callback, "", type));
+            }
+        }
         return this;
     }
 
@@ -49,7 +70,14 @@ public class ChildCommandBuilder {
      * @return this object
      */
     public ChildCommandBuilder var(String name, CommandCallback callback, ArgumentType type, String explanation){
-        array.append(new Argument(name, callback, explanation, type));
+        String[] names = name.split(" ");
+        if(names.length == 1) {
+            array.append(new Argument(name, callback, explanation, type));
+        } else {
+            for(String n : names){
+                array.append(new Argument(n, callback, explanation, type));
+            }
+        }
         return this;
     }
 

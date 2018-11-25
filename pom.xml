@@ -4,9 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <sl.version>1.7.8</sl.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <github.global.server>github</github.global.server>
+    </properties>
+
     <groupId>org.anhcraft</groupId>
     <artifactId>SpaciousLib</artifactId>
-    <version>1.7.7</version>
+    <version>{sl.version}</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -18,12 +26,6 @@
     <name>SpaciousLib</name>
 
     <description>A useful library for your Spigot/Bungeecord plugins and Java programs</description>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <github.global.server>github</github.global.server>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
     <url>https://anhcraft.org/</url>
 
     <build>
@@ -51,14 +53,6 @@
                     <skipAssembly>true</skipAssembly>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.1</version>
-                <configuration>
-                    <url>http://anhcraft.org:8081/</url>
-                    <groupId>org.anhcraft</groupId>
-                </configuration>
-            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -70,38 +64,8 @@
 
     <repositories>
         <repository>
-            <id>anhcraft</id>
-            <url>http://anhcraft.org:8081/repository/maven-releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>anhcraft</id>
-            <url>http://anhcraft.org:8081/repository/maven-releases/</url>
-        </repository>
-    </distributionManagement>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>anhcraft-release</id>
-            <url>http://anhcraft.org:8081/repository/maven-releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
 </project>

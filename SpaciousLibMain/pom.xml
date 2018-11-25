@@ -4,14 +4,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <sl.version>1.7.8</sl.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <github.global.server>github</github.global.server>
+    </properties>
+
     <artifactId>SpaciousLibMain</artifactId>
-    <version>1.7.7</version>
+    <version>{sl.version}</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.anhcraft</groupId>
         <artifactId>SpaciousLib</artifactId>
-        <version>1.7.7</version>
+        <version>{sl.version}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -27,28 +35,6 @@
                         <descriptor>../assembly.xml</descriptor>
                     </descriptors>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.11</version>
-                <configuration>
-                    <message>${project.version}</message>
-                    <noJekyll>true</noJekyll>
-                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
-                    <branch>refs/heads/mvn-repo</branch>
-                    <includes><include>**/*</include></includes>
-                    <repositoryName>SpaciousLib</repositoryName>
-                    <repositoryOwner>anhcraft</repositoryOwner>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
