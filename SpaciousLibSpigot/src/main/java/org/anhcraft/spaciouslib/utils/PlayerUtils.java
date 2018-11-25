@@ -99,17 +99,25 @@ public class PlayerUtils {
 
         // changing own player skin
         // https://www.spigotmc.org/threads/reload-skin-client-help.196072/#post-2043595
-        Object craftWorld = ReflectionUtils.cast(ClassFinder.CB.CraftWorld, player.getWorld());
-        Object worldServer = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftWorld, craftWorld);
-        int dimension = (int) ReflectionUtils.getField("dimension", ClassFinder.NMS.WorldServer, worldServer);
         Object craftPlayer = ReflectionUtils.cast(ClassFinder.CB.CraftPlayer, player);
         Object nmsEntityPlayer = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftPlayer, craftPlayer);
         Object craftServer = ReflectionUtils.cast(ClassFinder.CB.CraftServer, Bukkit.getServer());
         Object playerList = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftServer, craftServer);
-        ReflectionUtils.getMethod("moveToWorld", ClassFinder.NMS.PlayerList, playerList, new Group<>(
-                new Class<?>[]{ClassFinder.NMS.EntityPlayer, int.class, boolean.class, Location.class, boolean.class},
-                new Object[]{nmsEntityPlayer, dimension, true, player.getLocation(), true}
-        ));
+        Object craftWorld = ReflectionUtils.cast(ClassFinder.CB.CraftWorld, player.getWorld());
+        Object worldServer = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftWorld, craftWorld);
+        if(GameVersion.v1_13_R2.getId() <= GameVersion.getVersion().getId()){
+            Object dimension = ReflectionUtils.getField("dimension", ClassFinder.NMS.WorldServer, worldServer);
+            ReflectionUtils.getMethod("moveToWorld", ClassFinder.NMS.PlayerList, playerList, new Group<>(
+                    new Class<?>[]{ClassFinder.NMS.EntityPlayer, ClassFinder.NMS.DimensionManager, boolean.class, Location.class, boolean.class},
+                    new Object[]{nmsEntityPlayer, dimension, true, player.getLocation(), true}
+            ));
+        } else {
+            int dimension = (int) ReflectionUtils.getField("dimension", ClassFinder.NMS.WorldServer, worldServer);
+            ReflectionUtils.getMethod("moveToWorld", ClassFinder.NMS.PlayerList, playerList, new Group<>(
+                    new Class<?>[]{ClassFinder.NMS.EntityPlayer, int.class, boolean.class, Location.class, boolean.class},
+                    new Object[]{nmsEntityPlayer, dimension, true, player.getLocation(), true}
+            ));
+        }
     }
 
     /**
@@ -128,17 +136,26 @@ public class PlayerUtils {
         NamedEntitySpawn.create(player).sendPlayers(viewers);
 
         // changing own player skin
-        Object craftWorld = ReflectionUtils.cast(ClassFinder.CB.CraftWorld, player.getWorld());
-        Object worldServer = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftWorld, craftWorld);
-        int dimension = (int) ReflectionUtils.getField("dimension", ClassFinder.NMS.WorldServer, worldServer);
+        // https://www.spigotmc.org/threads/reload-skin-client-help.196072/#post-2043595
         Object craftPlayer = ReflectionUtils.cast(ClassFinder.CB.CraftPlayer, player);
         Object nmsEntityPlayer = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftPlayer, craftPlayer);
         Object craftServer = ReflectionUtils.cast(ClassFinder.CB.CraftServer, Bukkit.getServer());
         Object playerList = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftServer, craftServer);
-        ReflectionUtils.getMethod("moveToWorld", ClassFinder.NMS.PlayerList, playerList, new Group<>(
-                new Class<?>[]{ClassFinder.NMS.EntityPlayer, int.class, boolean.class, Location.class, boolean.class},
-                new Object[]{nmsEntityPlayer, dimension, true, player.getLocation(), true}
-        ));
+        Object craftWorld = ReflectionUtils.cast(ClassFinder.CB.CraftWorld, player.getWorld());
+        Object worldServer = ReflectionUtils.getMethod("getHandle", ClassFinder.CB.CraftWorld, craftWorld);
+        if(GameVersion.v1_13_R2.getId() <= GameVersion.getVersion().getId()){
+            Object dimension = ReflectionUtils.getField("dimension", ClassFinder.NMS.WorldServer, worldServer);
+            ReflectionUtils.getMethod("moveToWorld", ClassFinder.NMS.PlayerList, playerList, new Group<>(
+                    new Class<?>[]{ClassFinder.NMS.EntityPlayer, ClassFinder.NMS.DimensionManager, boolean.class, Location.class, boolean.class},
+                    new Object[]{nmsEntityPlayer, dimension, true, player.getLocation(), true}
+            ));
+        } else {
+            int dimension = (int) ReflectionUtils.getField("dimension", ClassFinder.NMS.WorldServer, worldServer);
+            ReflectionUtils.getMethod("moveToWorld", ClassFinder.NMS.PlayerList, playerList, new Group<>(
+                    new Class<?>[]{ClassFinder.NMS.EntityPlayer, int.class, boolean.class, Location.class, boolean.class},
+                    new Object[]{nmsEntityPlayer, dimension, true, player.getLocation(), true}
+            ));
+        }
     }
 
     /**
@@ -147,7 +164,7 @@ public class PlayerUtils {
      * @param player player
      */
     public static void freeze(Player player){
-        PlayerListener.freezedPlayers.add(player.getUniqueId());
+        PlayerListener.freezedPlayers.put(player.getUniqueId(), player.getLocation());
     }
 
     /**

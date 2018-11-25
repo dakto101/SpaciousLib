@@ -43,6 +43,7 @@ public class ClassFinder {
         public static Class<?> BarColor;
         public static Class<?> EntityEnderDragon;
         public static Class<?> PacketDataSerializer;
+        public static Class<?> DimensionManager;
         public static Class<?> PacketPlayOutTitle;
         public static Class<?> PacketPlayOutChat;
         public static Class<?> PacketPlayOutAnimation;
@@ -123,6 +124,7 @@ public class ClassFinder {
                     BossBattle = Class.forName(base + "BossBattle");
                     BarColor = Class.forName(base + "BossBattle$BarColor");
                     BarStyle = Class.forName(base + "BossBattle$BarStyle");
+                    DimensionManager = Class.forName(base + "DimensionManager");
                 }
                 if(GameVersion.is1_13Above()) {
                     Particle = Class.forName(base + "Particle");
