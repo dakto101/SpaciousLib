@@ -7,9 +7,9 @@ import org.anhcraft.spaciouslib.command.CommandArgument;
 import org.anhcraft.spaciouslib.command.CommandBuilder;
 import org.anhcraft.spaciouslib.command.CommandRunnable;
 import org.anhcraft.spaciouslib.command.SubCommandBuilder;
-import org.anhcraft.spaciouslib.entity.PlayerManager;
 import org.anhcraft.spaciouslib.mojang.MojangAPI;
 import org.anhcraft.spaciouslib.mojang.SkinAPI;
+import org.anhcraft.spaciouslib.utils.PlayerUtils;
 
 public class SLDev implements Listener {
     public SLDev(){
@@ -30,7 +30,7 @@ public class SLDev implements Listener {
                                 public void run(CommandBuilder cmd, SubCommandBuilder subcmd, CommandSender sender, String[] args, String value) {
                                     if(sender instanceof ProxiedPlayer) {
                                         try {
-                                            new PlayerManager((ProxiedPlayer) sender).changeSkin(
+                                            PlayerUtils.changeSkin((ProxiedPlayer) sender,
                                                     SkinAPI.getSkin(MojangAPI.getUniqueId(value).getB()).getSkin());
                                         } catch(Exception e) {
                                             e.printStackTrace();

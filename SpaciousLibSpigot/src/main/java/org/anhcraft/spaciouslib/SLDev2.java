@@ -3,13 +3,22 @@ package org.anhcraft.spaciouslib;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
 import org.anhcraft.spaciouslib.annotations.ConfigOption;
 import org.anhcraft.spaciouslib.annotations.SpaciousAnnotation;
-import org.anhcraft.spaciouslib.builders.command.*;
+import org.anhcraft.spaciouslib.builders.command.ArgumentType;
+import org.anhcraft.spaciouslib.builders.command.ChildCommandBuilder;
+import org.anhcraft.spaciouslib.builders.command.CommandBuilder;
+import org.anhcraft.spaciouslib.builders.command.CommandCallback;
+import org.anhcraft.spaciouslib.mojang.CachedSkin;
+import org.anhcraft.spaciouslib.mojang.Skin;
 import org.anhcraft.spaciouslib.protocol.ActionBar;
+import org.anhcraft.spaciouslib.serialization.DataSerialization;
+import org.anhcraft.spaciouslib.utils.CommonUtils;
 import org.anhcraft.spaciouslib.utils.MathUtils;
 import org.anhcraft.spaciouslib.utils.ServerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.UUID;
 
 public class SLDev2 implements Listener {
     public static final String FILE = "plugins/SpaciousLib/config.yml";
@@ -108,10 +117,9 @@ public class SLDev2 implements Listener {
     );
 
     public static void main(String[] args){
-        for(int i = 0; i < cb.getCommands(); i++){
-            System.out.println(cb.toString(i, true).replace("§", "&"));
-            System.out.println(cb.toString(i, true, true).replace("§", "&"));
-        }
+        CachedSkin cs = new CachedSkin(Skin.STEVE, UUID.randomUUID(), 10);
+        byte[] data = DataSerialization.serialize(CachedSkin.class, cs).getA();
+        System.out.println(CommonUtils.compare(cs, DataSerialization.deserialize(CachedSkin.class, data)));
     }
 
     public SLDev2(){

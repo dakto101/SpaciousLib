@@ -24,7 +24,7 @@ public class PlayerUtils {
      * @param player the player
      * @param skin new skin
      */
-    public void changeSkin(ProxiedPlayer player, Skin skin){
+    public static void changeSkin(ProxiedPlayer player, Skin skin){
         InitialHandler ih = (InitialHandler) player.getPendingConnection();
         LoginResult lr = ih.getLoginProfile();
         if(lr == null) {
