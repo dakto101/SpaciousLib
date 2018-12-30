@@ -17,6 +17,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,16 +102,21 @@ public final class SpaciousLib extends JavaPlugin {
         chat.sendSender("&eStarting tasks...");
         //if(config.getBoolean("stats", true)){}
         if(config.getBoolean("check_update", true)){
-            try {
-                if(UpdateChecker.predictLatest(getDescription().getVersion(), UpdateChecker.viaSpiget("39007"))){
-                    chat.sendSender("&a[Updater] This version is latest!");
-                } else {
-                    chat.sendSender("&c[Updater] Outdated version! Please update in order to receive bug fixes and much more.");
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        if(UpdateChecker.predictLatest(getDescription().getVersion(), UpdateChecker.viaSpiget("39007"))){
+                            chat.sendSender("&a[Updater] This version is latest!");
+                        } else {
+                            chat.sendSender("&c[Updater] Outdated version! Please update in order to receive bug fixes and much more.");
+                        }
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                        chat.sendSender("&c[Updater] Failed to check update.");
+                    }
                 }
-            } catch(IOException e) {
-                e.printStackTrace();
-                chat.sendSender("&c[Updater] Failed to check update.");
-            }
+            }.runTaskAsynchronously(this);
         }
 
         // uses synchronous task because this task will call the ArmorEquipEvent event

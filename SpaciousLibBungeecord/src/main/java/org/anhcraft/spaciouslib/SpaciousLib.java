@@ -80,16 +80,18 @@ public final class SpaciousLib extends Plugin {
         getProxy().getScheduler().schedule(this, new CachedSkinTask(), 0, 60, TimeUnit.SECONDS);
         //if(config.getBoolean("stats", true)){}
         if(config.getBoolean("check_update", true)){
-            try {
-                if(UpdateChecker.predictLatest(getDescription().getVersion(), UpdateChecker.viaSpiget("39007"))){
-                    chat.sendSender("&a[Updater] This version is latest!");
-                } else {
-                    chat.sendSender("&c[Updater] Outdated version! Please update in order to receive bug fixes and much more.");
+            getProxy().getScheduler().runAsync(this, () -> {
+                try {
+                    if(UpdateChecker.predictLatest(getDescription().getVersion(), UpdateChecker.viaSpiget("39007"))){
+                        chat.sendSender("&a[Updater] This version is latest!");
+                    } else {
+                        chat.sendSender("&c[Updater] Outdated version! Please update in order to receive bug fixes and much more.");
+                    }
+                } catch(IOException e) {
+                    e.printStackTrace();
+                    chat.sendSender("&c[Updater] Failed to check update.");
                 }
-            } catch(IOException e) {
-                e.printStackTrace();
-                chat.sendSender("&c[Updater] Failed to check update.");
-            }
+            });
         }
 
         chat.sendSender("&eRegistering listeners...");
