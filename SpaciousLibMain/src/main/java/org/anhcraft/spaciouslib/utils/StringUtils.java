@@ -5,6 +5,7 @@ import org.anhcraft.spaciouslib.builders.ArrayBuilder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class StringUtils {
     public static String escape(String text){
@@ -34,17 +35,9 @@ public class StringUtils {
         }
         char[] chars = str.toCharArray();
         ArrayBuilder arr = new ArrayBuilder(char.class);
-        Repeater.whileTrue(0, 1, new Repeater() {
-            @Override
-            public void run(int current) {
-                arr.append(chars);
-            }
-
-            @Override
-            public boolean check(int current) {
-                return current < times;
-            }
-        });
+        for(int i = 0; i < times; i++){
+            arr.append(Arrays.copyOf(chars, chars.length));
+        }
         return new String((char[]) arr.build());
     }
 
@@ -72,17 +65,9 @@ public class StringUtils {
 
     public static String reverse(String str){
         ArrayBuilder arr = new ArrayBuilder(char.class);
-        Repeater.whileTrue(0, 1, new Repeater() {
-            @Override
-            public void run(int current) {
-                arr.append(str.charAt(str.length()-current-1));
-            }
-
-            @Override
-            public boolean check(int current) {
-                return current < str.length();
-            }
-        });
+        for(int i = 0; i < str.length(); i++){
+            arr.append(str.charAt(str.length()-i-1));
+        }
         return new String((char[]) arr.build());
     }
 }
