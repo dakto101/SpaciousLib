@@ -1,5 +1,7 @@
 # allows SpaciousLib collects a little info of your server
 stats: true
+# automatic checks update?
+check_update: true
 # enables the development mode
 # secret command: /sls
 dev_mode: false
@@ -29,4 +31,4 @@ packet_handler: true
 
 # ==================================
 # pls don't change this
-config_version: 3
+config_version: 4

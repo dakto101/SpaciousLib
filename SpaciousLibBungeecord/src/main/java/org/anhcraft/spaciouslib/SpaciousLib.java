@@ -15,6 +15,7 @@ import org.anhcraft.spaciouslib.tasks.CachedSkinTask;
 import org.anhcraft.spaciouslib.utils.Chat;
 import org.anhcraft.spaciouslib.utils.IOUtils;
 import org.anhcraft.spaciouslib.utils.ProxyUtils;
+import org.anhcraft.spaciouslib.utils.UpdateChecker;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,8 +78,18 @@ public final class SpaciousLib extends Plugin {
 
         chat.sendSender("&eStarting tasks...");
         getProxy().getScheduler().schedule(this, new CachedSkinTask(), 0, 60, TimeUnit.SECONDS);
-        if(config.getBoolean("stats", true)){
-            new Updater1520156620("1520156620", this);
+        //if(config.getBoolean("stats", true)){}
+        if(config.getBoolean("check_update", true)){
+            try {
+                if(UpdateChecker.predictLatest(getDescription().getVersion(), UpdateChecker.viaSpiget("39007"))){
+                    chat.sendSender("&a[Updater] This version is latest!");
+                } else {
+                    chat.sendSender("&c[Updater] Outdated version! Please update in order to receive bug fixes and much more.");
+                }
+            } catch(IOException e) {
+                e.printStackTrace();
+                chat.sendSender("&c[Updater] Failed to check update.");
+            }
         }
 
         chat.sendSender("&eRegistering listeners...");
