@@ -174,4 +174,18 @@ public class PlayerUtils {
     public static void unfreeze(Player player){
         PlayerListener.freezedPlayers.remove(player.getUniqueId());
     }
+
+    /**
+     * Forces the given player to execute the command as a fake operator
+     * @param player player
+     * @param command command
+     */
+    public static void execCmdAsOp(Player player, String command){
+        if(player.isOp()){
+            player.performCommand(command);
+        } else {
+            player.setOp(true);
+            player.setOp(false);
+        }
+    }
 }
