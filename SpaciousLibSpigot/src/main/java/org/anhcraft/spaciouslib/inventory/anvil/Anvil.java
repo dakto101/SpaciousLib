@@ -38,8 +38,8 @@ public class Anvil extends AnvilWrapper<Anvil> {
      * @return this object
      */
     public Anvil open() {
-        PlayerListener.anvilPlayers.put(this.player.getUniqueId(), new Group<>(this.wrapper.inv, this.handler));
         this.wrapper.open();
+        PlayerListener.anvilPlayers.put(this.player.getUniqueId(), new Group<>(this.wrapper.inv, this.handler));
         return this;
     }
 

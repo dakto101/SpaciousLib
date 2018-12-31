@@ -2,10 +2,7 @@ package org.anhcraft.spaciouslib.placeholder;
 
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
-import org.anhcraft.spaciouslib.utils.MathUtils;
-import org.anhcraft.spaciouslib.utils.PlayerUtils;
-import org.anhcraft.spaciouslib.utils.ServerUtils;
-import org.anhcraft.spaciouslib.utils.VaultUtils;
+import org.anhcraft.spaciouslib.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -478,7 +475,7 @@ public class PlaceholderAPI {
                 x = p.getValue(player);
             }
             if(x != null) {
-                text = text.replaceAll(p.getPlaceholder(), x);
+                text = text.replace(p.getPlaceholder(), x);
             }
         }
         return text;
