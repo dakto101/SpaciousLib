@@ -49,15 +49,23 @@ public class Argument {
     }
 
     /**
+     * Check whether this is a root argument or not
+     * @return true if yes
+     */
+    public boolean isRootArgument() {
+        return isPathArgument() && name.isEmpty();
+    }
+
+    /**
      * Check whether the given string is valid
      * @param str string
      * @return true if it is valid
      */
     public boolean check(String str) {
-        if(isPathArgument() && name.length() > 0){
-            return str.equalsIgnoreCase(name);
+        if(isPathArgument()){
+            return str == null || name.length() == 0 || str.equalsIgnoreCase(name);
         } else {
-            return type == null || type.check(str.trim());
+            return type.check(str.trim());
         }
     }
 }
