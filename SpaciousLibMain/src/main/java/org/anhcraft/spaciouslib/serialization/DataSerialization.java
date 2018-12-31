@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings(value = "unchecked")
 public abstract class DataSerialization extends DataType {
     private static final int VERSION = 1;
-    private static final HashMap<Class<?>, DataType> arraySerializersa = new HashMap<>();
+    private static final HashMap<Class<?>, DataType> serializers = new HashMap<>();
 
     static {
         new ByteSerializer((byte) 0);
@@ -42,15 +42,15 @@ public abstract class DataSerialization extends DataType {
         // 33: Vector
         // 34: NBTCompound
 
-        arraySerializersa.put(boolean[].class, new PrimitiveArraySerializer((byte) 118, boolean.class));
-        arraySerializersa.put(byte[].class, new PrimitiveArraySerializer((byte) 119, byte.class));
-        arraySerializersa.put(char[].class, new PrimitiveArraySerializer((byte) 120, char.class));
-        arraySerializersa.put(int[].class, new PrimitiveArraySerializer((byte) 121, int.class));
-        arraySerializersa.put(double[].class, new PrimitiveArraySerializer((byte) 122, double.class));
-        arraySerializersa.put(short[].class, new PrimitiveArraySerializer((byte) 123, short.class));
-        arraySerializersa.put(float[].class, new PrimitiveArraySerializer((byte) 124, float.class));
-        arraySerializersa.put(long[].class, new PrimitiveArraySerializer((byte) 125, long.class));
-        arraySerializersa.put(Object[].class, new ObjectArraySerializer((byte) 126));
+        serializers.put(boolean[].class, new PrimitiveArraySerializer((byte) 118, boolean.class));
+        serializers.put(byte[].class, new PrimitiveArraySerializer((byte) 119, byte.class));
+        serializers.put(char[].class, new PrimitiveArraySerializer((byte) 120, char.class));
+        serializers.put(int[].class, new PrimitiveArraySerializer((byte) 121, int.class));
+        serializers.put(double[].class, new PrimitiveArraySerializer((byte) 122, double.class));
+        serializers.put(short[].class, new PrimitiveArraySerializer((byte) 123, short.class));
+        serializers.put(float[].class, new PrimitiveArraySerializer((byte) 124, float.class));
+        serializers.put(long[].class, new PrimitiveArraySerializer((byte) 125, long.class));
+        serializers.put(Object[].class, new ObjectArraySerializer((byte) 126));
         new ObjectSerializer((byte) 127);
     }
 
@@ -65,7 +65,7 @@ public abstract class DataSerialization extends DataType {
      */
     public static DataType<Object> lookupType(Class<?> clazz){
         if(clazz.isArray()){
-            return arraySerializersa.getOrDefault(clazz, typeLookupById[126]);
+            return serializers.getOrDefault(clazz, typeLookupById[126]);
         }
         if(clazz.isEnum()){
             return typeLookupById[11];

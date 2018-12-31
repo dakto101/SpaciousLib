@@ -64,49 +64,28 @@ public class SLDev implements Listener {
             }
         }, ArgumentType.ONLINE_PLAYER).build())
 
-                .addChild(new ChildCommandBuilder().path("book", new CommandCallback() {
-            @Override
-            public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-
-            }
-        }).var("player", new CommandCallback() {
+                .addChild(new ChildCommandBuilder().path("book").var("player", new CommandCallback() {
             @Override
             public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
                 CustomPayload.openBook(HandSlot.MAINHAND).sendPlayer(Bukkit.getPlayer(value));
             }
         }, ArgumentType.ONLINE_PLAYER).build())
 
-                .addChild(new ChildCommandBuilder().path("utils freeze", new CommandCallback() {
-                    @Override
-                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    }
-                }).var("player", new CommandCallback() {
+                .addChild(new ChildCommandBuilder().path("utils freeze").var("player", new CommandCallback() {
                     @Override
                     public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
                         PlayerUtils.freeze(Bukkit.getPlayer(value));
                     }
                 }, ArgumentType.ONLINE_PLAYER).build())
 
-                .addChild(new ChildCommandBuilder().path("utils unfreeze", new CommandCallback() {
-                    @Override
-                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    }
-                }).var("player", new CommandCallback() {
+                .addChild(new ChildCommandBuilder().path("utils unfreeze").var("player", new CommandCallback() {
                     @Override
                     public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
                         PlayerUtils.unfreeze(Bukkit.getPlayer(value));
                     }
                 }, ArgumentType.ONLINE_PLAYER).build())
 
-                .addChild(new ChildCommandBuilder().path("utils changeskin", new CommandCallback() {
-                    @Override
-                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    }
-                }).var("skin", new CommandCallback() {
-                    @Override
-                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    }
-                }, ArgumentType.ANYTHING).var("player", new CommandCallback() {
+                .addChild(new ChildCommandBuilder().path("utils changeskin").var("skin", ArgumentType.ANYTHING).var("player", new CommandCallback() {
                     @Override
                     public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
                         try {
@@ -116,7 +95,7 @@ public class SLDev implements Listener {
                         }
                     }
                 }, ArgumentType.ONLINE_PLAYER).build())
-                .build(SpaciousLib.instance).clone("spaciouslibspigot").build(SpaciousLib.instance);
+                .build(SpaciousLib.instance).clone("spaciouslibspigot").addAlias("slspigot").build(SpaciousLib.instance);
     }
 
 
@@ -134,13 +113,13 @@ public class SLDev implements Listener {
     public void equip(ArmorEquipEvent event){
         if(!InventoryUtils.isNull(event.getNewArmor())){
             if(event.getNewArmor().getType().equals(Material.DIAMOND_HELMET)) {
-                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 9999999, 1));
+                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999999, 1));
             }
             return;
         }
         if(!InventoryUtils.isNull(event.getOldArmor())) {
             if(event.getOldArmor().getType().equals(Material.DIAMOND_HELMET)) {
-                event.getPlayer().removePotionEffect(PotionEffectType.LEVITATION);
+                event.getPlayer().removePotionEffect(PotionEffectType.SPEED);
             }
         }
     }

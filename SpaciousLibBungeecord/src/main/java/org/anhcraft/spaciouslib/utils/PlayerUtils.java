@@ -8,6 +8,9 @@ import net.md_5.bungee.connection.LoginResult;
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.mojang.Skin;
 
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+
 public class PlayerUtils {
     /**
      * Get the ping number of the given player at the moment
@@ -16,6 +19,34 @@ public class PlayerUtils {
      */
     public static int getPing(ProxiedPlayer player){
         return player.getPing();
+    }
+
+    /**
+     * Get the offline id of the given player
+     * @param player player
+     * @return offline id
+     */
+    public static UUID getOfflineId(String player){
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player).getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Get the current skin of the given player
+     * @param player player
+     * @return the skin
+     */
+    public static Skin getSkin(ProxiedPlayer player){
+        InitialHandler ih = (InitialHandler) player.getPendingConnection();
+        LoginResult lr = ih.getLoginProfile();
+        if(lr == null) {
+            lr = new LoginResult(player.getUniqueId().toString().replace("-", ""),player.getName(), null);
+        }
+        for(LoginResult.Property p : lr.getProperties()){
+            if(p.getName().equals("textures")){
+                return new Skin(p.getValue(), p.getSignature());
+            }
+        }
+        return null;
     }
 
     /**

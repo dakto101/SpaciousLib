@@ -1,5 +1,7 @@
 # allows SpaciousLib collects a little info of your server
 stats: true
+# automatic checks update?
+check_update: true
 # enables the development mode
 # secret command: /slb
 dev_mode: false

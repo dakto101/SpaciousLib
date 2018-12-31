@@ -20,15 +20,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="SpaciousLibMain" />
     <orderEntry type="module-library">
-      <library name="Maven: net.md-5:bungeecord:1.13">
+      <library>
         <CLASSES>
-          <root url="jar://E:/test/bungee/BungeeCord.jar!/" />
+          <root url="jar://E:/Official Testing Server/Bungeecord/BungeeCord.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="SpaciousLibMain" />
   </component>
 </module>
