@@ -19,17 +19,17 @@ public class Test6 {
             @Override
             public String handle() {
                 StringBuilder sb = new StringBuilder();
-                Repeater.until(0, 1, new Repeater() {
+                Repeater.until(0, 1, new Repeater<String>() {
                     @Override
-                    public void run(int current) {
-                        sb.append(p.go(current).get()[0]);
+                    public String run(int current) {
+                        return Integer.toString(p.go(current).get()[0]);
                     }
 
                     @Override
                     public boolean check(int current) {
                         return current > p.max();
                     }
-                });
+                }).forEach(sb::append);
                 return sb.toString();
             }
         }.run());

@@ -52,5 +52,10 @@ public class Test4 {
         table.forEachRow(i -> System.out.print(i+" "), 1);
         System.out.println();
         table.forEachRow(i -> System.out.print(i+" "), 2);
+        System.out.println();
+
+        for(Integer i : table.toArray(Integer.class)){
+            System.out.print(i+" ");
+        }
     }
 }

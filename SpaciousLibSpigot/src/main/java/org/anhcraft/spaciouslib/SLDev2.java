@@ -27,94 +27,6 @@ public class SLDev2 implements Listener {
     public static boolean stats;
     @ConfigOption(path = "dev_mode", file = FILE)
     public static boolean dev_mode;
-    public static CommandBuilder cb = new CommandBuilder("test", new CommandCallback() {
-        @Override
-        public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-            for(int i = 0; i < builder.getCommands(); i++) {
-                sender.spigot().sendMessage(builder.toTextComponent(i, true, true));
-            }
-        }
-    }, "testing command").addChild(new ChildCommandBuilder().path("a", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("a");
-                }
-            }).path("b", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("a b");
-                }
-            }, "this is a test command").build()
-    ).addChild(new ChildCommandBuilder().path("b", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("b");
-                }
-            }).var("c", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("b c: "+value);
-                }
-            }, ArgumentType.ANYTHING).build()
-    ).addChild(new ChildCommandBuilder().path("c", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("c");
-                }
-            }).var("a", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("c a:"+value);
-                }
-            }, ArgumentType.ONLINE_PLAYER).var("b", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("c a b:"+value);
-                }
-            }, ArgumentType.INTEGER).build()
-    ).addChild(new ChildCommandBuilder().path("d", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("d");
-                }
-            }).var("aaa", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("d aaa:"+value);
-                }
-            }, ArgumentType.EMAIL).path("bab", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("d aaa bab:"+value);
-                }
-            }).build()
-    ).addChild(new ChildCommandBuilder().path("e", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("e");
-                }
-            }).path("0122", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("e 0122");
-                }
-            }).path("7870", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("e 0122 7870");
-                }
-            }).path("2485", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("e 0122 7870 2485");
-                }
-            }).path("1473", new CommandCallback() {
-                @Override
-                public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
-                    sender.sendMessage("e 0122 7870 2485 1473");
-                }
-            }).build()
-    );
 
     public static void main(String[] args){
         CachedSkin cs = new CachedSkin(Skin.STEVE, UUID.randomUUID(), 10);
@@ -133,10 +45,102 @@ public class SLDev2 implements Listener {
                 ActionBar.create("&aTPS: &f"+ MathUtils.round(ServerUtils.getTPS()[0])).sendAll();
             }
         }.runTaskTimerAsynchronously(SpaciousLib.instance, 0, 40);
-        // /test
-        // /test a b
-        // /test b <c>
-        // /test c [a <b>]
-        cb.build(SpaciousLib.instance);
+
+        new CommandBuilder("test", new CommandCallback() {
+            @Override
+            public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                for(int i = 0; i < builder.getCommands(); i++) {
+                    sender.spigot().sendMessage(builder.toTextComponent(i, true, true));
+                }
+            }
+        }, "testing command").addChild(new ChildCommandBuilder().path("dxffdtwmze", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("dxffdtwmze");
+                    }
+                }).path("nhtthelcif", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("dxffdtwmze nhtthelcif");
+                    }
+                }, "this is a test command").build()
+        ).addChild(new ChildCommandBuilder().path("bweiaefxof", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("bweiaefxof");
+                    }
+                }).var("aclavygsba", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("bweiaefxof aclavygsba: "+value);
+                    }
+                }, ArgumentType.ANYTHING).build()
+        ).addChild(new ChildCommandBuilder().path("8s5eq6z1rw", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("8s5eq6z1rw");
+                    }
+                }).var("ob60yzdks8", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("8s5eq6z1rw ob60yzdks8:"+value);
+                    }
+                }, ArgumentType.ONLINE_PLAYER).var("5ed63bdynt", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("8s5eq6z1rw ob60yzdks8 5ed63bdynt:"+value);
+                    }
+                }, ArgumentType.INTEGER).build()
+        ).addChild(new ChildCommandBuilder().path("rgikblwytx", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("rgikblwytx");
+                    }
+                }).var("yeyhkjdxea", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("rgikblwytx yeyhkjdxea:"+value);
+                    }
+                }, ArgumentType.EMAIL).var("bab", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("rgikblwytx yeyhkjdxea hgleprjzzd:"+value);
+                    }
+                }, ArgumentType.WORLD).build()
+        ).addChild(new ChildCommandBuilder().path("7465634628 0635284628", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("7465634628 0635284628");
+                    }
+                }).path("skrbejbbkx yhopiryvbl", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("7465634628 0635284628 skrbejbbkx yhopiryvbl");
+                    }
+                }).var("x3dk8e230u", new CommandCallback() {
+                    @Override
+                    public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                        sender.sendMessage("7465634628 0635284628 skrbejbbkx yhopiryvbl x3dk8e230u: "+value);
+                    }
+                }, ArgumentType.URL).build()
+        ).addAlias("tezt").build(SpaciousLib.instance);
+
+
+        new CommandBuilder("test2", new ChildCommandBuilder().root(new CommandCallback() {
+            @Override
+            public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                sender.sendMessage("root");
+            }
+        }).var("1fxc761i3u", new CommandCallback() {
+            @Override
+            public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                sender.sendMessage("root 1fxc761i3u: "+value);
+            }
+        }, ArgumentType.ANYTHING).var("iqq5rzyw7d", new CommandCallback() {
+            @Override
+            public void run(CommandBuilder builder, CommandSender sender, int command, String[] args, int arg, String value) {
+                sender.sendMessage("root 1fxc761i3u iqq5rzyw7d: "+value);
+            }
+        }, ArgumentType.NEGATIVE_REAL_NUMBER).build(), "testing command 2").addAlias("tezt2").build(SpaciousLib.instance);
     }
 }

@@ -1,5 +1,5 @@
 name: SpaciousLib
-version: 1.7.8
+version: 1.7.9
 main: org.anhcraft.spaciouslib.SpaciousLib
 softdepend: [Vault,PlayerPoints]
 authors: [anhcraft]
