@@ -18,12 +18,14 @@ import java.util.stream.Collectors;
 
 public class CommandBuilder {
     private String name;
-    private String[] explanationData;
-    private Table<Argument> arguments;
+    private List<String> aliases = new ArrayList<>();
+    private String[] explanationData = new String[0];
+    private Table<Argument> arguments = new Table<>(0, 0);
     private ErrorCallback errorCallback = new ErrorCallback() {
         @Override
         public void invalid(CommandBuilder builder, CommandSender sender, String[] args, int command, int arg) {
-            sender.sendMessage(Chat.color("&e(!) Invalid value &f'"+StringUtils.escape(args[arg])+"' &eat argument "+arg+": "+getArgument(command, arg).getType().getErrorMessage()));
+            Argument argument = getArgument(command, arg);
+            sender.sendMessage(Chat.color("&e(!) Invalid value &f'"+StringUtils.escape(args[arg])+"' &eat argument &f'"+argument.getName()+"' &e(index="+arg+"): "+argument.getType().getErrorMessage()));
             sender.sendMessage(Chat.color("&a(>) Please check again the command:"));
             sender.spigot().sendMessage(toTextComponent(command, true, true));
         }
@@ -50,8 +52,6 @@ public class CommandBuilder {
      */
     public CommandBuilder(String name, CommandCallback callback){
         this.name = name;
-        this.arguments = new Table<>(0, 0);
-        this.explanationData = new String[0];
         addChild("", new Argument("", callback, "", null));
     }
 
@@ -63,8 +63,6 @@ public class CommandBuilder {
      */
     public CommandBuilder(String name, CommandCallback callback, String explanation){
         this.name = name;
-        this.arguments = new Table<>(0, 0);
-        this.explanationData = new String[0];
         addChild(explanation, new Argument("", callback, "", null));
     }
 
@@ -74,9 +72,8 @@ public class CommandBuilder {
      * @param args arguments of root command
      */
     public CommandBuilder(String name, Argument[] args){
+        ExceptionThrower.ifTrue(args.length == 0, new Exception("Command must have at least one argument"));
         this.name = name;
-        this.arguments = new Table<>(0, 0);
-        this.explanationData = new String[0];
         addChild("", args);
     }
 
@@ -87,14 +84,14 @@ public class CommandBuilder {
      * @param explanation command explanation
      */
     public CommandBuilder(String name, Argument[] args, String explanation){
+        ExceptionThrower.ifTrue(args.length == 0, new Exception("Command must have at least one argument"));
         this.name = name;
-        this.arguments = new Table<>(0, 0);
-        this.explanationData = new String[0];
         addChild(explanation, args);
     }
 
     /**
-     * Add a child command
+     * Add a child command.<br>
+     * Warning: please put arguments in order: root arguments then path arguments then variable arguments
      * @param args arguments of child command
      * @return this object
      */
@@ -103,23 +100,113 @@ public class CommandBuilder {
     }
 
     /**
-     * Add a child command
+     * Add a child command.<br>
+     * Warning: please put arguments in order: root arguments then path arguments then variable arguments
      * @param args arguments of child command
      * @param explanation child command explanation
      * @return this object
      */
     public CommandBuilder addChild(String explanation, Argument... args){
         if(args.length > 0) {
-            explanationData = (String[]) new ArrayBuilder(explanationData).append(explanation).build();
-            if(arguments.columns() < args.length) {
-                int i = 0;
-                while(i < args.length) {
-                    arguments.addLastColumn();
-                    i++;
+            /*
+            Check whether the order of arguments is correct
+            - First range: one root argument
+            - Second range: path arguments
+            - Third range: variable arguments
+            - Residual range: null arguments
+             */
+            int mode = 0;
+            boolean oob = false;
+            try {
+                for(Argument arg : args) {
+                    // when an argument is null, determine that the checking passed the third range
+                    if(arg == null){
+                        oob = true;
+                    }
+                    else {
+                        if(oob){
+                            // when an argument is not null, but the current range is the residual one, then this is an invalid situation
+                            throw new Exception("Invalid ordinal: "+String.join(" ", Repeater.whileTrue(0, 1, new Repeater<String>() {
+                                @Override
+                                public String run(int current) {
+                                    return args[current] == null ? "[NULL]" : args[current].getName();
+                                }
+
+                                @Override
+                                public boolean check(int current) {
+                                    return current < args.length;
+                                }
+                            })));
+                        } else {
+                            // ROOT AND PATH ARGUMENTS
+                            if(arg.isPathArgument()) {
+                                // ROOT
+                                if(arg.getName().isEmpty()) {
+                                    // we only allow one root argument
+                                    if(mode == 0) {
+                                        mode++;
+                                    }
+                                    // this is an invalid situation whenever the checking is not in the first range
+                                    else {
+                                        throw new Exception("Invalid ordinal: "+String.join(" ", Repeater.whileTrue(0, 1, new Repeater<String>() {
+                                            @Override
+                                            public String run(int current) {
+                                                return args[current] == null ? "[NULL]" : args[current].getName();
+                                            }
+
+                                            @Override
+                                            public boolean check(int current) {
+                                                return current < args.length;
+                                            }
+                                        })));
+                                    }
+                                }
+                                // PATH
+                                else {
+                                    // set the current range to the second
+                                    if(mode == 0) {
+                                        mode++;
+                                    }
+                                    // this is an invalid situation whenever the checking is in the third range
+                                    else if(mode == 2) {
+                                        throw new Exception("Invalid ordinal: "+String.join(" ", Repeater.whileTrue(0, 1, new Repeater<String>() {
+                                            @Override
+                                            public String run(int current) {
+                                                return args[current] == null ? "[NULL]" : args[current].getName();
+                                            }
+
+                                            @Override
+                                            public boolean check(int current) {
+                                                return current < args.length;
+                                            }
+                                        })));
+                                    }
+                                }
+                            }
+                            // VARIABLE ARGUMENTS
+                            // if the argument is a variable one, determine that the checking is in the third range
+                            else if(mode < 2) {
+                                mode = 2;
+                            }
+                        }
+                    }
                 }
+            } catch(Exception e) {
+                e.printStackTrace();
+            } finally {
+                explanationData = (String[]) new ArrayBuilder(explanationData).append(explanation).build();
+                // expand the table if needed
+                if(arguments.columns() < args.length) {
+                    int amount = args.length-arguments.columns();
+                    int i = 0;
+                    while(i < amount) {
+                        arguments.addLastColumn();
+                        i++;
+                    }
+                }
+                arguments.addLastRow();
+                arguments.set(arguments.columns(), arguments.rows() - 1, args);
             }
-            arguments.addLastRow();
-            arguments.set(arguments.columns(), arguments.rows() - 1, args);
         }
         return this;
     }
@@ -293,6 +380,7 @@ public class CommandBuilder {
                     new Class<?>[]{String.class, Plugin.class},
                     new Object[]{this.name, plugin}
             ));
+            c.setAliases(aliases);
             c.setTabCompleter((sender, command, alias, args) -> tabCompleter(args));
             c.setExecutor((s, command, l, a) -> {
                 executor(s, a);
@@ -301,6 +389,7 @@ public class CommandBuilder {
             CommandUtils.register(plugin, c);
             this.command = c;
         } else {
+            command.setAliases(aliases);
             command.setTabCompleter((sender, command, alias, args) -> tabCompleter(args));
             command.setExecutor((s, command, l, a) -> {
                 executor(s, a);
@@ -310,11 +399,21 @@ public class CommandBuilder {
         return this;
     }
 
+    /**
+     * Clones this object
+     * @param name new command name
+     * @return new object
+     */
     public CommandBuilder clone(String name){
-        CommandBuilder cb = new CommandBuilder(name, CommonUtils.toArray(arguments.toList(), Argument.class),
-                explanationData[0]);
+        CommandBuilder cb = new CommandBuilder(name, (Argument[]) arguments.toArrayOfColumns(Argument.class, 0), explanationData[0]);
         cb.errorCallback = errorCallback;
         cb.suggestionCallback = suggestionCallback;
+        cb.aliases = aliases;
+        if(1 < arguments.rows()) {
+            for(int i = 1; i < arguments.rows(); i++) {
+                cb.addChild(explanationData[i], (Argument[]) arguments.toArrayOfColumns(Argument.class, i));
+            }
+        }
         return cb;
     }
 
@@ -322,11 +421,10 @@ public class CommandBuilder {
         /*
         HOW DOES THE TAB COMPLETER WORK?
         - Loop though all path arguments
-        - Checks all typing arguments except the last one, they must match with registered arguments
+        - Checks all typed arguments except the last one, they must match with registered arguments
         - Add the last argument to the suggestion list
          */
-
-        Argument arg; // store the current typing argument
+        Argument arg; // store the current typed argument
         List<String> str = new ArrayList<>(); // list of suggestions
         for(int i = 0; i < arguments.rows(); i++){
             for(int j = 0; j < arguments.columns(); j++){
@@ -334,71 +432,144 @@ public class CommandBuilder {
                 if(arg == null || !arg.isPathArgument() || arg.getName().length() == 0){
                     break;
                 }
-                // if there isn't any typing arguments
+                // if there isn't any typed arguments
                 if(args.length == 0) {
                     str.add(arg.getName());
                     break;
                 }
-                // previous typing arguments must match with registered arguments
+                // check previous typed arguments
                 if(j < args.length-1) {
+                    // they must match with registered arguments
                     if(!arg.getName().equals(args[j])){
                         break;
                     }
+                    continue;
                 }
-                // if this is the last argument, we will add it to the suggestion list
-                else {
+                // now this is the last argument, we will ensure it represent for an registered argument and then add the suggestion to the list
+                else if(arg.getName().startsWith(args[j])) {
                     str.add(arg.getName());
-                    break;
                 }
+                break; // ignores remaining registered arguments
             }
         }
         return str;
     }
 
     private void executor(CommandSender sender, String[] args) {
-        if(args.length == 0 && getCommandArgs(0).size() == 1){
-            arguments.get(0, 0).getCallback().run(this, sender, 0, args, 0, null);
-            return;
-        }
-        int command = -1;
-        int mostValidArgs = 0;
+        /*
+        NOTE:
+        - Calls all registered arguments (which is being in the table now) are X
+        - Calls all typed arguments are Y
+        - The index of X and Y are not always the same
+         */
 
-        boolean validArg[] = new boolean[explanationData.length];
+        // the command index in the table
+        int command = -1;
+        // the number of X
+        // this is the actual number which doesn't include null values
+        int regArgCount = 0;
+        // the index of the last Y
+        int typedArgIndex = -1;
+        boolean lastArgValid = false;
+
+        main:
         for(int i = 0; i < arguments.rows(); i++){
-            int validArgs = 0;
+            //System.out.println("[>>] Command "+i);
+
+            // ------temporary variables------
+            int tempRegArgCount = 0;
+            int tempTypedArgIndex = -1;
+            boolean tempLastArgValid = false;
+            // --------------------------------
+
             for(int j = 0; j < arguments.columns(); j++){
                 Argument arg = arguments.get(j, i);
-                if(arg == null || arg.getName().length() == 0){
+                //System.out.println("- Arg "+j);
+                // stop the checking when there is a null argument
+                if(arg == null){
+                    //System.out.println("-- NULL => BREAK");
                     break;
-                }
-                validArg[i] = arg.check(args[j]);
-                if(validArg[i]) {
-                    validArgs++;
                 } else {
-                    break;
-                }
-                if(j == arguments.columns() - 1 || j == args.length -1){
-                    break;
+                    // PATH & ROOT ARGS
+                    if(arg.isPathArgument()){
+                        // ROOT ARGS
+                        if(arg.getName().isEmpty()){
+                            // approves it
+                            tempRegArgCount++;
+                            tempLastArgValid = true;
+                            //System.out.println("-- ROOT (tempRegArgCount="+tempRegArgCount+")");
+                        }
+                        // PATH ARGS
+                        else {
+                            tempTypedArgIndex++;
+                            if(tempTypedArgIndex < args.length &&
+                                    (tempLastArgValid = arg.check(args[tempTypedArgIndex]))){
+                                tempRegArgCount++;
+                                //System.out.println("-- PATH: VALID (tempTypedArgIndex="+tempTypedArgIndex+",tempRegArgCount="+tempRegArgCount+")");
+                            }
+                            // if this path arg is invalid, we ignore this command
+                            else {
+                                //System.out.println("-- PATH: INVALID (tempTypedArgIndex="+tempTypedArgIndex+") => BREAK");
+                                continue main;
+                            }
+                        }
+                    }
+                    // VAR ARGS
+                    else {
+                        tempTypedArgIndex++;
+                        if(tempTypedArgIndex < args.length &&
+                                (tempLastArgValid = arg.check(args[tempTypedArgIndex]))){
+                            tempRegArgCount++;
+                            //System.out.println("-- VAR: VALID (tempTypedArgIndex="+tempTypedArgIndex+",tempRegArgCount="+tempRegArgCount+")");
+                        }
+                    }
                 }
             }
-            if(mostValidArgs < validArgs){
+            // switch to the new command if possible
+            if(regArgCount <= tempRegArgCount){
                 command = i;
-                mostValidArgs = validArgs;
+                regArgCount = tempRegArgCount;
+                typedArgIndex = tempTypedArgIndex;
+                lastArgValid = tempLastArgValid;
+                //System.out.println("[CHANGE] Selected command "+command+" (regArgCount="+regArgCount+",typedArgIndex="+typedArgIndex+",lastArgValid="+lastArgValid+")");
             }
         }
-
-        if(command == -1){
+        if(command == -1 || regArgCount == 0){
             errorCallback.notFound(this, sender, args);
             suggestionCallback.run(this, sender, args, 0);
         } else {
-            int lastArg = mostValidArgs-1;
-            if(!validArg[command]) {
-                errorCallback.invalid(this, sender, args, command, mostValidArgs);
+            if(!lastArgValid) {
+                errorCallback.invalid(this, sender, args, command, typedArgIndex);
             } else {
-                String[] arr = new String[args.length-lastArg];
-                System.arraycopy(args, lastArg, arr, 0, args.length-lastArg);
-                arguments.get(lastArg, command).getCallback().run(this, sender, command, args, lastArg, String.join(" ", arr));
+                // the index of X
+                int regArgIndex = regArgCount-1;
+                if(typedArgIndex == -1) {
+                    arguments.get(regArgIndex, command).getCallback().run(this, sender, command, args, typedArgIndex, null);
+                } else{
+                    int valueLength = args.length - typedArgIndex;
+                    String[] arr = new String[valueLength];
+                    System.arraycopy(args, typedArgIndex, arr, 0, valueLength);
+                    arguments.get(regArgIndex, command).getCallback().run(this, sender, command, args, typedArgIndex, String.join(" ", arr));
+                }
             }
         }
+    }
+
+    /**
+     * Gets all aliases
+     * @return list of aliases
+     */
+    public List<String> getAliases() {
+        return new ArrayList<>(aliases);
+    }
+
+    /**
+     * Add an alias
+     * @param alias alias
+     * @return this object
+     */
+    public CommandBuilder addAlias(String alias) {
+        aliases.add(alias);
+        return this;
     }
 }
