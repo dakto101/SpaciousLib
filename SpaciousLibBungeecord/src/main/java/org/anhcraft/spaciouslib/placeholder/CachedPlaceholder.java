@@ -13,20 +13,20 @@ import java.util.UUID;
  */
 public abstract class CachedPlaceholder extends Placeholder {
     @PlayerCleaner
-    protected LinkedHashMap<UUID, String> cache = new LinkedHashMap<>();
+    private LinkedHashMap<UUID, String> cache = new LinkedHashMap<>();
 
-    protected void updateCache(){
+    void updateCache(){
         this.cache.clear();
         for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()){
             updateCache(player);
         }
     }
 
-    protected void updateCache(ProxiedPlayer player){
+    void updateCache(ProxiedPlayer player){
         this.cache.put(player.getUniqueId(), getValue(player));
     }
 
-    protected String getCache(ProxiedPlayer player){
+    String getCache(ProxiedPlayer player){
         return cache.get(player.getUniqueId());
     }
 }

@@ -237,7 +237,7 @@ public class PlaceholderAPI {
                 x = p.getValue(player);
             }
             if(x != null) {
-                text = text.replaceAll(p.getPlaceholder(), x);
+                text = text.replace(p.getPlaceholder(), x);
             }
         }
         return text;

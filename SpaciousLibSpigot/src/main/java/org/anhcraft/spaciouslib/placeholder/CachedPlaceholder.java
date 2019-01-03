@@ -13,16 +13,16 @@ import java.util.UUID;
  */
 public abstract class CachedPlaceholder extends Placeholder {
     @PlayerCleaner
-    protected HashMap<UUID, String> cache = new HashMap<>();
+    private HashMap<UUID, String> cache = new HashMap<>();
 
-    protected void updateCache(){
+    void updateCache(){
         this.cache.clear();
         for(Player player : Bukkit.getServer().getOnlinePlayers()){
             updateCache(player);
         }
     }
 
-    protected void updateCache(Player player){
+    void updateCache(Player player){
         if(player != null) {
             String str = getValue(player);
             if(str != null) {
@@ -33,7 +33,7 @@ public abstract class CachedPlaceholder extends Placeholder {
         }
     }
 
-    protected String getCache(Player player){
+    String getCache(Player player){
         return cache.get(player.getUniqueId());
     }
 }
