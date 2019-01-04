@@ -104,8 +104,8 @@ public class DataSerializerStream implements DataOutput {
         log.append(s).append(',');
     }
 
-    public void flush() throws IOException {
-        outputStream.flush();
+    public void close() throws IOException {
+        outputStream.close();
     }
 
     public String getLog(){

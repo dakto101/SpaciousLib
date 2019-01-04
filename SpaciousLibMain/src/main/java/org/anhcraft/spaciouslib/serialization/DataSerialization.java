@@ -177,9 +177,7 @@ public abstract class DataSerialization extends DataType {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try {
             DataSerializerStream out = serialize(clazz, obj, new DataSerializerStream(byteStream));
-            out.flush();
-            byteStream.flush();
-            byteStream.close();
+            out.close();
             return new Group<>(byteStream.toByteArray(), out.getLog());
         } catch(IOException e) {
             e.printStackTrace();
