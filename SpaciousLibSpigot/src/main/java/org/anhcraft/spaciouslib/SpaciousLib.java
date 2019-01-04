@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 public final class SpaciousLib extends JavaPlugin {
-    public final static String CHANNEL = "spaciouslib:plugin";
+    public final static String SL_CHANNEL = "spaciouslib:plugin";
     public final static File ROOT_FOLDER = new File("plugins/SpaciousLib/");
     public final static File SKINS_FOLDER = new File(ROOT_FOLDER, "skins/");
     public final static File CONFIG_FILE = new File(ROOT_FOLDER, "config.yml");
@@ -131,8 +131,8 @@ public final class SpaciousLib extends JavaPlugin {
         }
 
         chat.sendSender("&eRegistering messaging channel...");
-        getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
-        getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, new BungeeListener());
+        getServer().getMessenger().registerOutgoingPluginChannel(this, SL_CHANNEL);
+        getServer().getMessenger().registerIncomingPluginChannel(this, SL_CHANNEL, new BungeeListener());
 
         if(Bukkit.getServer().getPluginManager().isPluginEnabled("Vault")){
             VaultUtils.init();
