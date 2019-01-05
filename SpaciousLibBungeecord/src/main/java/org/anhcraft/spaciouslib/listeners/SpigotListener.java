@@ -17,7 +17,7 @@ import java.io.IOException;
 public class SpigotListener implements Listener {
     @EventHandler
     public void onPluginMessage(PluginMessageEvent ev) {
-        if (!ev.getTag().equals(SpaciousLib.CHANNEL)) {
+        if (!ev.getTag().equals(SpaciousLib.SL_CHANNEL)) {
             return;
         }
         try {
@@ -44,7 +44,7 @@ public class SpigotListener implements Listener {
                     out1.writeUTF("cmdsv");
                     out1.writeUTF(cmd1);
                     BungeeCord.getInstance().getServerInfo(sv1)
-                            .sendData(SpaciousLib.CHANNEL, out1.toByteArray());
+                            .sendData(SpaciousLib.SL_CHANNEL, out1.toByteArray());
                     break;
                 case "playercmd":
                     String cmd2 = data.readUTF();
@@ -60,7 +60,7 @@ public class SpigotListener implements Listener {
                     out2.writeUTF(cmd3);
                     out2.writeUTF(player2);
                     BungeeCord.getInstance().getPlayer(player2).getServer()
-                            .sendData(SpaciousLib.CHANNEL, out2.toByteArray());
+                            .sendData(SpaciousLib.SL_CHANNEL, out2.toByteArray());
                     break;
             }
         } catch(IOException e) {

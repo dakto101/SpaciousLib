@@ -16,7 +16,7 @@ public class BungeeListener implements PluginMessageListener {
     public void onPluginMessageReceived(String s, Player x, byte[] bytes) {
         DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
         try {
-            if(s.equals(SpaciousLib.CHANNEL)){
+            if(s.equals(SpaciousLib.SL_CHANNEL)){
                 String sc = data.readUTF();
                 switch(sc) {
                     case "skin":
