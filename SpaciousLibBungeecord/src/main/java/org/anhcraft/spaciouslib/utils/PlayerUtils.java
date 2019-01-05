@@ -70,6 +70,6 @@ public class PlayerUtils {
         out.writeUTF(player.getName());
         out.writeUTF(skin.getValue());
         out.writeUTF(skin.getSignature());
-        player.getServer().sendData(SpaciousLib.CHANNEL, out.toByteArray());
+        player.getServer().sendData(SpaciousLib.SL_CHANNEL, out.toByteArray());
     }
 }
