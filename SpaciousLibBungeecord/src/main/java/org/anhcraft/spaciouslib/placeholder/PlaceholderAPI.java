@@ -5,7 +5,6 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.anhcraft.spaciouslib.SpaciousLib;
 import org.anhcraft.spaciouslib.annotations.AnnotationHandler;
-import org.anhcraft.spaciouslib.scheduler.TimerTask;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,8 +16,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class PlaceholderAPI {
     private static final LinkedHashMap<String, Placeholder> data = new LinkedHashMap<>();
-    public static TimerTask asyncTask;
-
     /**
      * Initializes PlaceholderAPI
      */
@@ -33,18 +30,16 @@ public class PlaceholderAPI {
             }, 0, SpaciousLib.
                     config.getLong("placeholder_cache_duration"), TimeUnit.SECONDS);
         } else {
-            asyncTask = new TimerTask(() -> {
-                if(!BungeeCord.getInstance().isRunning){
-                    asyncTask.stop();
-                }
-                for(Placeholder p : data.values()) {
-                    if(p instanceof CachedPlaceholder && !(p instanceof FixedPlaceholder)){
-                        ((CachedPlaceholder) p).updateCache();
+            ProxyServer.getInstance().getScheduler().schedule(SpaciousLib.instance, () -> {
+                ProxyServer.getInstance().getScheduler().runAsync(SpaciousLib.instance, () -> {
+                    for(Placeholder p : data.values()) {
+                        if(p instanceof CachedPlaceholder && !(p instanceof FixedPlaceholder)){
+                            ((CachedPlaceholder) p).updateCache();
+                        }
                     }
-                }
+                });
             }, 0, SpaciousLib.
-                    config.getLong("placeholder_cache_duration"));
-            asyncTask.run();
+                    config.getLong("placeholder_cache_duration"), TimeUnit.SECONDS);
         }
         register(new FixedPlaceholder() {
             @Override
